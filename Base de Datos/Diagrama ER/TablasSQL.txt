@@ -1,11 +1,13 @@
-Create Table User(
-	uid int,
-	email varchar(50),
-	password varchar(50),
-	role int,
+/* I needed to use this table, I just modified a bit*/
 
-	Primary Key(code)
+Create Table users(
+        uid varchar(30),
+        email varchar(50),
+        password varchar(16),
+        role smallint,
+        Primary Key(uid)
 );
+
 
 Create Table Individual(
 	inid int,
@@ -17,7 +19,7 @@ Create Table Individual(
 	birthDate date,
 
 	Primary Key(inid),
-	Foreign Key(inid) References User(uid)
+	Foreign Key(inid) References Users(uid)
 );
 
 Create Table Organization(
@@ -29,7 +31,7 @@ Create Table Organization(
 	location varchar(50),
 
 	Primary Key(oid),
-	Foreign Key(oid) References User(uid)
+	Foreign Key(oid) References Users(uid)
 );
 
 Create Table TelephoneInd(
@@ -75,7 +77,7 @@ Create Table Idea(
 	state int,
 
 	Primary Key(iid),
-	Foreign Key(uid) References User(uid) DELETE ON CASCADE,
+	Foreign Key(uid) References Users(uid) DELETE ON CASCADE,
 	Foreign Key(category) References CategoryIdea(id),
 	Foreign Key(state) References StateIdea(id)
 );
@@ -87,7 +89,7 @@ Create Table InvBook(
 
 	Primary Key(invId, iid),
 	Foreign Key(iid) References Idea(iid),
-	Foreign Key(invId) References User(invId)
+	Foreign Key(invId) References Users(invId)
 );
 
 -- Give Resource
@@ -101,7 +103,7 @@ Create Table ResGive(
 	link varchar(150),
 
 	Primary Key(rid),
-	Foreign Key(uid) References User(uid) DELETE ON CASCADE,
+	Foreign Key(uid) References Users(uid) DELETE ON CASCADE,
 );
 
 Create Table CategoryRes(
@@ -117,7 +119,7 @@ Create Table ResGet(
 	uid int,
 
 	Primary Key(uid, rid),
-	Foreign Key(uid) References User(uid),
+	Foreign Key(uid) References Users(uid),
 	Foreign Key(rid) References ResGive(rid),
 );
 
@@ -128,6 +130,18 @@ Create Table ResBook(
 	uid int,
 
 	Primary Key(uid, rid),
-	Foreign Key(uid) References User(uid),
+	Foreign Key(uid) References Users(uid),
 	Foreign Key(rid) References ResGive(rid),
 );
+
+
+/*
+Chafa users
+
+create role client LOGIN password 'client';
+Grant connect on database "Prueba" to client;
+GRANT SELECT, INSERT, UPDATE, DELETE ON users  TO client;
+
+Create role admin LOGIN password 'netZRocks';
+ALTER ROLE admin WITH SUPERUSER;
+*/
