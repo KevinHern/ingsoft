@@ -3,7 +3,7 @@ import { withRouter } from 'react-router-dom';
 
 import { SignUpLink } from './SignUp';
 import { withFirebase } from '../Firebase';
-import * as ROUTES from '../../constants/routes';
+import * as ROUTES from '../../Constants/routes';
 
 const SignInPage = () => (
     <div>
@@ -31,7 +31,7 @@ class SignInFormBase extends Component {
     onSubmit = event => {
         const { email, password } = this.state;
 
-        this.props.firebase
+        this.props.fireBase
             .doSignInWithEmailAndPassword(email, password)
             .then(() => {
                 this.setState({ ...INITIAL_STATE });

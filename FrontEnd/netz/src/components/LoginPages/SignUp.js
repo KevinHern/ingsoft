@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Link, withRouter } from 'react-router-dom';
 import { withFirebase } from '../Firebase';
-import * as ROUTES from '../../constants/routes';
+import * as ROUTES from '../../Constants/routes';
 import GoogleSignUpButton from "./GoogleSignUpButton";
 
 
@@ -30,7 +30,6 @@ class SignUpFormBase extends Component {
     }
 
     componentDidMount() {
-        console.log(this.props);
         this.props.fireBase.getRedirectResult( this.props.history);
     }
 
@@ -38,21 +37,13 @@ class SignUpFormBase extends Component {
     onSubmit = event => {
         event.preventDefault();
         const { username, email, passwordOne } = this.state;
-        // console.log(this.props.history);
-        // console.log(this.props.location);
-        // console.log(this.props.match);
-        // console.log(this.props.fireBase);
-        // console.log(this.props.staticContext);
        const {fireBase} = this.props;
-        // eslint-disable-next-line
-        // console.log(fireBase.withEmailAndPassword);
         return fireBase.withEmailAndPassword(email, passwordOne)
             .then(authUser => {
-                const API_PATH = 'http://localhost/integration/api/SignUp.php';
+                const API_PATH = 'http://localhost/Backend/src/SignUp.php';
                 fireBase.getIdToken(API_PATH, this.state)
                     .then(() => {
-                        this.props.history.push("/counter");
-                        console.log("Counter go")
+                        this.props.history.push("/home");
                     });
                 this.setState({ ...INITIAL_STATE });
             })

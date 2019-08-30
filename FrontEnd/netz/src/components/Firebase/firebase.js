@@ -30,7 +30,7 @@ class Firebase {
                 let user = result.user;
                 console.log("User");
                 console.log(user);
-                history.push('/counter');
+                history.push('/home');
             }
             console.log(result)
             // The signed-in user info
