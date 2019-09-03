@@ -6,7 +6,7 @@ class DataBase {
     private $host = "localhost";
     private $db_name = "Prueba";
     private $username = "";
-    private $adminPass = "admin";
+    private $adminPass = "netZRocks";
     private $clientPass = "client";
     private $pass = "";
     private $port = "5432";

@@ -46,10 +46,10 @@ if ($_POST)
     }
 
     echo json_encode(array(
-        "idToken" => $_POST,
-        "uid" => $uid,
-        "status" => $status
-    ));
+    "idToken" => $_POST,
+    "uid" => $uid,
+    "status" => $status
+));
 }
 else
 {
