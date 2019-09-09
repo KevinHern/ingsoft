@@ -17,6 +17,7 @@ Create Table Individual(
 	biography varchar(50),
 	org varchar(50),
 	birthDate date,
+	foto varchar(50),
 
 	Primary Key(inid),
 	Foreign Key(inid) References Users(uid)
