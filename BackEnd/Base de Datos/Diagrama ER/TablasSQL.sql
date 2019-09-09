@@ -10,7 +10,7 @@ Create Table users(
 
 
 Create Table Individual(
-	inid int,
+	inid varchar(30),
 	firstName varchar(50),
 	lastName varchar(50),
 	nationality varchar(50),
@@ -23,10 +23,10 @@ Create Table Individual(
 );
 
 Create Table Organization(
-	oid int,
+	oid varchar(30),
 	name varchar(50),
 	description varchar(50),
-	logo byte,
+	logo varchar(50),
 	country varchar(50),
 	location varchar(50),
 
@@ -35,23 +35,23 @@ Create Table Organization(
 );
 
 Create Table TelephoneInd(
-	tid int;
-	uid int,
+	tid int,
+	uid varchar(30),
 	number varchar(50),
 	extension int,
 
 	Primary Key(tid),
-	Foreign Key(uid) References Individual(uid) DELETE ON CASCADE
+	Foreign Key(uid) References Individual(inid) ON DELETE CASCADE
 );
 
 Create Table TelephoneOrg(
-	tid int;
-	oid int,
+	tid int,
+	oid varchar(30),
 	number varchar(8),
 	extension int,
 
 	Primary Key(tid),
-	Foreign Key(oid) References Organization(oid) DELETE ON CASCADE
+	Foreign Key(oid) References Organization(oid) ON DELETE CASCADE
 );
 
 Create Table CategoryIdea(
@@ -70,14 +70,14 @@ Create Table StateIdea(
 
 Create Table Idea(
 	iid int,
-	uid int,
+	uid varchar(30),
 	cantInt int,
 	description varchar(100),
 	category int,
 	state int,
 
 	Primary Key(iid),
-	Foreign Key(uid) References Users(uid) DELETE ON CASCADE,
+	Foreign Key(uid) References Users(uid) ON DELETE CASCADE,
 	Foreign Key(category) References CategoryIdea(id),
 	Foreign Key(state) References StateIdea(id)
 );
@@ -85,17 +85,17 @@ Create Table Idea(
 -- Inversionist Bookmark
 Create Table InvBook(
 	iid int,
-	invId int,
+	invId varchar(30),
 
 	Primary Key(invId, iid),
 	Foreign Key(iid) References Idea(iid),
-	Foreign Key(invId) References Users(invId)
+	Foreign Key(invId) References Users(uid)
 );
 
 -- Give Resource
 Create Table ResGive(
 	rid int,
-	uid int,
+	uid varchar(30),
 	description varchar(100),
 	state int,
 	category int,
@@ -103,7 +103,7 @@ Create Table ResGive(
 	link varchar(150),
 
 	Primary Key(rid),
-	Foreign Key(uid) References Users(uid) DELETE ON CASCADE,
+	Foreign Key(uid) References Users(uid) ON DELETE CASCADE
 );
 
 Create Table CategoryRes(
@@ -116,22 +116,22 @@ Create Table CategoryRes(
 -- Get Resource
 Create Table ResGet(
 	rid int,
-	uid int,
+	uid varchar(30),
 
 	Primary Key(uid, rid),
 	Foreign Key(uid) References Users(uid),
-	Foreign Key(rid) References ResGive(rid),
+	Foreign Key(rid) References ResGive(rid)
 );
 
 -- Bookmark of resources
 
 Create Table ResBook(
 	rid int,
-	uid int,
+	uid varchar(30),
 
 	Primary Key(uid, rid),
 	Foreign Key(uid) References Users(uid),
-	Foreign Key(rid) References ResGive(rid),
+	Foreign Key(rid) References ResGive(rid)
 );
 
 
@@ -142,6 +142,28 @@ create role client LOGIN password 'client';
 Grant connect on database "Prueba" to client;
 GRANT SELECT, INSERT, UPDATE, DELETE ON users  TO client;
 
+/* ROLES */
+
+--- Administrator ---
 Create role admin LOGIN password 'netZRocks';
 ALTER ROLE admin WITH SUPERUSER;
+
+--- Entrepreneur ---
+CREATE ROLE entrepreneur LOGIN password 'netzentrepreneur';
+GRANT CONNECT ON DATABASE "Prueba" to entrepreneur;
+GRANT SELECT, INSERT, UPDATE, DELETE ON users, individual, organization, telephoneind, telephoneorg, idea TO entrepreneur;
+GRANT SELECT ON categoryidea, stateidea TO entrepreneur;
+
+--- Financist ---
+CREATE ROLE financist LOGIN password 'netzfinancist';
+GRANT CONNECT ON DATABASE "Prueba" to financist;
+GRANT SELECT, INSERT, UPDATE, DELETE ON users, individual, organization, telephoneind, telephoneorg, invbook TO financist;
+GRANT SELECT ON idea, categoryidea, stateidea TO entrepreneur;
+
+--- Resource Business Guy ---
+CREATE ROLE resource LOGIN password 'netzresource';
+GRANT CONNECT ON DATABASE "Prueba" to resource;
+GRANT SELECT, INSERT, UPDATE, DELETE ON users, individual, organization, telephoneind, telephoneorg, resgive, resget TO resource;
+GRANT SELECT ON categoryres TO resource;
+
 */
