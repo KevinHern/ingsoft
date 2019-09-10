@@ -1,10 +1,14 @@
 <?php
+	//Libraries
 	include 'connection.php';
+	include 'imgdirectory.php';
+
+
 	$option = $_POST["option"];
 
 	//----- AGREEMENT -----//
 	/*
-	
+
 	-- Values that $option can take: --
 
 	REGISTER INDIVIDUAL: 		ind
@@ -41,10 +45,12 @@
 			$email = $_POST["email"];
 			$password = $_POST["password"];
 			$role = $_POST["role"];
+			$folderid = $_POST["folderid"];
 
 			$link = OpenConUser($typeuser);
 
-			$query = "INSERT INTO users VALUES('$uid', '$email', '$password', $role);";
+			$query = "INSERT INTO users VALUES('$uid', '$email', '$password', $role, $folderid, 0);";
+			CreateDir($folderid);
 
 			$result = pg_query($link, $query) or die('Query failed: ' . pg_result_error());
 
@@ -56,12 +62,26 @@
 				$biography = $_POST["biography"];
 				$org = $_POST["org"];
 				$birthdate = $_POST["birthdate"];
-				$query = "INSERT INTO individual VALUES('$uid', '$firstname', '$lastname', '$nationality', '$biography', '$org', $birthdate);";
+
+				//Photo
+				$name = $_FILES["photo"]["name"];
+				$tmp_name = $_FILES["photo"]["tmp_name"];
+
+				$query = "INSERT INTO individual VALUES('$uid', '$firstname', '$lastname', '$nationality', '$biography', '$org', $birthdate, 'img/$folderid');";
 
 				$result = pg_query($link, $query) or die('Query failed: ' . pg_result_error());
 
-				$json = array('status' => 1);
-				echo json_encode($json);
+				if ($result)
+				{
+					$exito = StoreFile($name, $tmp_name, "profile", $folderid);
+					$json = array('status' => 1);
+					echo json_encode($json);
+				}
+				else
+				{
+					$json = array('status' => 0);
+					echo json_encode($json);
+				}
 			}
 			else
 			{
@@ -77,10 +97,11 @@
 			$email = $_POST["email"];
 			$password = $_POST["password"];
 			$role = $_POST["role"];
+			$folderid = $_POST["folderid"];
 
 			$link = OpenConUser($typeuser);
 
-			$query = "INSERT INTO users VALUES('$uid', '$email', '$password', $role);";
+			$query = "INSERT INTO users VALUES('$uid', '$email', '$password', $role, $folderid, 1);";
 
 			$result = pg_query($link, $query) or die('Query failed: ' . pg_result_error());
 
@@ -92,12 +113,25 @@
 				$country = $_POST["country"];
 				$location = $_POST["location"];
 
-				$query = "INSERT INTO individual VALUES('$uid', '$name', '$description', '$logo', '$country', '$location');";
+				//Logo
+				$name = $_FILES["logo"]["name"];
+				$tmp_name = $_FILES["logo"]["tmp_name"];
+
+				$query = "INSERT INTO individual VALUES('$uid', '$name', '$description', 'img/$folderid', '$country', '$location');";
 
 				$result = pg_query($link, $query) or die('Query failed: ' . pg_result_error());
 
-				$json = array('status' => 1);
-				echo json_encode($json);
+				if ($result)
+				{
+					$exito = StoreFile($name, $tmp_name, "profile", $folderid);
+					$json = array('status' => 1);
+					echo json_encode($json);
+				}
+				else
+				{
+					$json = array('status' => 0);
+					echo json_encode($json);
+				}
 			}
 			else
 			{
@@ -169,7 +203,7 @@
 
 			$link = OpenConUser($typeuser);
 
-			$query = "INSERT INTO idea VALUES($iid, '$uid', $cantint, '$description', $category, $state);";
+			$query = "INSERT INTO idea VALUES($iid, '$uid', $cantint, '$title','$description', $category, $state);";
 
 			$result = pg_query($link, $query) or die('Query failed: ' . pg_result_error());
 
