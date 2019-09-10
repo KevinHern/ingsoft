@@ -165,7 +165,7 @@
 
 			$link = OpenConUser($typeuser);
 
-			$query = "INSERT INTO telephoneid VALUES($tid, '$uid', '$number', extension);";
+			$query = "INSERT INTO telephoneind VALUES($tid, '$uid', '$number', extension);";
 
 			$result = pg_query($link, $query) or die('Query failed: ' . pg_result_error());
 

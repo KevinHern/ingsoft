@@ -89,8 +89,8 @@ Create Table InvBook(
 	invId varchar(30),
 
 	Primary Key(invId, iid),
-	Foreign Key(iid) References Idea(iid),
-	Foreign Key(invId) References Users(uid)
+	Foreign Key(iid) References Idea(iid) ON DELETE CASCADE,
+	Foreign Key(invId) References Users(uid) ON DELETE CASCADE
 );
 
 -- Give Resource
