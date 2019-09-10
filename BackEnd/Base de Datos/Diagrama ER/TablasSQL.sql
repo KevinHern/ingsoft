@@ -1,11 +1,13 @@
 /* I needed to use this table, I just modified a bit*/
 
 Create Table users(
-        uid varchar(30),
-        email varchar(50),
-        password varchar(16),
-        role smallint,
-        Primary Key(uid)
+    uid varchar(30),
+    email varchar(50),
+    password varchar(16),
+    role smallint,
+    folderid int,
+    type int,
+    Primary Key(uid)
 );
 
 
@@ -57,14 +59,14 @@ Create Table TelephoneOrg(
 
 Create Table CategoryIdea(
 	id int,
-	nombre varchar(20),
+	name varchar(20),
 
 	Primary Key(id)
 );
 
 Create Table StateIdea(
 	id int,
-	nombre varchar(20),
+	name varchar(20),
 
 	Primary Key(id)
 );
@@ -73,6 +75,7 @@ Create Table Idea(
 	iid int,
 	uid varchar(30),
 	cantInt int,
+	title varchar(20),
 	description varchar(100),
 	category int,
 	state int,
