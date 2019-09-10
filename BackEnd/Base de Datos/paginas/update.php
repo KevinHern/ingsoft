@@ -7,14 +7,14 @@
 	
 	-- Values that $option can take: --
 
-	REGISTER INDIVIDUAL: 		ind
-	REGISTER ORGANIZATION: 		org
-	REGISTER CATEGORY IDEA:		catid
-	REGISTER STATE IDEA:		staid
-	REGISTER IDEA:				idea
-	REGISTER IND. TELEPHONE:	indtel
-	REGISTER ORD. TELEPHONE:	orgtel
-	REGISTER BOOKMARK:			book
+	UPDATE INDIVIDUAL: 		ind
+	UPDATE ORGANIZATION: 	org
+	UPDATE CATEGORY IDEA:	catid
+	UPDATE STATE IDEA:		staid
+	UPDATE IDEA:			idea
+	UPDATE IND. TELEPHONE:	indtel
+	UPDATE ORD. TELEPHONE:	orgtel
+	UPDATE BOOKMARK:		book
 
 	-- Values that $typeuser can take: --
 
@@ -24,8 +24,6 @@
 
 	*/
 	//---------------------//
-
-	
 	$typeuser = $_POST["type"];
 
 
@@ -35,7 +33,7 @@
 	/*--------------USER--------------*/
 	/*--------------------------------*/
 
-		//---- REGISTER INDIVIDUAL ----//
+		//---- UPDATE INDIVIDUAL ----//
 		case 'ind':
 			$uid = $_POST["uid"];
 			$email = $_POST["email"];
@@ -71,7 +69,7 @@
 			
 			break;
 		
-		//---- REGISTER ORGANIZATION ----//
+		//---- UPDATE ORGANIZATION ----//
 		case 'org':
 			$uid = $_POST["uid"];
 			$email = $_POST["email"];
@@ -106,11 +104,7 @@
 			}
 			break;
 
-		case 'option':
-			
-			break;
-
-		//---- REGISTER CATEGORY IDEA ----//
+		//---- UPDATE CATEGORY IDEA ----//
 		case 'catid':
 			$id = $_POST["id"];
 			$nombre = $_POST["nombre"];
@@ -134,7 +128,7 @@
 
 			break;
 
-		//---- REGISTER STATE IDEA ----//
+		//---- UPDATE STATE IDEA ----//
 		case 'staid':
 			$id = $_POST["id"];
 			$nombre = $_POST["nombre"];
@@ -158,7 +152,7 @@
 
 			break;
 
-		//---- REGISTER IDEA ----//
+		//---- UPDATE IDEA ----//
 		case 'idea':
 			$iid = $_POST["iid"];
 			$uid = $_POST["uid"];
@@ -186,7 +180,7 @@
 
 			break;
 
-		//---- REGISTER IND. TELEPHONE ----//
+		//---- UPDATE IND. TELEPHONE ----//
 		case 'indtel':
 			$uid = $_POST["uid"];
 			$tid = $_POST["tid"];
@@ -212,7 +206,7 @@
 
 			break;
 
-		//---- REGISTER ORG. TELEPHONE ----//
+		//---- UPDATE ORG. TELEPHONE ----//
 		case 'orgtel':
 			$oid = $_POST["oid"];
 			$tid = $_POST["tid"];
@@ -238,7 +232,7 @@
 
 			break;
 
-		//---- REGISTER BOOKMARK ----//
+		//---- UPDATE BOOKMARK ----//
 		case 'book':
 			$iid = $_POST["iid"];
 			$invid = $_POST["invid"];

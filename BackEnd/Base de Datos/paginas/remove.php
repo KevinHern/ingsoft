@@ -2,10 +2,27 @@
 	include 'connection.php';
 	$option = $_POST["option"];
 
+	//----- AGREEMENT -----//
+	/*
+	
+	-- Values that $option can take: --
 
-	// e = entrepreneur
-	// f = financist
-	// r = resource
+	DELETE ACCOUNT: 		acc
+	DELETE CATEGORY IDEA:	catid
+	DELETE STATE IDEA:		staid
+	DELETE IDEA:			idea
+	DELETE IND. TELEPHONE:	indtel
+	DELETE ORD. TELEPHONE:	orgtel
+	DELETE BOOKMARK:		book
+
+	-- Values that $typeuser can take: --
+
+	e = entrepreneur
+	f = financist
+	r = resource
+
+	*/
+	//---------------------//
 	$typeuser = $_POST["type"];
 
 
@@ -16,7 +33,7 @@
 	/*--------------------------------*/
 
 		//---- DELETE ACCOUNT ----//
-		case '1':
+		case 'acc':
 			$uid = $_POST["uid"];
 
 			$link = OpenConUser($typeuser);
@@ -27,17 +44,19 @@
 
 			if ($result)
 			{
-				echo "{\"status\": \"1\"}";
+				$json = array('status' => 1);
+				echo json_encode($json);
 			}
 			else
 			{
-				echo "{\"status\": \"0\"}";
+				$json = array('status' => 0);
+				echo json_encode($json);
 			}
 			
 			break;
 
 		//---- DELETE CATEGORY IDEA ----//
-		case '3':
+		case 'catid':
 			$id = $_POST["id"];
 
 			$link = OpenConAdmin();
@@ -48,17 +67,19 @@
 
 			if ($result)
 			{
-				echo "{\"status\": \"1\"}";
+				$json = array('status' => 1);
+				echo json_encode($json);
 			}
 			else
 			{
-				echo "{\"status\": \"0\"}";
+				$json = array('status' => 0);
+				echo json_encode($json);
 			}
 
 			break;
 
 		//---- DELETE STATE IDEA ----//
-		case '4':
+		case 'staid':
 			$id = $_POST["id"];
 
 			$link = OpenConAdmin();
@@ -69,16 +90,18 @@
 
 			if ($result)
 			{
-				echo "{\"status\": \"1\"}";
+				$json = array('status' => 1);
+				echo json_encode($json);
 			}
 			else
 			{
-				echo "{\"status\": \"0\"}";
+				$json = array('status' => 0);
+				echo json_encode($json);
 			}
 
 			break;
 
-		//---- REGISTER IDEA ----//
+		//---- DELETE IDEA ----//
 		case 'idea':
 			$iid = $_POST["iid"];
 
@@ -90,17 +113,19 @@
 
 			if ($result)
 			{
-				echo "{\"status\": \"1\"}";
+				$json = array('status' => 1);
+				echo json_encode($json);
 			}
 			else
 			{
-				echo "{\"status\": \"0\"}";
+				$json = array('status' => 0);
+				echo json_encode($json);
 			}
 
 			break;
 
-		//---- REGISTER IND. TELEPHONE ----//
-		case '5':
+		//---- DELETE IND. TELEPHONE ----//
+		case 'indtel':
 			$tid = $_POST["tid"];
 
 			$link = OpenConUser($typeuser);
@@ -111,17 +136,19 @@
 
 			if ($result)
 			{
-				echo "{\"status\": \"1\"}";
+				$json = array('status' => 1);
+				echo json_encode($json);
 			}
 			else
 			{
-				echo "{\"status\": \"0\"}";
+				$json = array('status' => 0);
+				echo json_encode($json);
 			}
 
 			break;
 
 		//---- DELETE ORG. TELEPHONE ----//
-		case '6':
+		case 'orgtel':
 			$tid = $_POST["tid"];
 
 			$link = OpenConUser($typeuser);
@@ -132,17 +159,19 @@
 
 			if ($result)
 			{
-				echo "{\"status\": \"1\"}";
+				$json = array('status' => 1);
+				echo json_encode($json);
 			}
 			else
 			{
-				echo "{\"status\": \"0\"}";
+				$json = array('status' => 0);
+				echo json_encode($json);
 			}
 
 			break;
 
 		//---- DELETE BOOKMARK ----//
-		case 'bookmark':
+		case 'book':
 			$iid = $_POST["iid"];
 			$invid = $_POST["invid"];
 
@@ -154,11 +183,13 @@
 
 			if ($result)
 			{
-				echo "{\"status\": \"1\"}";
+				$json = array('status' => 1);
+				echo json_encode($json);
 			}
 			else
 			{
-				echo "{\"status\": \"0\"}";
+				$json = array('status' => 0);
+				echo json_encode($json);
 			}
 
 			break;
