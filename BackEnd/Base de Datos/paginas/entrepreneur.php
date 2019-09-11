@@ -28,7 +28,7 @@
 			$uid = $_POST["uid"];
 
 			$numrows = $_POST["numrows"];
-			$numpages = $_POST["numpages"];}
+			$numpage = $_POST["numpage"];
 
 			$category = $_POST["category"];
 
@@ -38,7 +38,7 @@
 
 			$result = pg_query($link, $query) or die('Query failed: ' . pg_result_error());
 
-			pg_result_seek($result, (($numpages-1) * $numrows))
+			pg_result_seek($result, (($numpage-1) * $numrows))
 
 			$i = 0;
 			$array = array();
@@ -63,18 +63,38 @@
 			/*
 			INPUTS:
 			1. Idea ID
+			2. Number of rows
+			3. Page Number
 
 			----------------
-			OUTPUTS:
-			
+			OUTPUTS: Array(array1, array2, ... arrayN)
+
+			Array1: Contains Idea details
 			1. Idea Title
 			2. Idea Description
 			3. Idea Category
 			4. Idea State
 			5. Number of Interested
 
+			Array2 ... ArrayN: Contains the financists' data that has bookmarked the requested idea
+
+			For each financist:
+			1. Type of Entrepreneur
+			2. Entrepreneur's Id
+			3. Entrepreneur's data:
+
+				INDIVIDUAL:
+				3.1 First Name
+				3.2 Last Name
+
+				ORGANIZATION:
+				3.1 Name 
+
 			*/
 			$iid = $_POST["iid"];
+
+			$numrows = $_POST["numrows"];
+			$numpage = $_POST["numpage"];
 
 			$link = OpenConUser($typeuser);
 
@@ -92,7 +112,51 @@
 			$sin = $line["sin"];
 			$cantInt = $line["cantInt"];
 
-			$array = array($title, $description, $cin, $sin, $cantInt);
+			$temp = array($title, $description, $cin, $sin, $cantInt);
+
+			$array = array($temp);
+
+			$query = "SELECT U.uid, U.type FROM invbook IB, users U WHERE IB.invId = U.uid AND IB.invbook = $iid";
+
+			$result = pg_query($link, $query) or die('Query failed: ' . pg_result_error());
+
+			pg_result_seek($result, (($numpage-1) * $numrows))
+
+			while ($line = pg_fetch_array($result, NULL, PGSQL_ASSOC))
+			{
+				$temp = array();
+				$type = $line["type"];
+				$utemp = $line["uid"];
+
+				if ($type == 1)
+				{
+					$query = "SELECT firstName, lastName FROM individual WHERE inid = '$utemp'";
+
+					$result = pg_query($link, $query) or die('Query failed: ' . pg_result_error());
+
+					$line = pg_fetch_array($result, NULL, PGSQL_ASSOC);
+
+					$firstName = $line["firstName"];
+					$lastName = $line["lastName"];
+
+					array_push($temp, 1, $utemp, $firstName, $lastName)
+
+				}
+				else
+				{
+					$query = "SELECT name FROM organization WHERE oid = '$utemp'";
+
+					$result = pg_query($link, $query) or die('Query failed: ' . pg_result_error());
+
+					$line = pg_fetch_array($result, NULL, PGSQL_ASSOC);
+
+					$name = $line["name"];
+
+					array_push($temp, 0, $utemp, $name)
+				}
+
+				array_push($array, $temp)
+			}
 
 			echo json_encode($array);
 

@@ -6,7 +6,7 @@
 	switch ($option)
 	{
 
-		//---- LIST IDEAS TO FINANCIST: GENERAL INFO ----//
+		//---- LIST IDEAS TO FINANCIST  ----//
 		case 'value':
 			/*
 			INPUTS:
@@ -17,8 +17,17 @@
 			------------
 
 			OUTPUTS:
-			List of N ideas:
+			1. Entrepreneur's data:
 
+				Individual:
+				1.1 First Name
+				1.2 Last Name
+
+				Organization:
+				1.1 Name
+			2. Idea Title
+			3. Idea Description
+			4. Idea ID
 
 			*/
 
@@ -29,7 +38,7 @@
 
 			$link = OpenConUser("f");
 
-			$query = "SELECT iid, title FROM idea WHERE category = $category ORDER BY title";
+			$query = "SELECT iid, title, description FROM idea WHERE category = $category ORDER BY title";
 
 			$result = pg_query($link, $query) or die('Query failed: ' . pg_result_error());
 
@@ -45,64 +54,67 @@
 				$temp = array();
 				if ($type == 1)
 				{
-					$query = "SELECT firstName, lastName, photo FROM individual WHERE inid= '$uid'";
+					$query = "SELECT firstName, lastName FROM individual WHERE inid= '$uid'";
 					$result = pg_query($link, $query) or die('Query failed: ' . pg_result_error());
 					$line = pg_fetch_array($result, NULL, PGSQL_ASSOC);
 
 					$fname = $line["firstName"];
 					$lname = $line["lastName"];
-					$photo = $line["photo"];
-					$t = array($fname, $lname, $photo);
+					$t = array($fname, $lname);
 					array_push($temp, $t);
 				}
 				else
 				{
-					$query = "SELECT name, logo FROM organization WHERE oid = '$uid'";
+					$query = "SELECT name FROM organization WHERE oid = '$uid'";
 					$result = pg_query($link, $query) or die('Query failed: ' . pg_result_error());
 					$line = pg_fetch_array($result, NULL, PGSQL_ASSOC);
 
 					$name = $line["name"];
-					$logo = $line["logo"];
-					$t = array($name, $logo);
+					$t = array($name);
 					array_push($temp, $t);
 				}
 
 				$title = $line["title"];
 				$description = $line["description"];
-				$category = $line["cin"];
-				$state = $line["sin"];
-				$cantInt = $line["cantInt"];
+				$iid = $line["iid"];
 
-				array_push($temp, $title, $description, $category, $state, $cantInt);
+				array_push($temp, $title, $description, $iid);
 				array_push($array, $temp);
 			}
+
+			echo json_encode($array);
 			break;
 
 		//---- LIST BOOKMARK IDEAS: GENERAL INFO ----//
 		case 'value':
-			/*RETURNS THIS:
-			- List of N ideas
+			/*
+			INPUTS:
+			1. Financist Id
+			2. Idea Category
+			3. Number of rows
+			4. Page Number
 
-			For each Idea:
+			------------
 
-			Idea Data (array)
-				1.1 Idea Title
-				1.2 Idea ID				
+			OUTPUTS:			
+			List of N ideas:
 
+			For each idea:
+			1. Idea Title
+			2. Idea Id
 			*/
-			$typeuser = $_POST["typeuser"];
 
 			$category = $_POST["category"];
 
 			$numrows = $_POST["numrows"];
 			$numpages = $_POST["numpages"];
 
-			//-- Obtener Financist id
-			$invid = $_POST["invid"];
+			//-- Obtain Financist id
+			$uid = $_POST["uid"];
 
-			$link = OpenConUser($typeuser);
+			$link = OpenConUser("f");
 
-			$query = "SELECT I.title, I.iid FROM invbook IB, idea I WHERE IB.iid = I.iid AND I.category = $category";
+			$query = "SELECT I.title, I.iid FROM invbook IB, idea I WHERE IB.iid = I.iid AND IB.invId = '$uid' AND I.category = $category";
 
 			$result = pg_query($link, $query) or die('Query failed: ' . pg_result_error());
 
@@ -129,9 +141,15 @@
 
 		//---- LIST BOOKMARK IDEAS: SHOW IDEA INFO ----//
 		case 'variable':
-			/* RETURNS IN THIS ORDER:
+			/* 
+			INPUTS:
+			1. Idea Id
 
-			1. Type of user
+			-------------
+
+			OUTPUTS:
+
+			1. Type of entrepreneur user (Individual/Organization)
 			2. Entrepreneur's data (Array)
 
 				INDIVIDUAL:
@@ -143,17 +161,15 @@
 				2.1 Name
 				2.2 Logo
 
-			3. User Id
-			4. Title
-			5. Description
+			3. Entrepreneur's Id
+			4. Idea Title
+			5. Idea Description
 			6. Idea Category
 			7. Idea State
 			8. Number of Interested
 
 			*/
 
-			//-- GET or POST?
-			$typeuser = $_POST["typeuser"];
 			$iid = $_POST["iid"];
 
 			$link = OpenConUser($typeuser);
@@ -211,45 +227,4 @@
 			echo json_encode($array);
 
 			break;
-
-		//---- LIST CATEGORY IDEAS ----//
-		case 'value':
-			$link = OpenConAdmin($typeuser);
-
-			$query = "SELECT name FROM stateidea ORDER BY id";
-			
-			$result = pg_query($link, $query) or die('Query failed: ' . pg_result_error());
-
-			$array = array();
-
-			while ($line = pg_fetch_array($result, NULL, PGSQL_ASSOC))
-			{
-				$name = $line["name"];
-				array_push($array, $name);
-			}
-
-			echo json_encode($array);
-			break;
-
-		//---- LIST STATE IDEAS ----//
-		case 'value':
-			$link = OpenConAdmin($typeuser);
-
-			$query = "SELECT name FROM categoryidea ORDER BY id";
-			
-			$result = pg_query($link, $query) or die('Query failed: ' . pg_result_error());
-
-			$array = array();
-
-			while ($line = pg_fetch_array($result, NULL, PGSQL_ASSOC))
-			{
-				$name = $line["name"];
-				array_push($array, $name);
-			}
-
-			echo json_encode($array);
-			break;
-		
-	}
-
 ?>
