@@ -6,20 +6,33 @@
 	switch ($option)
 	{
 
-		//---- LIST IDEAS TO FINANCIST ----//
+		//---- LIST IDEAS TO FINANCIST: GENERAL INFO ----//
 		case 'value':
-			$typeuser = $_POST["typeuser"];
+			/*
+			INPUTS:
+			1. Idea Category
+			2. Number of Rows
+			3. Number of Pages
+
+			------------
+
+			OUTPUTS:
+			List of N ideas:
+
+
+			*/
 
 			$category = $_POST["category"];
 
 			$numrows = $_POST["numrows"];
 			$numpages = $_POST["numpages"];
 
-			$link = OpenConUser($typeuser);
+			$link = OpenConUser("f");
 
-			$query = "SELECT U.uid, U.type, I.cantInt, I.title, I.description, CI.nombre as cin, SI.nombre as sin FROM idea I, categoryIdea CI, stateidea SI, users U WHERE I.category = $category AND I.category = CI.id AND I.state = SI.id AND U.uid = I.uid ORDER BY title";
+			$query = "SELECT iid, title FROM idea WHERE category = $category ORDER BY title";
 
 			$result = pg_query($link, $query) or die('Query failed: ' . pg_result_error());
+
 			pg_result_seek($result, (($numpages-1) * $numrows))
 
 			$i = 0;
@@ -27,7 +40,6 @@
 
 			while ($line = pg_fetch_array($result, NULL, PGSQL_ASSOC) && $i < $numrows)
 			{
-				//Obtención del nombre del autor
 				$uid = $line["uid"];
 				$type = $line["type"];
 				$temp = array();
