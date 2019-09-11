@@ -10,7 +10,7 @@ Create Table users(
     Primary Key(uid)
 );
 
-
+-- type = 1
 Create Table Individual(
 	inid varchar(30),
 	firstName varchar(50),
@@ -19,12 +19,13 @@ Create Table Individual(
 	biography varchar(50),
 	org varchar(50),
 	birthDate date,
-	foto varchar(50),
+	photo varchar(50),
 
 	Primary Key(inid),
 	Foreign Key(inid) References Users(uid)
 );
 
+-- type = 0
 Create Table Organization(
 	oid varchar(30),
 	name varchar(50),
@@ -156,7 +157,7 @@ ALTER ROLE admin WITH SUPERUSER;
 CREATE ROLE entrepreneur LOGIN password 'netzentrepreneur';
 GRANT CONNECT ON DATABASE "Prueba" to entrepreneur;
 GRANT SELECT, INSERT, UPDATE, DELETE ON users, individual, organization, telephoneind, telephoneorg, idea TO entrepreneur;
-GRANT SELECT ON categoryidea, stateidea TO entrepreneur;
+GRANT SELECT ON categoryidea, stateidea, invbook TO entrepreneur;
 
 --- Financist ---
 CREATE ROLE financist LOGIN password 'netzfinancist';
