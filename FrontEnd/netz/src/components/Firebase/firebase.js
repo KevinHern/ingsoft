@@ -20,23 +20,53 @@ class Firebase {
         this.googleProvider =  new firebase.auth.GoogleAuthProvider();
     }
 
-    getRedirectResult(history) {
+    getRedirectResult(history, API_PATH = false) {
         this.appAuth.getRedirectResult().then((result) => {
             if (result.credential) {
                 // This gives you a Google Access Token. You can use it to access the Google API.
-                let token = result.credential.accessToken;
-                console.log("Token");
-                console.log(token);
+                // let token = result.credential.accessToken;
+                let apiToken = result.credential.idToken;
+                let idToken = result.user._lat;
+                // console.log("Token");
+                // console.log(token);
                 let user = result.user;
                 console.log("User");
                 console.log(user);
-                history.push('/home');
+                console.log("Result");
+                console.log(result);
+                if(result.additionalUserInfo.isNewUser){
+                    if(API_PATH){
+                        axios({
+                            method: 'post',
+                            url: `${API_PATH}`,
+                            headers: { 'content-type': 'application/json' },
+                            data: {idToken, name:result.additionalUserInfo.profile.name ,
+                                email:result.additionalUserInfo.profile.email, pass:"", role: 1}
+                        })
+                            .then(result => {
+                                // this.setState({
+                                //     mailSent: result.data.sent
+                                // }
+                                // )
+                                let thing = result.data;
+                                console.table(thing);
+                                history.push('/home');
+                            })
+                            .catch(error =>
+                                // {this.setState({ error: error.message })
+                                console.log(error)
+                            );
+                    }
+                }else{
+                    history.push('/home');
+                }
             }
-            console.log(result)
+            // return "failed";
             // The signed-in user info
 
         })
             .catch((error) => {
+                console.log(error);
                 console.log("Not everything works kiddo")
             })
     }

@@ -2,15 +2,14 @@ import React, { Component } from 'react';
 import { Link, withRouter } from 'react-router-dom';
 import { withFirebase } from '../Firebase';
 import * as ROUTES from '../../Constants/routes';
-import GoogleSignUpButton from "./GoogleSignUpButton";
-
+import GoogleSign from "./GoogleSignUpButton";
+import {Form, FormGroup, Label, Button, Input, Col, FormText} from "reactstrap";
+import ButtonGroup from "reactstrap/es/ButtonGroup";
 
 
 const SignUpPage = () => (
     <div>
-        <h1>SignUp</h1>
         <SignUpForm key= 'signUp'/>
-        <GoogleSignUp/>
     </div>
 );
 const INITIAL_STATE = {
@@ -29,10 +28,10 @@ class SignUpFormBase extends Component {
         this.state = { ...INITIAL_STATE };
     }
 
-    componentDidMount() {
-        this.props.fireBase.getRedirectResult( this.props.history);
-    }
-
+    // componentDidMount() {
+    //     const API_PATH = 'http://localhost/ingsoft/src/SignUp.php';
+    //     this.props.fireBase.getRedirectResult(this.props.history, API_PATH);
+    // }
 
     onSubmit = event => {
         event.preventDefault();
@@ -40,7 +39,7 @@ class SignUpFormBase extends Component {
        const {fireBase} = this.props;
         return fireBase.withEmailAndPassword(email, passwordOne)
             .then(authUser => {
-                const API_PATH = 'http://localhost/Backend/src/SignUp.php';
+                const API_PATH = 'http://localhost/ingsoft/src/SignUp.php';
                 fireBase.getIdToken(API_PATH, this.state)
                     .then(() => {
                         this.props.history.push("/home");
@@ -73,48 +72,57 @@ class SignUpFormBase extends Component {
             username === '';
 
         return (
-               <form onSubmit={this.onSubmit} key={"SignI"}>
-                   <input
-                       name="username"
-                       value={username}
-                       onChange={this.onChange}
-                       type="text"
-                       placeholder="Full Name"
-                   />
-                   <input
-                       name="email"
-                       value={email}
-                       onChange={this.onChange}
-                       type="text"
-                       placeholder="Email Address"
-                   />
-                   <input
-                       name="passwordOne"
-                       value={passwordOne}
-                       onChange={this.onChange}
-                       type="password"
-                       placeholder="Password"
-                   />
-                   <input
-                       name="passwordTwo"
-                       value={passwordTwo}
-                       onChange={this.onChange}
-                       type="password"
-                       placeholder="Confirm Password"
-                   />
-                   <button disabled={isInvalid} type="submit">Sign Up</button>
-                   {error && <p>{error.message}</p>}
-               </form>
+               <Form onSubmit = {this.onSubmit}  key={"SignUp"}   className="align-middle">
+                   <FormGroup row className="justify-content-md-center mt-3">
+                       <h1>SignUp</h1>
+                   </FormGroup>
+                   <FormGroup row className="justify-content-md-center">
+                       <Label for="userName" sm={2}>Nombre</Label>
+                       <Col sm={5}>
+                           <Input onChange = {this.onChange} type="type" name="username" id="username"/>
+                       </Col>
+                   </FormGroup>
+                   <FormGroup row className="justify-content-md-center">
+                       <Label for = "email" sm={2}>Email</Label>
+                       <Col sm={5}>
+                       <Input onChange = {this.onChange} type="email" name="email" id="email"/>
+                       </Col>
+                   </FormGroup>
+                   <FormGroup row className="justify-content-md-center">
+                       <Label for = "password" sm={2}>Password</Label>
+                       <Col sm={5}>
+                       <Input onChange = {this.onChange} type="password" name="passwordOne" id="passwordOne"/>
+                       </Col>
+                   </FormGroup>
+                   <FormGroup row className="justify-content-md-center">
+                       <Label for = "password" sm={2}>Retype Password</Label>
+                       <Col sm={5}>
+                            <Input onChange = {this.onChange} type="password" name="passwordTwo" id="passwordTwo"/>
+                       </Col>
+                   </FormGroup>
+                   <FormGroup row className="justify-content-md-center">
+                       {/*<ButtonGroup className="d-flex justify-content-center" >*/}
+                       {/*    <Button color="primary" disabled={isInvalid}>Sign Up</Button>*/}
+                       {/*    <GoogleSign message = {"Sign Up with Google"}/>*/}
+                       {/*</ButtonGroup>*/}
+                       <ButtonGroup>
+                               <Button  disabled={isInvalid} type = "Submit" className="mr-3" color = "primary">
+                                   Sign In</Button>
+                               <FormText color="muted">
+                                       Already have an account? <Link to={ROUTES.SIGN_IN}>Sign In</Link>
+                               </FormText>
+                       </ButtonGroup>
+                   </FormGroup>
+                   {/*<FormGroup row className="justify-content-md-center">*/}
+                   {/*    <GoogleSign message = { "Sign Up with Google"}/>*/}
+                   {/*</FormGroup>*/}
+                   {error && <p>error.message</p>}
+               </Form>
+
         );
     }
 }
 
-const SignUpLink = () => (
-    <p>
-        Don't have an account? <Link to={ROUTES.SIGN_UP}>Sign Up</Link>
-    </p>
-);
 const SignUpForm = withRouter(withFirebase(SignUpFormBase));
-const GoogleSignUp = withFirebase(GoogleSignUpButton);
 export default SignUpPage;
-export { SignUpForm, SignUpLink, GoogleSignUp};
+export { SignUpForm, GoogleSign};

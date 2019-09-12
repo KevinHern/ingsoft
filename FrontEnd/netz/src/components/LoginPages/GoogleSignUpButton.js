@@ -1,5 +1,8 @@
 import React, { Component } from 'react';
 import {withRouter} from 'react-router-dom';
+import {withFirebase} from "../Firebase";
+import {Button} from  'reactstrap';
+
 
 class GoogleSignUpButton extends Component {
 
@@ -8,8 +11,6 @@ class GoogleSignUpButton extends Component {
     }
 
     onClick = (e) => {
-        // console.log("Button");
-        // console.table(this.props);
         if (!this.props.fireBase.appAuth.currentUser) {
             this.props.fireBase.doSignInWithGoogle();
         }else{
@@ -19,9 +20,10 @@ class GoogleSignUpButton extends Component {
     };
 
     render() {
+        const {message} = this.props;
         return (
             <div>
-                <button onClick={this.onClick}>Sign in With Google</button>
+                <Button onClick={this.onClick} color = "danger">{message}</Button>
             </div>
         );
     }
@@ -31,4 +33,4 @@ class GoogleSignUpButton extends Component {
 
 
 
- export default withRouter(GoogleSignUpButton);
+ export default withFirebase(withRouter(GoogleSignUpButton));

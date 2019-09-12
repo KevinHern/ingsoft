@@ -1,15 +1,19 @@
 import React, { Component } from 'react';
-import { withRouter } from 'react-router-dom';
+import {Link, withRouter} from 'react-router-dom';
 
-import { SignUpLink } from './SignUp';
 import { withFirebase } from '../Firebase';
 import * as ROUTES from '../../Constants/routes';
+import Form from "reactstrap/es/Form";
+import FormGroup from "reactstrap/es/FormGroup";
+import {Button, Col, FormText} from 'reactstrap';
+import Label from "reactstrap/es/Label";
+import Input from "reactstrap/es/Input";
+import GoogleSign from './GoogleSignUpButton'
+import ButtonGroup from "reactstrap/es/ButtonGroup";
 
 const SignInPage = () => (
     <div>
-        <h1>SignIn</h1>
-        <SignInForm />
-        <SignUpLink />
+        <SignInForm  key= 'signIn'/>
     </div>
 );
 
@@ -27,6 +31,10 @@ class SignInFormBase extends Component {
         this.state = { ...INITIAL_STATE };
     }
 
+    componentDidMount() {
+        const API_PATH = 'http://localhost/ingsoft/src/SignUp.php';
+        this.props.fireBase.getRedirectResult( this.props.history, API_PATH);
+    }
 
     onSubmit = event => {
         const { email, password } = this.state;
@@ -54,34 +62,39 @@ class SignInFormBase extends Component {
         const isInvalid = password === '' || email === '';
 
         return (
-            <form onSubmit={this.onSubmit}>
-                <input
-                    name="email"
-                    value={email}
-                    onChange={this.onChange}
-                    type="text"
-                    placeholder="Email Address"
-                />
-                <input
-                    name="password"
-                    value={password}
-                    onChange={this.onChange}
-                    type="password"
-                    placeholder="Password"
-                />
-                <button disabled={isInvalid} type="submit">
-                    Sign In
-                </button>
-
-                {error && <p>{error.message}</p>}
-            </form>
+            <Form onSubmit = {this.onSubmit} className="align-middle">
+                <FormGroup row className="justify-content-md-center">
+                <h1>Sign In</h1>
+                </FormGroup>
+                <FormGroup row className="justify-content-md-center mt-3">
+                    <Label for = "email"  sm={2}>Email</Label>
+                    <Col sm={5}>
+                    <Input type = "email" name = "email" id="email" value={email} onChange = {this.onChange}/>
+                    </Col>
+                </FormGroup >
+                <FormGroup row className="justify-content-md-center mt-3">
+                    <Label for = "password" sm={2}>Password</Label>
+                    <Col sm={5}>
+                    <Input type = "password" name = "password" id="password" value={password} onChange = {this.onChange}/>
+                    </Col>
+                </FormGroup >
+                <FormGroup row className="justify-content-md-center mt-3">
+                 <ButtonGroup >
+                     <Button  disabled={isInvalid} type = "Submit" className="mr-3" color = "primary">
+                         Sign In</Button>
+                     <FormText color="muted">
+                             Don't have an account? <Link to={ROUTES.SIGN_UP}>Sign Up</Link>
+                     </FormText>
+                 </ButtonGroup>
+                </FormGroup>
+                <FormGroup  row className="justify-content-md-center mt-3">
+                    <GoogleSign message = { "Sign In with Google"}/>
+                </FormGroup>
+            </Form>
         );
     }
 }
 
 const SignInForm = withRouter(withFirebase(SignInFormBase));
-
-
 export default SignInPage;
-
 export { SignInForm };

@@ -21,7 +21,7 @@ class DataBase {
             $this->username = $username;
             $this->pass = $this ->adminPass;
         }else{
-            throw new InvalidArgumentException("$username must not be empty");
+            throw new InvalidArgumentException("username must not be empty");
         }
     }
 
