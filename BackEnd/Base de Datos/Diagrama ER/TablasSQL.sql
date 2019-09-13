@@ -1,4 +1,4 @@
-Create Table User(
+Create Table Users(
     uid varchar(30),
     email varchar(50),
     password varchar(16),
@@ -20,7 +20,7 @@ Create Table Individual(
 	photo varchar(50),
 
 	Primary Key(inid),
-	Foreign Key(inid) References Users(uid)
+	Foreign Key(inid) References Users(uid) ON DELETE CASCADE
 );
 
 -- type = 0
@@ -33,7 +33,7 @@ Create Table Organization(
 	logo varchar(50),
 
 	Primary Key(oid),
-	Foreign Key(oid) References Users(uid)
+	Foreign Key(oid) References Users(uid) ON DELETE CASCADE
 );
 
 Create Table TelephoneInd(
@@ -90,9 +90,9 @@ Create Table FinBook(
 	iid bigint,
 	finId varchar(30),
 
-	Primary Key(invId, iid),
+	Primary Key(finId, iid),
 	Foreign Key(iid) References Idea(iid) ON DELETE CASCADE,
-	Foreign Key(invId) References Users(uid) ON DELETE CASCADE
+	Foreign Key(finId) References Users(uid) ON DELETE CASCADE
 );
 
 -- Give Resource
@@ -163,16 +163,13 @@ GRANT USAGE, SELECT ON SEQUENCE telephoneorg_tid_seq to orduser;
 CREATE ROLE entrepreneur LOGIN password 'netzentrepreneur';
 GRANT CONNECT ON DATABASE "NetZ" to entrepreneur;
 GRANT SELECT, INSERT, UPDATE, DELETE ON users, individual, organization, telephoneind, telephoneorg, idea TO entrepreneur;
-GRANT SELECT ON categoryidea, stateidea, invbook TO entrepreneur;
-GRANT USAGE, SELECT ON SEQUENCE users_folderid_seq to entrepreneur;
-GRANT USAGE, SELECT ON SEQUENCE telephoneind_tid_seq to entrepreneur;
-GRANT USAGE, SELECT ON SEQUENCE telephoneorg_tid_seq to entrepreneur;
+GRANT SELECT ON categoryidea, stateidea, finBook TO entrepreneur;
 GRANT USAGE, SELECT ON SEQUENCE idea_iid_seq to entrepreneur;
 
 --- Financist ---
 CREATE ROLE financist LOGIN password 'netzfinancist';
 GRANT CONNECT ON DATABASE "NetZ" to financist;
-GRANT SELECT, INSERT, UPDATE, DELETE ON users, individual, organization, telephoneind, telephoneorg, invbook TO financist;
+GRANT SELECT, INSERT, UPDATE, DELETE ON users, individual, organization, telephoneind, telephoneorg, finBook TO financist;
 GRANT SELECT ON idea, categoryidea, stateidea TO entrepreneur;
 
 --- Resource Business Guy ---
