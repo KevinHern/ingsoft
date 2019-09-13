@@ -21,12 +21,6 @@
 	REGISTER ORD. TELEPHONE:	orgtel
 	REGISTER BOOKMARK:			book
 
-	-- Values that $roleuser can take: --
-
-	e = entrepreneur
-	f = financist
-	r = resource
-
 	*/
 	//---------------------//
 
