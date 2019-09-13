@@ -1,11 +1,9 @@
-/* I needed to use this table, I just modified a bit*/
-
-Create Table users(
+Create Table User(
     uid varchar(30),
     email varchar(50),
     password varchar(16),
     role smallint,
-    folderid int,
+    folderId serial,
     type int,
     Primary Key(uid)
 );
@@ -30,18 +28,18 @@ Create Table Organization(
 	oid varchar(30),
 	name varchar(50),
 	description varchar(50),
-	logo varchar(50),
 	country varchar(50),
 	location varchar(50),
+	logo varchar(50),
 
 	Primary Key(oid),
 	Foreign Key(oid) References Users(uid)
 );
 
 Create Table TelephoneInd(
-	tid int,
+	tid serial,
 	uid varchar(30),
-	number varchar(50),
+	number varchar(12),
 	extension int,
 
 	Primary Key(tid),
@@ -49,9 +47,9 @@ Create Table TelephoneInd(
 );
 
 Create Table TelephoneOrg(
-	tid int,
+	tid serial,
 	oid varchar(30),
-	number varchar(8),
+	number varchar(12),
 	extension int,
 
 	Primary Key(tid),
@@ -59,27 +57,27 @@ Create Table TelephoneOrg(
 );
 
 Create Table CategoryIdea(
-	id int,
+	id serial,
 	name varchar(20),
 
 	Primary Key(id)
 );
 
 Create Table StateIdea(
-	id int,
+	id serial,
 	name varchar(20),
 
 	Primary Key(id)
 );
 
 Create Table Idea(
-	iid int,
+	iid serial,
 	uid varchar(30),
 	cantInt int,
 	title varchar(20),
 	description varchar(100),
-	category int,
-	state int,
+	category bigint,
+	state bigint,
 
 	Primary Key(iid),
 	Foreign Key(uid) References Users(uid) ON DELETE CASCADE,
@@ -88,9 +86,9 @@ Create Table Idea(
 );
 
 -- Inversionist Bookmark
-Create Table InvBook(
-	iid int,
-	invId varchar(30),
+Create Table FinBook(
+	iid bigint,
+	finId varchar(30),
 
 	Primary Key(invId, iid),
 	Foreign Key(iid) References Idea(iid) ON DELETE CASCADE,
@@ -146,29 +144,39 @@ Chafa users
 create role client LOGIN password 'client';
 Grant connect on database "Prueba" to client;
 GRANT SELECT, INSERT, UPDATE, DELETE ON users  TO client;
-
+*/
 /* ROLES */
 
 --- Administrator ---
 Create role admin LOGIN password 'netZRocks';
 ALTER ROLE admin WITH SUPERUSER;
 
+--- Ordinary User ---
+CREATE ROLE orduser LOGIN password 'netzorduser';
+GRANT CONNECT ON DATABASE "NetZ" to orduser;
+GRANT SELECT, INSERT, UPDATE, DELETE ON users, individual, organization, telephoneind, telephoneorg TO orduser;
+GRANT USAGE, SELECT ON SEQUENCE users_folderid_seq to orduser;
+GRANT USAGE, SELECT ON SEQUENCE telephoneind_tid_seq to orduser;
+GRANT USAGE, SELECT ON SEQUENCE telephoneorg_tid_seq to orduser;
+
 --- Entrepreneur ---
 CREATE ROLE entrepreneur LOGIN password 'netzentrepreneur';
-GRANT CONNECT ON DATABASE "Prueba" to entrepreneur;
+GRANT CONNECT ON DATABASE "NetZ" to entrepreneur;
 GRANT SELECT, INSERT, UPDATE, DELETE ON users, individual, organization, telephoneind, telephoneorg, idea TO entrepreneur;
 GRANT SELECT ON categoryidea, stateidea, invbook TO entrepreneur;
+GRANT USAGE, SELECT ON SEQUENCE users_folderid_seq to entrepreneur;
+GRANT USAGE, SELECT ON SEQUENCE telephoneind_tid_seq to entrepreneur;
+GRANT USAGE, SELECT ON SEQUENCE telephoneorg_tid_seq to entrepreneur;
+GRANT USAGE, SELECT ON SEQUENCE idea_iid_seq to entrepreneur;
 
 --- Financist ---
 CREATE ROLE financist LOGIN password 'netzfinancist';
-GRANT CONNECT ON DATABASE "Prueba" to financist;
+GRANT CONNECT ON DATABASE "NetZ" to financist;
 GRANT SELECT, INSERT, UPDATE, DELETE ON users, individual, organization, telephoneind, telephoneorg, invbook TO financist;
 GRANT SELECT ON idea, categoryidea, stateidea TO entrepreneur;
 
 --- Resource Business Guy ---
 CREATE ROLE resource LOGIN password 'netzresource';
-GRANT CONNECT ON DATABASE "Prueba" to resource;
+GRANT CONNECT ON DATABASE "NetZ" to resource;
 GRANT SELECT, INSERT, UPDATE, DELETE ON users, individual, organization, telephoneind, telephoneorg, resgive, resget TO resource;
 GRANT SELECT ON categoryres TO resource;
-
-*/
