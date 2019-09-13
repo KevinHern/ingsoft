@@ -1,17 +1,14 @@
-<?php
-
-    $host = "localhost";
-    $db_name = "reservas";
-    $clientPass = "client";
-    $pass = "";
-    $port = "5432";
-    
+<?php  
 	function OpenConAdmin()
 	{
+		$host = "localhost";
+	    $db_name = "NetZ";
+	    $pass = "";
+	    $port = "5432";
 		$username = "admin";
     	$adminPass = "netZRocks";
 		$connect_str = "host=$host port=$port dbname=$db_name user=$username password=$adminPass";
-		$conn = pg_connect($GLOBALS['connect_str']);
+		$conn = pg_connect($connect_str);
 		return $conn;
 	}
 
@@ -23,8 +20,11 @@
 
 	function OpenConUser($option)
 	{
+		$host = "localhost";
+	    $db_name = "NetZ";
+	    $pass = "";
+	    $port = "5432";
 		$username = "";
-		$pass = "";
 		switch ($option)
 		{
 			case 'e':
@@ -41,10 +41,14 @@
 				$username = "resource";
 				$pass = "netzresource";
 				break;
+
+			case 'u':
+				$username = "orduser";
+				$pass = "netzorduser";
 		}
 		$connect_str = "host=$host port=$port dbname=$db_name user=$username password=$pass";
 
-		$conn = pg_connect($GLOBALS['connect_str']);
+		$conn = pg_connect($connect_str);
 		return $conn;
 	}
 ?>
