@@ -2,17 +2,29 @@
 
 	function CreateDir($path)
 	{
-		if(!file_exists('img/$path'))
+		$path = 'img/' . $path;
+		if(!file_exists($path))
 		{
-			mkdir('img/$path', 0777, true);
+			mkdir($path, 0777, true);
+			return true;
+		}
+		else
+		{
+			return false;
 		}
 	}
 
 	function DeleteDir($path)
 	{
-		if(file_exists('img/$path'))
+		$path = 'img/' . $path;
+		if(file_exists($path))
 		{
-			rmdir('img/$path');
+			rmdir($path);
+			return true;
+		}
+		else
+		{
+			return false;
 		}
 	}
 
@@ -20,8 +32,9 @@
 	{
 		if ($name != "")
 		{
-			$ext = end(explode(".", $name));
-			move_uploaded_file($tmp_name, "img/" . $folderid . "/" . $newname . $ext);
+			$temp = explode(".", $name);
+			$ext = end($temp);
+			move_uploaded_file($tmp_name, "img/" . $folderid . "/" . $newname . "." . $ext);
 			return true;
 		}
 		else
