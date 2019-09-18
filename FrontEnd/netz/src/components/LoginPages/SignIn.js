@@ -38,15 +38,15 @@ class SignInFormBase extends Component {
 
     onSubmit = event => {
         const { email, password } = this.state;
-
         this.props.fireBase
             .doSignInWithEmailAndPassword(email, password)
             .then(() => {
                 this.setState({ ...INITIAL_STATE });
-                this.props.history.push(ROUTES.HOME);
+                this.props.history.push(ROUTES.UCONFIG);
             })
             .catch(error => {
                 this.setState({ error });
+                console.log(error);
             });
 
         event.preventDefault();

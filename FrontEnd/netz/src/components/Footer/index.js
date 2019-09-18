@@ -3,7 +3,7 @@ import {Row, Col} from 'reactstrap';
 import './Footer.css';
 function Footer(props) {
     return (
-        <footer className="fixed-bottom">
+        <footer className="position-relative pt-5">
             <Row>
                 <Col sm="12" md="12" lg="12">
                     <p className="text-md-center">NetZ</p>

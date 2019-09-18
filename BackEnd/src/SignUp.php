@@ -36,10 +36,10 @@ if ($_POST)
 //        I don't know what they mean by these, i guess email and password
 //        When I do signIn I'll check
 //        $user = $firebase->getAuth()->getUser($uid);
-        $db = new DataBase("client");
+        $db = new DataBase("admin");
         $conn = $db->getConnection();
 //       Save User in local database
-        $query = pg_query_params($conn,"insert into users (uid, email, password, role) values($1, $2, $3, $4)",
+        $query = pg_query_params($conn,"insert into users(uid, email, password, role, type) values($1, $2, $3, $4,1)",
             array($uid, $email, $pass, $role))  ;
         $db->disconnect();
         // set response code - 200 OK

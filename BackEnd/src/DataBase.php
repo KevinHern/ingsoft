@@ -4,7 +4,7 @@
 class DataBase {
 
     private $host = "localhost";
-    private $db_name = "Prueba";
+    private $db_name = "NetZ";
     private $username = "";
     private $adminPass = "netZRocks";
     private $clientPass = "client";

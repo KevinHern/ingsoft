@@ -1,6 +1,7 @@
 import app from 'firebase/app';
 import axios from "axios";
 import  *  as firebase from  'firebase';
+import * as ROUTES from '../../Constants/routes';
 
 const config = {
     apiKey: process.env.REACT_APP_API_KEY,
@@ -50,7 +51,7 @@ class Firebase {
                                 // )
                                 let thing = result.data;
                                 console.table(thing);
-                                history.push('/home');
+                                history.push(ROUTES.UCONFIG);
                             })
                             .catch(error =>
                                 // {this.setState({ error: error.message })
@@ -58,7 +59,7 @@ class Firebase {
                             );
                     }
                 }else{
-                    history.push('/home');
+                    history.push(ROUTES.UCONFIG);
                 }
             }
             // return "failed";

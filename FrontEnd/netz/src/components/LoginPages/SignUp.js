@@ -42,7 +42,7 @@ class SignUpFormBase extends Component {
                 const API_PATH = 'http://localhost/ingsoft/src/SignUp.php';
                 fireBase.getIdToken(API_PATH, this.state)
                     .then(() => {
-                        this.props.history.push("/home");
+                        this.props.history.push(ROUTES.UCONFIG);
                     });
                 this.setState({ ...INITIAL_STATE });
             })
