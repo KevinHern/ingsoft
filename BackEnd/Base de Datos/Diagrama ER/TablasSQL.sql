@@ -170,7 +170,7 @@ GRANT USAGE, SELECT ON SEQUENCE idea_iid_seq to entrepreneur;
 CREATE ROLE financist LOGIN password 'netzfinancist';
 GRANT CONNECT ON DATABASE "NetZ" to financist;
 GRANT SELECT, INSERT, UPDATE, DELETE ON users, individual, organization, telephoneind, telephoneorg, finBook TO financist;
-GRANT SELECT ON idea, categoryidea, stateidea TO entrepreneur;
+GRANT SELECT ON idea, categoryidea, stateidea TO financist;
 
 --- Resource Business Guy ---
 CREATE ROLE resource LOGIN password 'netzresource';
