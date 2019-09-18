@@ -3,10 +3,21 @@
 	include 'connection.php';
 	$option = $_POST["option"];
 
+	//----- AGREEMENT -----//
+	/*
+
+	-- Values that $option can take: --
+
+	LIST IDEAS, GENERAL INFO:	gi
+	LIST IDEAS, IDEA DETAIL:	id
+
+	*/
+	//---------------------//
+
 	switch ($option)
 	{
 		//---- LIST ENTREPRENEUR IDEAS: GENERAL INFO ----//
-		case 'variable':
+		case 'gi':
 			/*
 			INPUTS:
 			1. User ID
@@ -56,10 +67,12 @@
 				$i = $i + 1;
 			}
 			
+			echo json_encode($array);
+
 			break;
 
 		//---- LIST ENTREPRENEUR IDEAS: IDEA DETAILS ----//
-		case 'value':
+		case 'id':
 			/*
 			INPUTS:
 			1. Idea ID
@@ -96,7 +109,7 @@
 			$numrows = $_POST["numrows"];
 			$numpage = $_POST["numpage"];
 
-			$link = OpenConUser($typeuser);
+			$link = OpenConUser("e");
 
 			$query = "SELECT I.title, I.description, CI.nombre as cin, SI.nombre as sin, I.cantInt FROM idea I, categoryIdea CI, stateidea SI WHERE I.iid = $iid AND I.category = CI.id AND I.state = SI.id";
 
@@ -116,7 +129,7 @@
 
 			$array = array($temp);
 
-			$query = "SELECT U.uid, U.type FROM invbook IB, users U WHERE IB.invId = U.uid AND IB.invbook = $iid";
+			$query = "SELECT U.uid, U.type FROM finbook IB, users U WHERE IB.invId = U.uid AND IB.iid = $iid";
 
 			$result = pg_query($link, $query) or die('Query failed: ' . pg_result_error());
 

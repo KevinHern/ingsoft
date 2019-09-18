@@ -3,16 +3,28 @@
 	include 'connection.php';
 	$option = $_POST["option"];
 
+	//----- AGREEMENT -----//
+	/*
+
+	-- Values that $option can take: --
+
+	LIST IDEAS BY CATEGORY: 		list
+	LIST BOOKMARK, GENERAL INFO:	gi
+	LIST BOOKMARK, IDEA DETAILS:	id
+
+	*/
+	//---------------------//
+
 	switch ($option)
 	{
 
 		//---- LIST IDEAS TO FINANCIST  ----//
-		case 'value':
+		case 'list':
 			/*
 			INPUTS:
 			1. Idea Category
 			2. Number of Rows
-			3. Number of Pages
+			3. Page Number
 
 			------------
 
@@ -33,41 +45,42 @@
 
 			$category = $_POST["category"];
 
-			$numrows = $_POST["numrows"];
-			$numpages = $_POST["numpages"];
+			$rows = $_POST["rows"];
+			$pagenumber = $_POST["pagenumber"];
 
 			$link = OpenConUser("f");
 
-			$query = "SELECT iid, title, description FROM idea WHERE category = $category ORDER BY title";
+			$query = "SELECT I.iid, I.uid, I.title, I.description, U.type FROM idea I, users U WHERE I.category = $category AND I.uid = U.uid ORDER BY title";
 
 			$result = pg_query($link, $query) or die('Query failed: ' . pg_result_error());
 
-			pg_result_seek($result, (($numpages-1) * $numrows))
+			pg_result_seek($result, (($pagenumber-1) * $rows));
+
 
 			$i = 0;
 			$array = array();
 
-			while ($line = pg_fetch_array($result, NULL, PGSQL_ASSOC) && $i < $numrows)
+			while (($line = pg_fetch_array($result, NULL, PGSQL_ASSOC)) && ($i < $rows))
 			{
 				$uid = $line["uid"];
 				$type = $line["type"];
 				$temp = array();
 				if ($type == 1)
 				{
-					$query = "SELECT firstName, lastName FROM individual WHERE inid= '$uid'";
-					$result = pg_query($link, $query) or die('Query failed: ' . pg_result_error());
-					$line = pg_fetch_array($result, NULL, PGSQL_ASSOC);
+					$query = "SELECT firstName, lastName FROM individual WHERE inid = '$uid'";
+					$result1 = pg_query($link, $query) or die('Query failed: ' . pg_result_error());
+					$line1 = pg_fetch_array($result1, NULL, PGSQL_ASSOC);
 
-					$fname = $line["firstName"];
-					$lname = $line["lastName"];
-					$t = array($fname, $lname);
+					$firstname = $line1["firstname"];
+					$lastname = $line1["lastname"];
+					$t = array('' => $firstname, $lastname);
 					array_push($temp, $t);
 				}
 				else
 				{
 					$query = "SELECT name FROM organization WHERE oid = '$uid'";
-					$result = pg_query($link, $query) or die('Query failed: ' . pg_result_error());
-					$line = pg_fetch_array($result, NULL, PGSQL_ASSOC);
+					$result1 = pg_query($link, $query) or die('Query failed: ' . pg_result_error());
+					$line1 = pg_fetch_array($result1, NULL, PGSQL_ASSOC);
 
 					$name = $line["name"];
 					$t = array($name);
@@ -77,16 +90,17 @@
 				$title = $line["title"];
 				$description = $line["description"];
 				$iid = $line["iid"];
-
 				array_push($temp, $title, $description, $iid);
 				array_push($array, $temp);
+				$i = $i + 1;
 			}
 
+			CloseCon($link);
 			echo json_encode($array);
 			break;
 
 		//---- LIST BOOKMARK IDEAS: GENERAL INFO ----//
-		case 'value':
+		case 'gi':
 			/*
 			INPUTS:
 			1. Financist Id
@@ -106,8 +120,8 @@
 
 			$category = $_POST["category"];
 
-			$numrows = $_POST["numrows"];
-			$numpages = $_POST["numpages"];
+			$rows = $_POST["rows"];
+			$pagenumber = $_POST["pagenumber"];
 
 			//-- Obtain Financist id
 			$uid = $_POST["uid"];
@@ -118,12 +132,12 @@
 
 			$result = pg_query($link, $query) or die('Query failed: ' . pg_result_error());
 
-			pg_result_seek($result, (($numpages-1) * $numrows))
+			pg_result_seek($result, (($pagenumber-1) * $rows));
 
 			$i = 0;
 			$array = array();
 			
-			while ($line = pg_fetch_array($result, NULL, PGSQL_ASSOC) && $i < $numrows)
+			while ($line = pg_fetch_array($result, NULL, PGSQL_ASSOC) && $i < $rows)
 			{
 				$temp = array();
 
@@ -140,7 +154,7 @@
 			break;
 
 		//---- LIST BOOKMARK IDEAS: SHOW IDEA INFO ----//
-		case 'variable':
+		case 'id':
 			/* 
 			INPUTS:
 			1. Idea Id
@@ -227,4 +241,5 @@
 			echo json_encode($array);
 
 			break;
+	}
 ?>

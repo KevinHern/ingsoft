@@ -55,7 +55,7 @@
 
 			$link = OpenConUser("u");
 
-			$query = "INSERT INTO user VALUES('$uid', '$email', '$password', $role, DEFAULT, 1);";
+			$query = "INSERT INTO users () VALUES('$uid', '$email', '$password', $role, DEFAULT, 1);";
 
 			$result = pg_query($link, $query) or die('Query failed: ' . pg_result_error());
 
@@ -102,27 +102,27 @@
 
 			$link = OpenConUser("u");
 
-			$query = "SELECT folderId FROM user WHERE uid = '$uid';";
+			$query = "SELECT folderid FROM users WHERE uid = '$uid';";
 
 			$result = pg_query($link, $query) or die('Query failed: ' . pg_result_error());
 
 			$line = pg_fetch_array($result, NULL, PGSQL_ASSOC);
 
-			$folderId = $line["folderId"];
+			$folderid = $line["folderid"];
 
-			CreateDir($folderId);
+			CreateDir($folderid);
 
 			//Photo
 			$name = $_FILES["photo"]["name"];
 			$tmp_name = $_FILES["photo"]["tmp_name"];
 
-			$query = "INSERT INTO individual VALUES('$uid', '$firstname', '$lastname', '$nationality', '$biography', '$org', '$birthdate', 'img/$folderId') ;";
+			$query = "INSERT INTO individual VALUES('$uid', '$firstname', '$lastname', '$nationality', '$biography', '$org', '$birthdate', 'img/$folderid') ;";
 
 			$result = pg_query($link, $query) or die('Query failed: ' . pg_result_error());
 
 			if ($result)
 			{
-				$exito = StoreFile($name, $tmp_name, "profile", $folderId);
+				$exito = StoreFile($name, $tmp_name, "profile", $folderid);
 				$json = array('status' => 1);
 				echo json_encode($json);
 			}
@@ -161,27 +161,27 @@
 
 			$link = OpenConUser("u");
 
-			$query = "SELECT folderId FROM user WHERE uid = '$uid';";
+			$query = "SELECT folderid FROM users WHERE uid = '$uid';";
 
 			$result = pg_query($link, $query) or die('Query failed: ' . pg_result_error());
 
 			$line = pg_fetch_array($result, NULL, PGSQL_ASSOC);
 
-			$folderId = $line["folderId"];
+			$folderid = $line["folderid"];
 
-			CreateDir($folderId);
+			CreateDir($folderid);
 
 			//Photo
 			$logoname = $_FILES["logo"]["name"];
 			$tmp_name = $_FILES["logo"]["tmp_name"];
 
-			$query = "INSERT INTO organization VALUES('$uid', '$name', '$description', '$country', '$location', 'img/$folderId') ;";
+			$query = "INSERT INTO organization VALUES('$uid', '$name', '$description', '$country', '$location', 'img/$folderid') ;";
 
 			$result = pg_query($link, $query) or die('Query failed: ' . pg_result_error());
 
 			if ($result)
 			{
-				$exito = StoreFile($logoname, $tmp_name, "profile", $folderId);
+				$exito = StoreFile($logoname, $tmp_name, "profile", $folderid);
 				$json = array('status' => 1);
 				echo json_encode($json);
 			}
