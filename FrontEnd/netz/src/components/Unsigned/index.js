@@ -6,14 +6,17 @@ import {NavItem} from "reactstrap";
 
 
 function Unsigned(props) {
+    const {signIn} = props;
     return (
         <React.Fragment>
-            <NavItem>
-                <NavLink href="signIn" className="text-md-center">SignIn</NavLink>
-            </NavItem>
-            <NavItem>
-                <NavLink href="signUp">SignUp</NavLink>
-            </NavItem>
+            {(signIn)?
+                <NavItem>
+                    <NavLink href="signUp">SignUp</NavLink>
+                </NavItem> :
+                <NavItem>
+                    <NavLink href="signIn" className="text-md-center">SignIn</NavLink>
+                </NavItem>
+            }
         </React.Fragment>
     );
 }

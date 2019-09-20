@@ -1,8 +1,8 @@
 export const LANDING = '/';
-export const SIGN_UP = '/signup';
-export const SIGN_IN = '/signin';
+export const SIGN_UP = '/signUp';
+export const SIGN_IN = '/signIn';
 export const HOME = '/home';
-export const UCONFIG = '/uconfig';
+export const UCONFIG = '/uConfig';
 export const OVERVIEW = '/overview';
 export const CREATEIDEA = '/createIdea';
 export const DESCIDEA = '/descIdea';

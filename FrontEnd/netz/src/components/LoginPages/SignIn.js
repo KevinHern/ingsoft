@@ -5,7 +5,7 @@ import { withFirebase } from '../Firebase';
 import * as ROUTES from '../../Constants/routes';
 import Form from "reactstrap/es/Form";
 import FormGroup from "reactstrap/es/FormGroup";
-import {Button, Col, FormText} from 'reactstrap';
+import {Alert, Button, Col, FormText} from 'reactstrap';
 import Label from "reactstrap/es/Label";
 import Input from "reactstrap/es/Input";
 import GoogleSign from './GoogleSignUpButton'
@@ -42,6 +42,7 @@ class SignInFormBase extends Component {
             .doSignInWithEmailAndPassword(email, password)
             .then(() => {
                 this.setState({ ...INITIAL_STATE });
+                //By now always, but it is not meant to go to Uconfig all the time
                 this.props.history.push(ROUTES.UCONFIG);
             })
             .catch(error => {
@@ -62,35 +63,38 @@ class SignInFormBase extends Component {
         const isInvalid = password === '' || email === '';
 
         return (
-            <Form onSubmit = {this.onSubmit} className="align-middle">
-                <FormGroup row className="justify-content-md-center">
-                <h1>Sign In</h1>
-                </FormGroup>
-                <FormGroup row className="justify-content-md-center mt-3">
-                    <Label for = "email"  sm={2}>Email</Label>
-                    <Col sm={5}>
-                    <Input type = "email" name = "email" id="email" value={email} onChange = {this.onChange}/>
-                    </Col>
-                </FormGroup >
-                <FormGroup row className="justify-content-md-center mt-3">
-                    <Label for = "password" sm={2}>Password</Label>
-                    <Col sm={5}>
-                    <Input type = "password" name = "password" id="password" value={password} onChange = {this.onChange}/>
-                    </Col>
-                </FormGroup >
-                <FormGroup row className="justify-content-md-center mt-3">
-                 <ButtonGroup >
-                     <Button  disabled={isInvalid} type = "Submit" className="mr-3" color = "primary">
-                         Sign In</Button>
-                     <FormText color="muted">
-                             Don't have an account? <Link to={ROUTES.SIGN_UP}>Sign Up</Link>
-                     </FormText>
-                 </ButtonGroup>
-                </FormGroup>
-                <FormGroup  row className="justify-content-md-center mt-3">
-                    <GoogleSign message = { "Sign In with Google"}/>
-                </FormGroup>
-            </Form>
+            <React.Fragment>
+                {(error)? <Alert color={"danger"}>{error.message}</Alert>: null}
+                <Form onSubmit = {this.onSubmit} className="align-middle">
+                    <FormGroup row className="justify-content-md-center">
+                    <h1>Sign In</h1>
+                    </FormGroup>
+                    <FormGroup row className="justify-content-md-center mt-3">
+                        <Label for = "email"  sm={2}>Email</Label>
+                        <Col sm={5}>
+                        <Input type = "email" name = "email" id="email" value={email} onChange = {this.onChange}/>
+                        </Col>
+                    </FormGroup >
+                    <FormGroup row className="justify-content-md-center mt-3">
+                        <Label for = "password" sm={2}>Password</Label>
+                        <Col sm={5}>
+                        <Input type = "password" name = "password" id="password" value={password} onChange = {this.onChange}/>
+                        </Col>
+                    </FormGroup >
+                    <FormGroup row className="justify-content-md-center mt-3">
+                     <ButtonGroup >
+                         <Button  disabled={isInvalid} type = "Submit" className="mr-3" color = "primary">
+                             Sign In</Button>
+                         <FormText color="muted">
+                                 Don't have an account? <Link to={ROUTES.SIGN_UP}>Sign Up</Link>
+                         </FormText>
+                     </ButtonGroup>
+                    </FormGroup>
+                    <FormGroup  row className="justify-content-md-center mt-3">
+                        <GoogleSign message = { "Sign In with Google"}/>
+                    </FormGroup>
+                </Form>
+            </React.Fragment>
         );
     }
 }

@@ -8,11 +8,13 @@ import logo from '../../resource/logo.jpg';
 import './Header.css';
 import Signed from '../Signed';
 import Unsigned from '../Unsigned';
+import {withRouter} from 'react-router-dom';
+import * as ROUTES from '../../Constants/routes';
 
 
 function Header(props) {
+    const {pathname} = props.location;
     return (
-
             <header>
                 <Row>
                     <Col sm="12" md="12" lg="12">
@@ -24,7 +26,21 @@ function Header(props) {
                             </Media>
                             <Nav className="ml-auto pr-4 text-md-center">
                                 <AuthUserContext.Consumer>
-                                {authUser => authUser ? <Signed/> : <Unsigned/>}
+                                {(authUser) => {
+                                    if(authUser){
+                                       return <Signed/>
+                                       console.log("Signed");
+                                       console.log(authUser);
+                                    }else{
+                                        if((pathname).toLowerCase() === ROUTES.SIGN_IN.toLocaleLowerCase()){
+                                            console.log("Unsigned Show Sign UP");
+                                            return <Unsigned signIn ={true}/>
+                                        }else{
+                                            console.log("Unsigned Show Sign In");
+                                            return <Unsigned signIn ={false}/>
+                                        }
+                                    }
+                                }}
                                 </AuthUserContext.Consumer>
                             </Nav>
                         </Navbar>
@@ -36,4 +52,4 @@ function Header(props) {
     );
 }
 
-export default Header;
+export default withRouter(Header);

@@ -1,10 +1,19 @@
 <?php
 	//Libraries
+    include_once 'Permission.php';
 	include 'connection.php';
 	include 'imgdirectory.php';
-
-
+	include_once 'getSub.php';
+    permission();
+//    Won't be need, using formdata not a json
+//    $json = file_get_contents('php://input');
+//     Converts it into a PHP object
+//    $_POST = json_decode($json, true);
+//    $option =  $us['option'];
 	$option = $_POST["option"];
+    http_response_code(200);
+    header("Content-type: application/json");
+//    echo  "desc" .$_POST["desc"];
 
 	//----- AGREEMENT -----//
 	/*
@@ -48,7 +57,7 @@
 			1. Status: 1 if success, 0 otherwise
 			*/
 
-			$uid = $_POST["uid"];
+			$uid = getUid($_POST['uid']);
 			$email = $_POST["email"];
 			$password = $_POST["password"];
 			$role = $_POST["role"];
@@ -69,7 +78,7 @@
 				$json = array('status' => 0);
 				echo json_encode($json);
 			}
-			
+
 			CloseCon($link);
 			break;
 
@@ -92,13 +101,14 @@
 			1. Status: 1 if success, 0 otherwise
 			*/
 
-			$uid = $_POST["uid"];
-			$firstname = $_POST["firstName"];
-			$lastname = $_POST["lastName"];
-			$nationality = $_POST["nationality"];
-			$biography = $_POST["biography"];
+			$uid = getUid($_POST['uid']);
+			$firstname = $_POST["name1"];
+			$lastname = $_POST["last1"];
+			$nationality = $_POST["nat"];
+			$biography = $_POST["bio"];
 			$org = $_POST["org"];
-			$birthdate = $_POST["birthdate"];
+			$birthdate = $_POST["birth"];
+            $role = $_POST["role"];
 
 			$link = OpenConUser("u");
 
@@ -134,7 +144,7 @@
 
 			CloseCon($link);
 			break;
-		
+
 		//---- REGISTER ORGANIZATION ----//
 		case 'org':
 			/*
@@ -153,11 +163,12 @@
 
 			*/
 
-			$uid = $_POST["uid"];
+			$uid = getUid($_POST['uid']);
 			$name = $_POST["name"];
-			$description = $_POST["description"];
+			$description = $_POST["desc"];
 			$country = $_POST["country"];
-			$location = $_POST["location"];
+			$location = $_POST["addr"];
+			$role = $_POST["role"];
 
 			$link = OpenConUser("u");
 
@@ -278,7 +289,7 @@
 
 			*/
 
-			$uid = $_POST["uid"];
+			$uid = getUid($_POST['uid']);
 			$cantInt = 0;
 			$title = $_POST["title"];
 			$description = $_POST["description"];
@@ -320,7 +331,7 @@
 
 			*/
 
-			$uid = $_POST["uid"];
+			$uid = getUid($_POST['uid']);
 			$number = $_POST["number"];
 			$extension = $_POST["extension"];
 
@@ -359,7 +370,7 @@
 
 			*/
 
-			$uid = $_POST["uid"];
+			$uid = getUid($_POST['uid']);
 
 			$number = $_POST["number"];
 			$extension = $_POST["extension"];

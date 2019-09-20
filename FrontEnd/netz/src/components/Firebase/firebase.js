@@ -122,6 +122,35 @@ class Firebase {
     // doPasswordUpdate (pass) {
     //     return this.appAuth.currentUser.updatePassword(pass)} ;
 
+
+    token = () =>  {
+      return this.appAuth.currentUser.getIdToken();
+    };
+
+
+
+    postgreRequest = (API_PATH, data, headers, method) => {
+        this.appAuth.currentUser.getIdToken(true).then(function (idToken)  {
+            axios(
+                {
+                    method:method,
+                    url: `${API_PATH}`,
+                    headers: headers,
+                    data: {}
+                }
+            )
+                .then(result => {
+
+
+
+                })
+                .catch( error => {
+
+                })
+        });
+    }
+
+
     getIdToken = (API_PATH, state) => {
         return this.appAuth.currentUser.getIdToken(/* forceRefresh */ true).then(function(idToken) {
             axios({
@@ -129,7 +158,7 @@ class Firebase {
                             url: `${API_PATH}`,
                             headers: { 'content-type': 'application/json' },
                             data: {idToken, name:state.username ,
-                                email:state.email, pass:state.passwordOne, role: 1}
+                                email:state.email, pass:state.passwordOne, role: 0}
                         })
                             .then(result => {
                                 // this.setState({

@@ -1,8 +1,4 @@
 import React, {Component} from 'react';
-import Form from "reactstrap/es/Form";
-import FormGroup from "reactstrap/es/FormGroup";
-import Label from "reactstrap/es/Label";
-import Input from "reactstrap/es/Input";
 import OverView from './overview'
 /*
  classnames permite agregar clases a un component, condicionalmente
@@ -12,20 +8,20 @@ import OverView from './overview'
 import classnames from 'classnames';
 import {Organizacion, Individual} from './UserForm';
 
-import {TabContent, TabPane, Nav, NavItem, NavLink, Button, Row, Col, CustomInput, Media} from 'reactstrap'
+import {TabContent, TabPane, Nav, NavItem, NavLink} from 'reactstrap'
+import {withFirebase} from "../Firebase";
 
-class TabConfig extends Component {
+class TabConfigManager extends Component {
     constructor(props) {
         super(props);
         this.toggle = this.toggle.bind(this);
         this.state = {
             activeTab: '1',
             imagePreviewUrl: '',
-            file: '',
             roles:[],
             org:false,
         };
-        this._handleImageChange = this._handleImageChange.bind(this);
+        this.token = this.token.bind(this);
     }
 
     toggle(tab) {
@@ -37,10 +33,16 @@ class TabConfig extends Component {
         }
     }
 
-    handleSubmit = (e) => {
-        e.preventDefault();
-        console.log(e.target);
-    };
+
+
+    async token() {
+        const {fireBase} = this.props;
+        const token = await fireBase.token();
+        return token;
+    }
+
+
+
 
     handleRadio = (event) => {
         console.log(event.target);
@@ -51,24 +53,6 @@ class TabConfig extends Component {
         }
     };
 
-    _handleImageChange(e) {
-        e.preventDefault();
-        console.log( e.target.files[0]);
-        let reader = new FileReader();
-        let file = e.target.files[0];
-
-
-
-        reader.onloadend = () => {
-            this.setState({
-                file: file,
-                imagePreviewUrl: reader.result
-            });
-
-        };
-        reader.readAsDataURL(file);
-        console.log(reader);
-    }
 
 
     render() {
@@ -101,18 +85,20 @@ class TabConfig extends Component {
                 </Nav>
                 <TabContent activeTab = {activeTab}>
                     <TabPane tabId="1">
-                        <Individual handleSubmit = {this.handleSubmit} _handleImageChange = {this._handleImageChange} imagePreviewUrl = {imagePreviewUrl} handleRadio = {this.handleRadio}
+                        <Individual  token={this.token} handleRadio = {this.handleRadio}
                             org={org}
                         />
                     </TabPane>
                     <TabPane tabId="2">
-                        <Organizacion handleSubmit = {this.handleSubmit} disable = {true}  _handleImageChange = {this._handleImageChange} imagePreviewUrl = {imagePreviewUrl}/>
+                        <Organizacion   token={this.token} disable = {true}/>
                     </TabPane>
                 </TabContent>
             </div>
         );
     }
 }
+
+const TabConfig = withFirebase(TabConfigManager);
 
 export {TabConfig, OverView};
 

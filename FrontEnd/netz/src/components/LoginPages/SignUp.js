@@ -3,7 +3,7 @@ import { Link, withRouter } from 'react-router-dom';
 import { withFirebase } from '../Firebase';
 import * as ROUTES from '../../Constants/routes';
 import GoogleSign from "./GoogleSignUpButton";
-import {Form, FormGroup, Label, Button, Input, Col, FormText} from "reactstrap";
+import {Form, FormGroup, Label, Button, Input, Col, FormText, Alert} from "reactstrap";
 import ButtonGroup from "reactstrap/es/ButtonGroup";
 
 
@@ -42,12 +42,14 @@ class SignUpFormBase extends Component {
                 const API_PATH = 'http://localhost/ingsoft/src/SignUp.php';
                 fireBase.getIdToken(API_PATH, this.state)
                     .then(() => {
+                        //Always to UCONFIG
                         this.props.history.push(ROUTES.UCONFIG);
                     });
                 this.setState({ ...INITIAL_STATE });
             })
             .catch(error => {
                 this.setState({ error });
+                console.log(error);
             });
     };
 
@@ -72,6 +74,8 @@ class SignUpFormBase extends Component {
             username === '';
 
         return (
+            <React.Fragment>
+            {(error)? <Alert color={"danger"}>{error.message}</Alert>: null}
                <Form onSubmit = {this.onSubmit}  key={"SignUp"}   className="align-middle">
                    <FormGroup row className="justify-content-md-center mt-3">
                        <h1>SignUp</h1>
@@ -113,12 +117,8 @@ class SignUpFormBase extends Component {
                                </FormText>
                        </ButtonGroup>
                    </FormGroup>
-                   {/*<FormGroup row className="justify-content-md-center">*/}
-                   {/*    <GoogleSign message = { "Sign Up with Google"}/>*/}
-                   {/*</FormGroup>*/}
-                   {error && <p>error.message</p>}
                </Form>
-
+            </React.Fragment>
         );
     }
 }
