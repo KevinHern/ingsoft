@@ -2,7 +2,7 @@
 	//include 'connection.php';
 
 	//Functions that map a given parameter to a respective table field 
-	function MapUser($parameter)
+	function MapUser($parameter, $val)
 	{
 		$str;
 		switch ($parameter)
@@ -83,7 +83,7 @@
 		return $str;
 	}
 
-	function MapTelephone($parameter)
+	function MapTelephone($parameter, $val)
 	{
 		$str;
 		switch ($parameter)
@@ -100,7 +100,7 @@
 		return $str;
 	}
 
-	function MapIdea($parameter)
+	function MapIdea($parameter, $val)
 	{
 		$str;
 		switch ($parameter)
