@@ -1,6 +1,12 @@
 <?php
 	//Libraries
 	include 'connection.php';
+/*
+	$json = file_get_contents('php://input');
+	//Converts it into a PHP object
+    $_POST = json_decode($json, true);
+*/
+
 	$option = $_POST["option"];
 
 	//----- AGREEMENT -----//
@@ -9,8 +15,7 @@
 	-- Values that $option can take: --
 
 	LIST IDEAS BY CATEGORY: 		list
-	LIST BOOKMARK, GENERAL INFO:	gi
-	LIST BOOKMARK, IDEA DETAILS:	id
+	LIST BOOKMARKED IDEAS:			book
 
 	*/
 	//---------------------//
@@ -18,7 +23,7 @@
 	switch ($option)
 	{
 
-		//---- LIST IDEAS TO FINANCIST  ----//
+		//---- LIST IDEAS TO FINANCIST BY CATEGORY  ----//
 		case 'list':
 			/*
 			INPUTS:
@@ -28,79 +33,118 @@
 
 			------------
 
-			OUTPUTS:
-			1. Entrepreneur's data:
+			OUTPUTS: List of Ideas, each idea contains:
+			1. Idea's ID
+			2. Idea's Title
+			3. Idea's Description
+			4. Idea's State
+			5. Entrepreneur's Information
+				INDIVIDUAL:
+				5.1 Individual's ID
+				5.2 Individual's Type of User
+				5.3 Individual's Firt Name
+				5.4 Individual's Last Name
 
-				Individual:
-				1.1 First Name
-				1.2 Last Name
-
-				Organization:
-				1.1 Name
-			2. Idea Title
-			3. Idea Description
-			4. Idea ID
-
+				ORGANIZATION:
+				5.1 Organization's ID
+				5.2 Organization's Type of User
+				5.3 Organization's Name
 			*/
 
 			$category = $_POST["category"];
 
 			$rows = $_POST["rows"];
-			$pagenumber = $_POST["pagenumber"];
+			$page = $_POST["page"];
 
 			$link = OpenConUser("f");
 
-			$query = "SELECT I.iid, I.uid, I.title, I.description, U.type FROM idea I, users U WHERE I.category = $category AND I.uid = U.uid ORDER BY title";
+			//----- Extract total number of rows -----//
+			$query = "SELECT COUNT(iid) as total FROM idea WHERE category = '$category'";
+			$result = pg_query($link, $query);
+			$line = pg_fetch_array($result, NULL, PGSQL_ASSOC);
 
-			$result = pg_query($link, $query) or die('Query failed: ' . pg_result_error());
+			$total = $line["total"];
 
-			pg_result_seek($result, (($pagenumber-1) * $rows));
+			$tempres = ($page-1) * $rows;
 
+			$ideas = array("status" => -1);
 
-			$i = 0;
-			$array = array();
-
-			while (($line = pg_fetch_array($result, NULL, PGSQL_ASSOC)) && ($i < $rows))
+			if ($total == 0)
 			{
-				$uid = $line["uid"];
-				$type = $line["type"];
-				$temp = array();
-				if ($type == 1)
+				$ideas["status"] = 0;
+
+			}
+			else if($tempres > $total)
+			{
+				$ideas["status"] = 0;
+			}
+			else
+			{
+				//----- Extract Ideas filtered by category -----//
+				$query = "SELECT I.iid, I.uid, I.title, I.description, SI.name, U.uid, U.type FROM idea I, users U, stateidea SI  WHERE I.category = $category AND I.uid = U.uid AND SI.id = I.state ORDER BY title";
+
+				$result = pg_query($link, $query) or die('Query failed: ' . pg_result_error());
+
+				pg_result_seek($result, (($page-1) * $rows));
+
+				$i = 0;
+
+				while (($line = pg_fetch_array($result, NULL, PGSQL_ASSOC)) && ($i < $rows))
 				{
-					$query = "SELECT firstName, lastName FROM individual WHERE inid = '$uid'";
-					$result1 = pg_query($link, $query) or die('Query failed: ' . pg_result_error());
-					$line1 = pg_fetch_array($result1, NULL, PGSQL_ASSOC);
+					
+					//--- Idea's Basic Information ---//
+					$iid = $line["iid"];
+					$title = $line["title"];
+					$description = $line["description"];
+					$state = $line["name"];
 
-					$firstname = $line1["firstname"];
-					$lastname = $line1["lastname"];
-					$t = array('' => $firstname, $lastname);
-					array_push($temp, $t);
+					$temp = array("iid" => $iid, "title" => $title, "description" => $description, "state" => $state);
+
+					//--- Entrepreneur's Basic Information ---//
+					$uid = $line["uid"];
+					$type = $line["type"];
+
+					if ($type == 1)
+					{
+						$query = "SELECT firstname, lastname FROM individual WHERE inid = '$uid'";
+						$result1 = pg_query($link, $query) or die('Query failed: ' . pg_result_error());
+						$line1 = pg_fetch_array($result1, NULL, PGSQL_ASSOC);
+
+						$firstname = $line1["firstname"];
+						$lastname = $line1["lastname"];
+
+						//--- Individual's Basic Information ---//
+						$t = array("uid" => $uid, "type" => $type, "fname" => $firstname, "lname" => $lastname);
+						$temp = array_merge($temp, $t);
+
+						$temp = array("e$i" => $temp);
+					}
+					else
+					{
+						$query = "SELECT name FROM organization WHERE oid = '$uid'";
+						$result1 = pg_query($link, $query) or die('Query failed: ' . pg_result_error());
+						$line1 = pg_fetch_array($result1, NULL, PGSQL_ASSOC);
+
+						//--- Organization's Basic Information ---//
+						$name = $line1["name"];
+
+						$t = array("uid" => $uid, "type" => $type, "name" => $name);
+						$temp = array_merge($temp, $t);
+
+						$temp = array("e$i" => $temp);
+					}
+
+					$ideas = array_merge($ideas, $temp);
+					$i = $i + 1;
 				}
-				else
-				{
-					$query = "SELECT name FROM organization WHERE oid = '$uid'";
-					$result1 = pg_query($link, $query) or die('Query failed: ' . pg_result_error());
-					$line1 = pg_fetch_array($result1, NULL, PGSQL_ASSOC);
-
-					$name = $line["name"];
-					$t = array($name);
-					array_push($temp, $t);
-				}
-
-				$title = $line["title"];
-				$description = $line["description"];
-				$iid = $line["iid"];
-				array_push($temp, $title, $description, $iid);
-				array_push($array, $temp);
-				$i = $i + 1;
+				$ideas["status"] = 1;
 			}
 
-			CloseCon($link);
-			echo json_encode($array);
+			echo json_encode($ideas);
 			break;
 
-		//---- LIST BOOKMARK IDEAS: GENERAL INFO ----//
-		case 'gi':
+		//---- LIST BOOKMARKED IDEAS ----//
+		case 'book':
 			/*
 			INPUTS:
 			1. Financist Id
@@ -110,136 +154,117 @@
 
 			------------
 
-			OUTPUTS:			
-			List of N ideas:
+			OUTPUTS: List of Ideas, each idea contains:
+			1. Idea's ID
+			2. Idea's Title
+			3. Idea's Description
+			4. Idea's State
+			5. Entrepreneur's Information
+				INDIVIDUAL:
+				5.1 Individual's ID
+				5.2 Individual's Type of User
+				5.3 Individual's Firt Name
+				5.4 Individual's Last Name
 
-			For each idea:
-			1. Idea Title
-			2. Idea Id
+				ORGANIZATION:
+				5.1 Organization's ID
+				5.2 Organization's Type of User
+				5.3 Organization's Name
 			*/
-
+				
+			$uid = $_POST["uid"];
 			$category = $_POST["category"];
 
 			$rows = $_POST["rows"];
-			$pagenumber = $_POST["pagenumber"];
-
-			//-- Obtain Financist id
-			$uid = $_POST["uid"];
+			$page = $_POST["page"];
 
 			$link = OpenConUser("f");
 
-			$query = "SELECT I.title, I.iid FROM invbook IB, idea I WHERE IB.iid = I.iid AND IB.invId = '$uid' AND I.category = $category";
-
-			$result = pg_query($link, $query) or die('Query failed: ' . pg_result_error());
-
-			pg_result_seek($result, (($pagenumber-1) * $rows));
-
-			$i = 0;
-			$array = array();
-			
-			while ($line = pg_fetch_array($result, NULL, PGSQL_ASSOC) && $i < $rows)
-			{
-				$temp = array();
-
-				$title = $_POST["title"];
-				$iid = $_POST["iid"];
-
-				array_push($temp, $title, $iid);
-
-				array_push($array, $temp);
-			}
-
-			echo json_encode($array);
-
-			break;
-
-		//---- LIST BOOKMARK IDEAS: SHOW IDEA INFO ----//
-		case 'id':
-			/* 
-			INPUTS:
-			1. Idea Id
-
-			-------------
-
-			OUTPUTS:
-
-			1. Type of entrepreneur user (Individual/Organization)
-			2. Entrepreneur's data (Array)
-
-				INDIVIDUAL:
-				2.1 First Name
-				2.2 Last Name
-				2.3 Photo
-
-				ORGANIZATION:
-				2.1 Name
-				2.2 Logo
-
-			3. Entrepreneur's Id
-			4. Idea Title
-			5. Idea Description
-			6. Idea Category
-			7. Idea State
-			8. Number of Interested
-
-			*/
-
-			$iid = $_POST["iid"];
-
-			$link = OpenConUser($typeuser);
-
-			$query = "SELECT U.uid, U.type, I.title, I.description, I.category, I.state, I.cantInt FROM idea I, users U WHERE iid = $iid AND U.uid = I.uid";
-
-			$result = pg_query($link, $query) or die('Query failed: ' . pg_result_error());
-
+			//----- Extract total number of rows -----//
+			$query = "SELECT COUNT(FB.iid) as total FROM idea I, finbook FB WHERE I.category = '$category' AND I.iid = FB.iid AND FB.finid = '$uid'";
+			$result = pg_query($link, $query);
 			$line = pg_fetch_array($result, NULL, PGSQL_ASSOC);
 
-			$array = array();
+			$total = $line["total"];
 
-			$uid = $line["uid"];
-			$type = $line["type"];
-			$title = $line["title"];
-			$description = $line["description"];
-			$category = $line["category"];
-			$state = $line["state"];
-			$cantInt = $line["cantInt"];
+			$tempres = ($page-1) * $rows;
 
-			$temp = array();
-			if ($type == 1)
-			{	
-				
-				$query = "SELECT firstName, lastName, photo FROM individual WHERE inid = '$uid'";
+			$ideas = array("status" => -1);
 
-				$result = pg_query($link, $query) or die('Query failed: ' . pg_result_error());
+			if ($total == 0)
+			{
+				$ideas["status"] = 0;
 
-				$line = pg_fetch_array($result, NULL, PGSQL_ASSOC);
-
-				$firstName = $line["firstName"];
-				$lastName = $line["lastName"];
-				$photo = $line["photo"];
-
-				array_push($temp, $firstName, $lastName, $photo);
-				array_push($array, 1, $temp);
+			}
+			else if($tempres > $total)
+			{
+				$ideas["status"] = 0;
 			}
 			else
 			{
-				$query = "SELECT name, logo FROM organization WHERE oid = '$uid'";
+				//----- Extract Ideas from bookmark filtered by category -----//
+				$query = "SELECT I.iid, I.title, I.description, SI.name, U.uid, U.type FROM idea I, finbook FB, users U, stateid SI WHERE I.category = '$category' AND I.iid = FB.iid AND FB.finid = '$uid' AND I.uid = U.uid AND SI.id = I.state ORDER BY title";
 
 				$result = pg_query($link, $query) or die('Query failed: ' . pg_result_error());
 
-				$line = pg_fetch_array($result, NULL, PGSQL_ASSOC);
+				pg_result_seek($result, (($page-1) * $rows));
 
-				$name = $line["name"];
-				$logo = $line["logo"];
+				$i = 0;
 
-				array_push($temp, $name, $logo);
-				array_push($array, 0, $temp);
+				while (($line = pg_fetch_array($result, NULL, PGSQL_ASSOC)) && ($i < $rows))
+				{
+					
+					//--- Idea's Basic Information ---//
+					$iid = $line["iid"];
+					$title = $line["title"];
+					$description = $line["description"];
+					$state = $line["name"];
+
+					$temp = array("iid" => $iid, "title" => $title, "description" => $description, "state" => $state);
+
+					//--- Entrepreneur's Basic Information ---//
+					$uid = $line["uid"];
+					$type = $line["type"];
+
+					if ($type == 1)
+					{
+						$query = "SELECT firstname, lastname FROM individual WHERE inid = '$uid'";
+						$result1 = pg_query($link, $query) or die('Query failed: ' . pg_result_error());
+						$line1 = pg_fetch_array($result1, NULL, PGSQL_ASSOC);
+
+						$firstname = $line1["firstname"];
+						$lastname = $line1["lastname"];
+
+						//--- Individual's Basic Information ---//
+						$t = array("uid" => $uid, "type" => $type, "fname" => $firstname, "lname" => $lastname);
+						$temp = array_merge($temp, $t);
+
+						$temp = array("e$i" => $temp);
+					}
+					else
+					{
+						$query = "SELECT name FROM organization WHERE oid = '$uid'";
+						$result1 = pg_query($link, $query) or die('Query failed: ' . pg_result_error());
+						$line1 = pg_fetch_array($result1, NULL, PGSQL_ASSOC);
+
+						//--- Organization's Basic Information ---//
+						$name = $line1["name"];
+
+						$t = array("uid" => $uid, "type" => $type, "name" => $name);
+						$temp = array_merge($temp, $t);
+
+						$temp = array("e$i" => $temp);
+					}
+
+					$ideas = array_merge($ideas, $temp);
+					$i = $i + 1;
+				}
+				$ideas["status"] = 1;
 			}
 
-			array_push($array, $uid, $title, $description, $category, $state, $cantInt);
-
-			echo json_encode($array);
-
+			echo json_encode($ideas);
 			break;
 	}
+
+	CloseCon($link);
 ?>

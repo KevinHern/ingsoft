@@ -1,9 +1,14 @@
 <?php
+	include 'connection.php';
+
 	/*
 	INPUTS:
 	1. User Id
 	*/
-	include 'connection.php';
+
+	$json = file_get_contents('php://input');
+	//Converts it into a PHP object
+    $_POST = json_decode($json, true);
 
 	$link = OpenConUser("u");
 
