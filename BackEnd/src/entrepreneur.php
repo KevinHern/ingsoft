@@ -1,6 +1,12 @@
 <?php
 	//Libraries
 	include 'connection.php';
+
+	$json = file_get_contents('php://input');
+	//Converts it into a PHP object
+    $_POST = json_decode($json, true);
+
+
 	$option = $_POST["option"];
 
 	//----- AGREEMENT -----//
@@ -28,46 +34,67 @@
 			-------------------
 
 			RETURNS THIS:
-			List of N ideas
-
-			For each idea:
-			1. Idea Title
-			2. Idea ID
+			1. Status: 1 if success, 0 if failure, -1 if empty
+			2. List of N ideas
+				For each idea:
+				2.1 Idea Title
+				2.2 Idea ID
 
 			*/
 
 			$uid = $_POST["uid"];
 
-			$numrows = $_POST["numrows"];
-			$numpage = $_POST["numpage"];
+			$rows = $_POST["rows"];
+			$page = $_POST["page"];
 
 			$category = $_POST["category"];
 
 			$link = OpenConUser("e");
 
-			$query = "SELECT iid, title FROM idea WHERE category = $category ORDER BY title";
+			//----- Extract total number of rows -----//
+			$query = "SELECT COUNT(iid) as total FROM idea WHERE uid = '$uid' AND category = '$category'";
+			$result = pg_query($link, $query);
+			$line = pg_fetch_array($result, NULL, PGSQL_ASSOC);
 
-			$result = pg_query($link, $query) or die('Query failed: ' . pg_result_error());
+			$total = $line["total"];
 
-			pg_result_seek($result, (($numpage-1) * $numrows))
+			$tempres = ($page-1) * $rows;
 
-			$i = 0;
-			$array = array();
-
-			while ($line = pg_fetch_array($result, NULL, PGSQL_ASSOC) && $i < $numrows)
+			$ideas = array("status" => -1);
+			if($total == 0)
 			{
-				$temp = array();
+				$ideas["status"] = -1;
+			}
+			else if ($tempres > $total)
+			{
+				$ideas["status"] = 0;
+			}
+			else
+			{
+				pg_result_seek($result, $tempres);
 
-				$title = $line["title"];
-				$iid = $line["iid"];
+				$i = 0;
 
-				array_push($temp, $title, $iid);
+				$query = "SELECT iid, title FROM idea WHERE uid = '$uid' AND category = '$category' ORDER BY title";
 
-				array_push($array, $temp);
-				$i = $i + 1;
+				$result = pg_query($link, $query);
+
+				while (($line = pg_fetch_array($result, NULL, PGSQL_ASSOC)) && ($i < $rows))
+				{
+					
+					$title = $line["title"];
+					$iid = $line["iid"];
+
+					$temp = array("title" => $title, "iid" => $iid);
+
+					$temp = array("i$i" => $temp);
+					$ideas = array_merge($ideas, $temp);
+					$i = $i + 1;
+				}
+				$ideas["status"] = 1;
 			}
 			
-			echo json_encode($array);
+			echo json_encode($ideas);
 
 			break;
 
@@ -80,98 +107,123 @@
 			3. Page Number
 
 			----------------
-			OUTPUTS: Array(array1, array2, ... arrayN)
+			OUTPUTS:
 
-			Array1: Contains Idea details
-			1. Idea Title
-			2. Idea Description
-			3. Idea Category
-			4. Idea State
-			5. Number of Interested
-
-			Array2 ... ArrayN: Contains the financists' data that has bookmarked the requested idea
-
-			For each financist:
-			1. Type of Entrepreneur
-			2. Entrepreneur's Id
-			3. Entrepreneur's data:
+			1. Status: 1 if success and financist list is not empty, 2 if success and financists list is empty
+			2. Title
+			3. Description
+			4. Category
+			5. State
+			6. Number of Interested
+			7. List of Financists: f0, f1, ... ,fn
+				7.1 Financist's ID
+				7.2 Financist's Type of user
 
 				INDIVIDUAL:
-				3.1 First Name
-				3.2 Last Name
+				7.3 First Name
+				7.4 Last Name
 
 				ORGANIZATION:
-				3.1 Name 
+				7.3 Name 
 
 			*/
+			
 			$iid = $_POST["iid"];
 
-			$numrows = $_POST["numrows"];
-			$numpage = $_POST["numpage"];
+			$rows = $_POST["rows"];
+			$page = $_POST["page"];
 
 			$link = OpenConUser("e");
 
-			$query = "SELECT I.title, I.description, CI.nombre as cin, SI.nombre as sin, I.cantInt FROM idea I, categoryIdea CI, stateidea SI WHERE I.iid = $iid AND I.category = CI.id AND I.state = SI.id";
+			//----- Extract Idea's basic information -----//
+			$query = "SELECT I.title, I.description, CI.name as cname, SI.name as sname, I.cantInt FROM idea I, categoryIdea CI, stateidea SI WHERE I.iid = $iid AND I.category = CI.id AND I.state = SI.id";
 
 			$result = pg_query($link, $query) or die('Query failed: ' . pg_result_error());
 
 			$line = pg_fetch_array($result, NULL, PGSQL_ASSOC);
 
-			$array = array();
-
 			$title = $line["title"];
 			$description = $line["description"];
-			$cin = $line["cin"];
-			$sin = $line["sin"];
-			$cantInt = $line["cantInt"];
+			$cname = $line["cname"];
+			$sname = $line["sname"];
+			$cantint = $line["cantint"];
 
-			$temp = array($title, $description, $cin, $sin, $cantInt);
+			$idea = array("status" => -1, "title" => $title, "description" => $description, "category" => $cname, "state" => $sname, "interested" => $cantint);
 
-			$array = array($temp);
+			//----- Extract Financists that are interested -----//
 
-			$query = "SELECT U.uid, U.type FROM finbook IB, users U WHERE IB.invId = U.uid AND IB.iid = $iid";
-
+			//--- Extract total number of rows ---//
+			$query = "SELECT COUNT(uid) as total FROM finbook IB, users U WHERE IB.finid = U.uid AND IB.iid = $iid";
 			$result = pg_query($link, $query) or die('Query failed: ' . pg_result_error());
 
-			pg_result_seek($result, (($numpage-1) * $numrows))
+			$line = pg_fetch_array($result, NULL, PGSQL_ASSOC);
 
-			while ($line = pg_fetch_array($result, NULL, PGSQL_ASSOC))
+			$total = $line["total"];
+
+			$tempres = ($page-1) * $rows;
+
+			
+			if($total == 0)
 			{
-				$temp = array();
-				$type = $line["type"];
-				$utemp = $line["uid"];
+				$idea["status"] = 2;
+			}
+			else if ($tempres > $total)
+			{
+				$idea["status"] = 2;
+			}
+			else
+			{
+				//--- Extract Financists ---//
+				$query = "SELECT U.uid, U.type FROM finbook IB, users U WHERE IB.finid = U.uid AND IB.iid = $iid";
 
-				if ($type == 1)
+				$result = pg_query($link, $query) or die('Query failed: ' . pg_result_error());
+
+				pg_result_seek($result, $tempres);
+
+				$i = 0;
+				while (($line = pg_fetch_array($result, NULL, PGSQL_ASSOC)) && ($i < $rows))
 				{
-					$query = "SELECT firstName, lastName FROM individual WHERE inid = '$utemp'";
+					$temp = array();
+					$type = $line["type"];
+					$utemp = $line["uid"];
 
-					$result = pg_query($link, $query) or die('Query failed: ' . pg_result_error());
+					if ($type == 1)
+					{
+						$query = "SELECT firstName, lastName FROM individual WHERE inid = '$utemp'";
 
-					$line = pg_fetch_array($result, NULL, PGSQL_ASSOC);
+						$result1 = pg_query($link, $query);
 
-					$firstName = $line["firstName"];
-					$lastName = $line["lastName"];
+						$line1 = pg_fetch_array($result1, NULL, PGSQL_ASSOC);
 
-					array_push($temp, 1, $utemp, $firstName, $lastName)
+						$firstName = $line1["firstName"];
+						$lastName = $line1["lastName"];
 
+						$temp = array("uid" => $utemp, "type" => $type, "fname" => $firstName, "lname" => $lastName);
+					}
+					else
+					{
+						$query = "SELECT name FROM organization WHERE oid = '$utemp'";
+
+						$result1 = pg_query($link, $query);
+
+						$line1 = pg_fetch_array($result1, NULL, PGSQL_ASSOC);
+
+						$name = $line1["name"];
+
+						$temp = array("uid" => $utemp, "type" => $type, "fname" => $name);
+					}
+
+					$temp = array("f$i" => $temp);
+
+					$idea = array_merge($idea, $temp);
+
+					$i = $i + 1;
 				}
-				else
-				{
-					$query = "SELECT name FROM organization WHERE oid = '$utemp'";
 
-					$result = pg_query($link, $query) or die('Query failed: ' . pg_result_error());
-
-					$line = pg_fetch_array($result, NULL, PGSQL_ASSOC);
-
-					$name = $line["name"];
-
-					array_push($temp, 0, $utemp, $name)
-				}
-
-				array_push($array, $temp)
+				$idea["status"] = 1;
 			}
 
-			echo json_encode($array);
+			echo json_encode($idea);
 
 			break;
 

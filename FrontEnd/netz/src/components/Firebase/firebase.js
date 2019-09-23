@@ -19,6 +19,8 @@ class Firebase {
         app.initializeApp(config);
         this.appAuth = app.auth();
         this.googleProvider =  new firebase.auth.GoogleAuthProvider();
+        this.db = firebase.firestore();
+        this.functions = firebase.functions();
     }
 
     getRedirectResult(history, API_PATH = false) {
@@ -42,13 +44,9 @@ class Firebase {
                             url: `${API_PATH}`,
                             headers: { 'content-type': 'application/json' },
                             data: {idToken, name:result.additionalUserInfo.profile.name ,
-                                email:result.additionalUserInfo.profile.email, pass:"", role: 1}
+                                email:result.additionalUserInfo.profile.email, pass:"", role: 0}
                         })
                             .then(result => {
-                                // this.setState({
-                                //     mailSent: result.data.sent
-                                // }
-                                // )
                                 let thing = result.data;
                                 console.table(thing);
                                 history.push(ROUTES.UCONFIG);
@@ -129,28 +127,6 @@ class Firebase {
 
 
 
-    postgreRequest = (API_PATH, data, headers, method) => {
-        this.appAuth.currentUser.getIdToken(true).then(function (idToken)  {
-            axios(
-                {
-                    method:method,
-                    url: `${API_PATH}`,
-                    headers: headers,
-                    data: {}
-                }
-            )
-                .then(result => {
-
-
-
-                })
-                .catch( error => {
-
-                })
-        });
-    }
-
-
     getIdToken = (API_PATH, state) => {
         return this.appAuth.currentUser.getIdToken(/* forceRefresh */ true).then(function(idToken) {
             axios({
@@ -161,22 +137,22 @@ class Firebase {
                                 email:state.email, pass:state.passwordOne, role: 0}
                         })
                             .then(result => {
-                                // this.setState({
-                                //     mailSent: result.data.sent
-                                // }
-                                // )
                                 let thing = result.data;
                                 console.table(thing);
                             })
                             .catch(error =>
-                                // {this.setState({ error: error.message })
                                 console.log(error)
                             );
         }).catch(function(error) {
-            // Handle error
             console.log(error);
         });
-    }
+    };
+
+
+    callFunction = (name) => this.functions.httpsCallable(name);
+    user = uid => this.db.collection('users').doc(uid);
+    users = uid => this.db.collection('users')
+
 }
 
 export default Firebase;

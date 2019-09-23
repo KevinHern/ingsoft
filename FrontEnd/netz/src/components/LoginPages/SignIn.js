@@ -10,6 +10,7 @@ import Label from "reactstrap/es/Label";
 import Input from "reactstrap/es/Input";
 import GoogleSign from './GoogleSignUpButton'
 import ButtonGroup from "reactstrap/es/ButtonGroup";
+import firebase from "firebase";
 
 const SignInPage = () => (
     <div>
@@ -43,6 +44,7 @@ class SignInFormBase extends Component {
             .then(() => {
                 this.setState({ ...INITIAL_STATE });
                 //By now always, but it is not meant to go to Uconfig all the time
+                // firebase.users().
                 this.props.history.push(ROUTES.UCONFIG);
             })
             .catch(error => {

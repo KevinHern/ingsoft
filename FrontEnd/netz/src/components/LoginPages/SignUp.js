@@ -36,16 +36,32 @@ class SignUpFormBase extends Component {
     onSubmit = event => {
         event.preventDefault();
         const { username, email, passwordOne } = this.state;
-       const {fireBase} = this.props;
+//     User process has not finished
+        const role = 0;
+        const {fireBase} = this.props;
         return fireBase.withEmailAndPassword(email, passwordOne)
             .then(authUser => {
-                const API_PATH = 'http://localhost/ingsoft/src/SignUp.php';
-                fireBase.getIdToken(API_PATH, this.state)
-                    .then(() => {
-                        //Always to UCONFIG
-                        this.props.history.push(ROUTES.UCONFIG);
-                    });
-                this.setState({ ...INITIAL_STATE });
+                console.log(authUser);
+                fireBase.user(authUser.user.uid).set({
+                            username,
+                           email,
+                           role
+                       }).then(() =>  {
+                            console.log("Just before axios");
+                            const API_PATH = 'http://localhost/ingsoft/src/SignUp.php';
+                            fireBase.getIdToken(API_PATH, this.state)
+                                .then(() => {
+                                    //Always to UCONFIG
+                                    this.props.history.push(ROUTES.UCONFIG);
+                                }).catch(error => {
+                                this.setState({ error });
+                                console.log(error);
+                            });
+                            this.setState({ ...INITIAL_STATE });
+               }).catch(function (error) {
+                    this.setState({ error });
+                    console.log(error);
+               });
             })
             .catch(error => {
                 this.setState({ error });
@@ -105,13 +121,9 @@ class SignUpFormBase extends Component {
                        </Col>
                    </FormGroup>
                    <FormGroup row className="justify-content-md-center">
-                       {/*<ButtonGroup className="d-flex justify-content-center" >*/}
-                       {/*    <Button color="primary" disabled={isInvalid}>Sign Up</Button>*/}
-                       {/*    <GoogleSign message = {"Sign Up with Google"}/>*/}
-                       {/*</ButtonGroup>*/}
                        <ButtonGroup>
                                <Button  disabled={isInvalid} type = "Submit" className="mr-3" color = "primary">
-                                   Sign In</Button>
+                                   Sign Up</Button>
                                <FormText color="muted">
                                        Already have an account? <Link to={ROUTES.SIGN_IN}>Sign In</Link>
                                </FormText>

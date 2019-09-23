@@ -13,6 +13,8 @@ class CreateIdea extends Component {
         this.onSubmit = this.onSubmit.bind(this);
     }
 
+
+
     onSubmit(e){
         e.preventDefault();
     }
@@ -59,7 +61,7 @@ class CreateIdea extends Component {
                                     </Col>
                                 </FormGroup>
                                 <FormGroup row className={"justify-content-md-center mt-3"}>
-                                    <Button color="primary">{this.props.message}</Button>
+                                    <Button color="primary" onClick={this.props.onClick}>{this.props.message}</Button>
                                 </FormGroup>
                             </Form>
                         </Col>

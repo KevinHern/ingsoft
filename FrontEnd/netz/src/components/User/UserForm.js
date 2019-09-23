@@ -7,6 +7,7 @@ import React, {Component} from "react";
 import axios from 'axios';
 import {withFirebase} from "../Firebase";
 import {withRouter} from "react-router-dom";
+import * as ROUTES from '../../Constants/routes';
 class OrganForm extends Component {
 
 
@@ -24,7 +25,7 @@ class OrganForm extends Component {
         };
         this._handleImageChange= this._handleImageChange.bind(this);
         this.modifyRole = this.modifyRole.bind(this);
-
+        this.handleSubmit = this.handleSubmit.bind(this);
     }
 
     _handleImageChange(e) {
@@ -47,49 +48,33 @@ class OrganForm extends Component {
     }
 
 
-
-
-    handleSubmit = (e) => {
+   async handleSubmit (e) {
         e.preventDefault();
         const data =  {
             ...this.state,
             option:'org'
         };
-        const pro = this.props.token();
-        const formData = new FormData;
-        for (const [key, value] of Object.entries(data)){
-            // console.log(key);
-            // console.log(value);
-            if(!(key === "imagePreviewUrl")) formData.append(key, value);
-        }
-
-        // for (let key of formData.entries()) {
-        //     console.log(key[0] + ', ' + key[1]);
-        // }
-
-
-        pro.then(token => {
-            formData.append('uid', token);
-            axios({
-                method: 'POST',
-                url: 'http://localhost/ingsoft/src/insert.php',
-                data: formData,
-                headers: { 'Content-Type': 'multipart/form-data'},
-            }).then((response) => {
-                console.log(response);
-                const data = response.data;
-                if(data['status'] == 1){
-                    console.log('success');
-                    // this.history.push();
-                }else {
-                    this.setState({error:"Error en el servidor"});
-                    console.log('failure');
-                }
-            });
-        }).catch((error) => {
+       // Create form Data object
+       const formData = new FormData;
+       for (const [key, value] of Object.entries(data)){
+           if(!(key === "imagePreviewUrl")) formData.append(key, value);
+       }
+        try{
+            const promisedToken =  await this.props.token(); //Wait for this promise to resolve
+            const [axiosRequest, fireStoreRequest] = await Promise.all([this.props.serverData(formData, promisedToken),
+            this.props.setRole(data['role'])]) ; // This two in parallel, save to databases
+            const response = axiosRequest.data; //Check response from axios for server status.
+            if(response['status'] === 1){
+                // console.log('success');
+                this.props.history.push(ROUTES.HOME);
+            }else {
+                this.setState({error:"Error en el servidor"});
+                // console.log('failure');
+            }
+        }catch(error){
             console.log(error);
             this.setState({error:error.message});
-        });
+        }
     };
 
 
@@ -111,8 +96,6 @@ class OrganForm extends Component {
         }
         // console.log(this.state);
     };
-
-
 
     render() {
         const {imagePreviewUrl} = this.state;
@@ -174,6 +157,32 @@ class OrganForm extends Component {
             </React.Fragment>
         );
     }
+
+    //oldDotThen = () => {
+    // const pro = this.props.token();
+    // pro.then(token => {
+    //      formData.append('uid', token);
+    //      axios({
+    //          method: 'POST',
+    //          url: 'http://localhost/ingsoft/src/insert.php',
+    //          data: formData,
+    //          headers: { 'Content-Type': 'multipart/form-data'},
+    //      }).then((response) => {
+    //          console.log(response);
+    //          const data = response.data;
+    //          if(data['status'] == 1){
+    //              console.log('success');
+    //              this.props.history.push(ROUTES.HOME);
+    //          }else {
+    //              this.setState({error:"Error en el servidor"});
+    //              console.log('failure');
+    //          }
+    //      });
+    //  }).catch((error) => {
+    //      console.log(error);
+    //      this.setState({error:error.message});
+    //  });
+    //};
 }
 
 class IndForm extends Component {
@@ -187,17 +196,16 @@ class IndForm extends Component {
             nat: "",
             org: "",
             name1: "",
-            name2: "",
             last1: '',
-            last2: '',
             role: 0,
             error: false,
         };
         this._handleImageChange= this._handleImageChange.bind(this);
         this.modifyRole = this.modifyRole.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
     }
 
-
+// Modify role according to whether it was checked or unchecked
     modifyRole(target) {
         console.log(target);
         const {role} = this.state;
@@ -208,46 +216,38 @@ class IndForm extends Component {
         }
     }
 
-    handleSubmit = (e) => {
+    //Send data to server
+    async handleSubmit(e) {
         e.preventDefault();
         const data =  {
             ...this.state,
             option:'ind'
         };
-        const pro = this.props.token();
         const formData = new FormData;
         for (const [key, value] of Object.entries(data)){
-            // console.log(key);
-            // console.log(value);
             if(!(key === "imagePreviewUrl")) formData.append(key, value);
         }
 
-        // for (let key of formData.entries()) {
-        //     console.log(key[0] + ', ' + key[1]);
-        // }
-        console.table(data);
-        pro.then(token => {
-            formData.append('uid', token);
-            axios({
-                method: 'POST',
-                url: 'http://localhost/ingsoft/src/insert.php',
-                data: formData,
-                headers: { 'Content-Type': 'multipart/form-data'},
-            }).then((response) => {
-                console.log(response);
-                const data = response.data;
-                 if(data['status'] == 1){
-                     console.log('sucess');
-                     // this.history.push();
-                 }else {
-                     this.setState({error:"Error en el servidor"});
-                     console.log('failure');
-                 }
-            });
-        }).catch((error) => {
+        console.log(data['role'])
+        try{
+            const promisedToken =  await this.props.token();
+            const [axiosRequest, fireStoreRequest] = await Promise.all([this.props.serverData(formData, promisedToken),
+                this.props.setRole(data['role'])]);
+            // this.props.setClaims(data['role']).then((result) => {
+            //     console.log(result);
+            // });
+            const response = axiosRequest.data;
+            if(response['status'] === 1){
+                console.log('success');
+                this.props.history.push(ROUTES.HOME);
+            }else {
+                this.setState({error:"Error en el servidor"});
+                console.log('failure');
+            }
+        }catch(error){
             console.log(error);
             this.setState({error:error.message});
-        });
+        }
 
 
     };
@@ -260,8 +260,6 @@ class IndForm extends Component {
         }
         // console.log(this.state);
     };
-
-
 
 
     _handleImageChange(e) {
@@ -288,12 +286,12 @@ class IndForm extends Component {
                 {(error)? <Alert color={"danger"}>{error}</Alert>: null}
                 <Form key={"formInd"} id={"formInd"} onSubmit={this.handleSubmit}>
                     <legend className={"mt-5 ml-3"}>
-                        Nombres
+                        General
                     </legend>
                     <Row form className={"mt-5"}>
                         <Col md={4} className={" mr-4 ml-4"}>
                             <FormGroup row className={"justify-content-md-center"}>
-                                <Label for="name1" sm={4}>Primero</Label>
+                                <Label for="name1" sm={4}>Nombre</Label>
                                 <Col sm={8}>
                                     <Input name="name1" type={"text"} id="name1" onChange = {this.onChange} required/>
                                 </Col>
@@ -301,30 +299,9 @@ class IndForm extends Component {
                         </Col>
                         <Col md={4}>
                             <FormGroup row className={"justify-content-md-center"}>
-                                <Label for="name2" sm={4}>Segundo</Label>
-                                <Col sm={8}>
-                                    <Input name="name2" type={"text"} id="name2" onChange = {this.onChange} required/>
-                                </Col>
-                            </FormGroup>
-                        </Col>
-                    </Row>
-                    <legend className={"mt-5 ml-3"}>
-                        Apellidos
-                    </legend>
-                    <Row form className={"mt-5"}>
-                        <Col md={4} className={" mr-4 ml-4"}>
-                            <FormGroup row className={"justify-content-md-center"}>
-                                <Label for="last1" sm={4}>Primero</Label>
+                                <Label for="last1" sm={4}>Apellido</Label>
                                 <Col sm={8}>
                                     <Input name="last1" type={"text"} id="last1" onChange = {this.onChange} required/>
-                                </Col>
-                            </FormGroup>
-                        </Col>
-                        <Col md={4}>
-                            <FormGroup row className={"justify-content-md-center"}>
-                                <Label for="last2" sm={4}>Segundo</Label>
-                                <Col sm={8}>
-                                    <Input name="last2" type={"text"} id="last2" onChange = {this.onChange} required/>
                                 </Col>
                             </FormGroup>
                         </Col>
@@ -356,8 +333,8 @@ class IndForm extends Component {
                     <Row form className={"mt-5 ml-3"}>
                         <Label sm={2} for="roles">Roles</Label>
                         <Col sm={5}>
-                            <CustomInput type="checkbox" id="e1" name="e1" label="Emprendedor" key={"e1"} onChange = {this.onChange}/>
-                            <CustomInput type="checkbox" id="f1" name="f1" label="Financista" key={"f1"} onChange = {this.onChange}/>
+                            <CustomInput type="checkbox" id="e1" name="e1" label="Emprendedor" key={"e1"} value={1} onChange = {this.onChange}/>
+                            <CustomInput type="checkbox" id="f1" name="f1" label="Financista" key={"f1"}  value={2} onChange = {this.onChange}/>
                         </Col>
                     </Row>
                     <Row form className={"mt-5 ml-3"}>
@@ -404,10 +381,40 @@ class IndForm extends Component {
             </React.Fragment>
         );
     }
+
+    // oldDotThen = ()  => {
+    //DotThen
+    //Wait for promise
+    // const pro =  await this.props.token();
+    //console.table(data);
+    // pro.then(token => {
+    //     formData.append('uid', token);
+    //     axios({
+    //         method: 'POST',
+    //         url: 'http://localhost/ingsoft/src/insert.php',
+    //         data: formData,
+    //         headers: { 'Content-Type': 'multipart/form-data'},
+    //     }).then((response) => {
+    //         console.log(response);
+    //         const data = response.data;
+    //          //Check status of Request
+    //          if(data['status'] === 1){
+    //              console.log('success');
+    //              this.props.history.push(ROUTES.HOME);
+    //          }else {
+    //              this.setState({error:"Error en el servidor"});
+    //              console.log('failure');
+    //          }
+    //     });
+    // }).catch((error) => {
+    //     console.log(error);
+    //     this.setState({error:error.message});
+    // });
+    // };
 }
 
 const Organizacion = withRouter(OrganForm);
-const Individual = withRouter(withFirebase(IndForm));
+const Individual = withRouter(IndForm);
 export {Organizacion, Individual};
 
 
