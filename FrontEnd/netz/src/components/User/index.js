@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import OverView from './overviewInd'
 import {withAuthorization} from '../Session'
+import {withAuthorization2} from '../Session';
 /*
  classnames permite agregar clases a un component, condicionalmente
  osea le doy una condicion y si es verdadera agrega la clase si es falsa
@@ -45,11 +46,11 @@ class TabConfigManager extends Component {
     };
 
 
-    // setClaims = (role) =>  {
-    //     const {fireBase} = this.props;
-    //     const customClaims = fireBase.callFunction('customClaims');
-    //     return customClaims({role});
-    // };
+    setClaims = (role) =>  {
+        const {fireBase} = this.props;
+        const customClaims = fireBase.callFunction('customClaims');
+        return customClaims({role});
+    };
 
 
     token() {
@@ -82,7 +83,6 @@ class TabConfigManager extends Component {
         const {activeTab} = this.state;
         const {imagePreviewUrl} = this.state;
         const {org} = this.state;
-        console.log("Url" + imagePreviewUrl);
         let $imagePreview = null;
         if (imagePreviewUrl) {
             $imagePreview = (<img alt =  "empty" src={imagePreviewUrl}/>);
@@ -108,12 +108,12 @@ class TabConfigManager extends Component {
                 </Nav>
                 <TabContent activeTab = {activeTab}>
                     <TabPane tabId="1">
-                        <Individual  token={this.token} serverData={this.serverData} setRole={this.setRole} handleRadio = {this.handleRadio}
+                        <Individual  token={this.token} setClaims = {this.setClaims} serverData={this.serverData} setRole={this.setRole} handleRadio = {this.handleRadio}
                             org={org}
                         />
                     </TabPane>
                     <TabPane tabId="2">
-                        <Organizacion   token={this.token}   serverData={this.serverData} setRole={this.setRole} disable = {true}/>
+                        <Organizacion   token={this.token} setClaims = {this.setClaims}  serverData={this.serverData} setRole={this.setRole} disable = {true}/>
                     </TabPane>
                 </TabContent>
             </div>
@@ -121,8 +121,8 @@ class TabConfigManager extends Component {
     }
 }
 
-// const condition = (authUser, role) => (authUser != null) & !role;
-const TabConfig = (TabConfigManager);
+const condition = (role) => role === undefined | role === 0;
+const TabConfig = withAuthorization2(condition)(TabConfigManager);
 export {TabConfig, OverView};
 
 

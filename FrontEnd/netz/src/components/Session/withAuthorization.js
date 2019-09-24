@@ -5,12 +5,14 @@ import AuthUserContext from './context';
 import * as ROUTES from '../../Constants/routes';
 
 const withAuthorization = condition => Component => {
-    class WithAuthorization extends Com {
+    class WithAuthorization extends Com{
         constructor(props) {
             super(props);
             this.state = {
                 role:1
             };
+
+
         }
 
 

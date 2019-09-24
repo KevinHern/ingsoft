@@ -64,6 +64,9 @@ class OrganForm extends Component {
             const [axiosRequest, fireStoreRequest] = await Promise.all([this.props.serverData(formData, promisedToken),
             this.props.setRole(data['role'])]) ; // This two in parallel, save to databases
             const response = axiosRequest.data; //Check response from axios for server status.
+            this.props.setClaims(data['role']).then((result) => {
+                console.log(result);
+            });
             if(response['status'] === 1){
                 // console.log('success');
                 this.props.history.push(ROUTES.HOME);
@@ -228,14 +231,14 @@ class IndForm extends Component {
             if(!(key === "imagePreviewUrl")) formData.append(key, value);
         }
 
-        console.log(data['role'])
+        console.log(data['role']);
         try{
             const promisedToken =  await this.props.token();
             const [axiosRequest, fireStoreRequest] = await Promise.all([this.props.serverData(formData, promisedToken),
                 this.props.setRole(data['role'])]);
-            // this.props.setClaims(data['role']).then((result) => {
-            //     console.log(result);
-            // });
+            this.props.setClaims(data['role']).then((result) => {
+                console.log(result);
+            });
             const response = axiosRequest.data;
             if(response['status'] === 1){
                 console.log('success');
