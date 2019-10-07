@@ -6,14 +6,12 @@ import {Button, Col, CustomInput, Media, Row} from "reactstrap";
 import Input from "reactstrap/es/Input";
 import Container from "reactstrap/es/Container";
 
-class CreateIdea extends Component {
+class Create extends Component {
 
     constructor(props) {
         super(props);
         this.onSubmit = this.onSubmit.bind(this);
     }
-
-
 
     onSubmit(e){
         e.preventDefault();
@@ -61,7 +59,7 @@ class CreateIdea extends Component {
                                     </Col>
                                 </FormGroup>
                                 <FormGroup row className={"justify-content-md-center mt-3"}>
-                                    <Button color="primary" onClick={this.props.onClick}>{this.props.message}</Button>
+                                    <Button color="primary">{this.props.message}</Button>
                                 </FormGroup>
                             </Form>
                         </Col>
@@ -71,4 +69,4 @@ class CreateIdea extends Component {
     }
 }
 
-export default CreateIdea;
+export default Create;

@@ -4,10 +4,10 @@ import Label from "reactstrap/es/Label";
 import {Button, Col, CustomInput, Media, Row, Alert} from "reactstrap";
 import Input from "reactstrap/es/Input";
 import React, {Component} from "react";
-import axios from 'axios';
-import {withFirebase} from "../Firebase";
 import {withRouter} from "react-router-dom";
 import * as ROUTES from '../../Constants/routes';
+
+//Missing phone field
 class OrganForm extends Component {
 
 
@@ -21,7 +21,7 @@ class OrganForm extends Component {
             addr: "",
             role: 0,
             error:false,
-
+            phone: "",
         };
         this._handleImageChange= this._handleImageChange.bind(this);
         this.modifyRole = this.modifyRole.bind(this);
@@ -131,6 +131,12 @@ class OrganForm extends Component {
                             <Input name="addr" type={"text"} id="addr" onChange = {this.onChange} required/>
                         </Col>
                     </FormGroup>
+                    <FormGroup row className={"justify-content-md-center mt-3"}>
+                        <Label sm={2} for="phone">Numero Telefonico</Label>
+                        <Col sm={5}>
+                            <Input name="phone" type={"text"} id="phone" onChange = {this.onChange} required/>
+                        </Col>
+                    </FormGroup>
                     <FormGroup row required className={"justify-content-md-center mt-3"}>
                         <Label sm={2} for="exampleCheckbox">Roles</Label>
                         <Col sm={5}>
@@ -202,6 +208,7 @@ class IndForm extends Component {
             last1: '',
             role: 0,
             error: false,
+            phone: [],
         };
         this._handleImageChange= this._handleImageChange.bind(this);
         this.modifyRole = this.modifyRole.bind(this);
@@ -244,6 +251,7 @@ class IndForm extends Component {
                 console.log('success');
                 this.props.history.push(ROUTES.HOME);
             }else {
+                // this.setState({error:error.message});
                 this.setState({error:"Error en el servidor"});
                 console.log('failure');
             }
@@ -262,6 +270,10 @@ class IndForm extends Component {
             this.setState({ [event.target.name]: event.target.value});
         }
         // console.log(this.state);
+    };
+
+    addExtra = () => {
+        this.setState()
     };
 
 
@@ -294,9 +306,9 @@ class IndForm extends Component {
                     <Row form className={"mt-5"}>
                         <Col md={4} className={" mr-4 ml-4"}>
                             <FormGroup row className={"justify-content-md-center"}>
-                                <Label for="name1" sm={4}>Nombre</Label>
+                                <Label for="name" sm={4}>Nombre</Label>
                                 <Col sm={8}>
-                                    <Input name="name1" type={"text"} id="name1" onChange = {this.onChange} required/>
+                                    <Input name="name" type={"text"} id="name" onChange = {this.onChange} required/>
                                 </Col>
                             </FormGroup>
                         </Col>
@@ -304,7 +316,7 @@ class IndForm extends Component {
                             <FormGroup row className={"justify-content-md-center"}>
                                 <Label for="last1" sm={4}>Apellido</Label>
                                 <Col sm={8}>
-                                    <Input name="last1" type={"text"} id="last1" onChange = {this.onChange} required/>
+                                    <Input name="last" type={"text"} id="last" onChange = {this.onChange} required/>
                                 </Col>
                             </FormGroup>
                         </Col>
@@ -339,6 +351,15 @@ class IndForm extends Component {
                             <CustomInput type="checkbox" id="e1" name="e1" label="Emprendedor" key={"e1"} value={1} onChange = {this.onChange}/>
                             <CustomInput type="checkbox" id="f1" name="f1" label="Financista" key={"f1"}  value={2} onChange = {this.onChange}/>
                         </Col>
+                    </Row>
+                    <Row form className={"mt-5 ml-3"}>
+                        <FormGroup row className={"justify-content-md-center mt-3"}>
+                            <Label sm={2} for="phone">Numero Telefonico</Label>
+                            <Col sm={5}>
+                                <Input name="phone" type={"text"} id="phone" onChange = {this.onChange} required/>
+                            </Col>
+                            <Button onClick={this.addExtra}>Extra Phone</Button>
+                        </FormGroup>
                     </Row>
                     <Row form className={"mt-5 ml-3"}>
                         <Label sm={2} for="direccion">Imagen de Perfil</Label>
@@ -385,6 +406,7 @@ class IndForm extends Component {
         );
     }
 
+    //No Cloud Functions call here
     // oldDotThen = ()  => {
     //DotThen
     //Wait for promise

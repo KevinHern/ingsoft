@@ -122,7 +122,8 @@ class TabConfigManager extends Component {
 }
 
 const condition = (role) => role === undefined | role === 0;
-const TabConfig = withAuthorization2(condition)(TabConfigManager);
+// const TabConfig = withAuthorization2(condition)(TabConfigManager);
+const TabConfig = TabConfigManager;
 export {TabConfig, OverView};
 
 

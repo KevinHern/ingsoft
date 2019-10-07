@@ -4,9 +4,10 @@ import PaginationItem from "reactstrap/es/PaginationItem";
 import PaginationLink from "reactstrap/es/PaginationLink";
 
 function Item(props) {
+    console.log(props.no);
     return(
-        <PaginationItem>
-            <PaginationLink first href="#">
+        <PaginationItem active = {props.active} onClick = {() => {props.onPageMove(props.no)}}>
+            <PaginationLink   >
                 {props.no}
             </PaginationLink>
         </PaginationItem>
@@ -16,25 +17,33 @@ function Item(props) {
 
 function Paginator(props) {
     let pages =[];
-    for(let i = 1; i<=props.page; i++){
-        pages.push(<Item no={i}></Item>);
-    }
+    const {initPage, currentPage, max, perTag} = props;
+    for(let i = initPage; i<initPage+perTag; i++){
+        if(max < i) {
+            break;
+        }
+        if(currentPage === i) {
+            pages.push(<Item no={i} key = {i}  active = {true} onPageMove = {props.onPageMove}/>);
+        }else{
+            pages.push(<Item no={i} key = {i}  active = {false} onPageMove = {props.onPageMove}/>);
+        }
+    };
     return (
         <Pagination>
-            <PaginationItem>
-                <PaginationLink first href="#" />
+            <PaginationItem disabled={!(initPage-1)} onClick={(e) => {props.onArrowMove(e, 'first')}}>
+                <PaginationLink first  />
             </PaginationItem>
-            <PaginationItem>
-                <PaginationLink previous href="#" />
+            <PaginationItem  disabled={currentPage===1} onClick={ (e) => {props.onArrowMove(e, 'previous')}}>
+                <PaginationLink previous   />
             </PaginationItem>
             {
                 pages
             }
-            <PaginationItem>
-                <PaginationLink next href="#" />
+            <PaginationItem disabled={currentPage === max} onClick={ (e) => {props.onArrowMove(e, 'next')}}>
+                <PaginationLink next  />
             </PaginationItem>
-            <PaginationItem>
-                <PaginationLink last href="#" />
+            <PaginationItem   disabled={currentPage === max } onClick={ (e) => {props.onArrowMove(e, 'last')}}>
+                <PaginationLink last/>
             </PaginationItem>
         </Pagination>
     );

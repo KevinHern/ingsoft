@@ -1,19 +1,103 @@
-import React from 'react';
+import React, {Component} from 'react';
 import {Form, Col, Row, FormText, Button, ButtonGroup, ButtonToolbar, Table} from 'reactstrap'
 import FormGroup from "reactstrap/es/FormGroup";
 import Label from "reactstrap/es/Label";
 import Input from "reactstrap/es/Input";
 import Container from "reactstrap/es/Container";
+import { BrowserRouter as Router, Route,} from 'react-router-dom';
 import Paginator from "../Paginator";
 import { FaSearch } from 'react-icons/fa';
-import CreateIdea from './create';
+import Create from './create';
 import Desc from './desc';
+import List from "./List";
 
-function ListIdea() {
-    return (
-        <React.Fragment>
+import axios from 'axios';
+
+class ListIdea extends Component {
+
+    constructor(props) {
+        super(props);
+        this.state ={
+          initPage: 1,
+          currentPage:1,
+          max: 5,
+          search: '',
+          perTag: 4,
+          perPage: 4
+        };
+    }
+
+    onSubmit = (e)   => {
+      e.preventDefault();
+      const{search} = this.state;
+      console.log(search);
+    };
+
+
+    componentDidMount() {
+        const maxResults = 10;
+        if(maxResults) {
+
+        }else {
+           this.setState({empty:true})
+        }
+        // let max = 0;
+        // this.setState({max})
+    }
+
+    fetchPage = (page) => {
+        const {perPage, search} =this.state;
+
+    };
+
+
+    onPageMove = (currentPage) => {
+        this.fetchPage(currentPage);
+        this.setState({currentPage});
+    };
+
+
+    onArrowMove = (e, move) => {
+        e.preventDefault();
+        console.log(move);
+        const{max, perTag} = this.state;
+        let {initPage, currentPage} = this.state
+        //If we are at the first page don't try to go to the first group
+        if(move === 'first'  && (initPage-1)) {
+            initPage = initPage-perTag;
+            currentPage = initPage;
+            // Go to Last Group Still needs some checking
+        }else if (move === 'last' && ((initPage+perTag) <= max)) {
+            initPage = initPage+perTag;
+            currentPage = initPage;
+            //If currentPage == 1 don't do previous
+        }else if(move === 'previous' && (currentPage-1)){
+            currentPage--;
+        //    If current Page >= max don't do next
+        }else if(move === 'next' && (currentPage < max)){
+            currentPage++;
+        }
+        if((initPage+perTag) === currentPage) {
+            initPage = initPage+perTag;
+        } else if (currentPage < initPage) {
+            initPage = initPage-perTag;
+        }
+
+        console.log(`Current page:  ${currentPage}  init page:  ${initPage}`);
+        this.setState({currentPage, initPage});
+    };
+
+    search  = (e) => {
+        this.setState({[e.target.name] : e.target.value});
+    };
+
+
+    render() {
+        const{initPage, currentPage, max, perTag, empty} = this.state;
+        return (
+            <React.Fragment>
                 <Row className={"justify-content-end"}>
-                    <Col sm={4} >
+                    <Col sm={4}>
                         <ButtonToolbar className={"justify-content-end"}>
                             <ButtonGroup>
                                 <Button color={"info"}>Crear Idea</Button>
@@ -26,69 +110,36 @@ function ListIdea() {
                 <Row className={"justify-content-md-center mt-3"}>
                     <Table hover responsive={true} size={""}>
                         <thead>
-                                <tr>
-                                    <td>
-                                        Ideas
-                                    </td>
-                                    <td colSpan={2}>
-                                        <Form inline className={"justify-content-md-end"}>
-                                            <FormGroup >
-                                                <Input type="text" name="search" id="search" placeholder="Buscar" />
-                                                <Button type={"submit"}>
-                                                    <FaSearch/>
-                                                </Button>
-                                            </FormGroup>
-                                        </Form>
-                                    </td>
-                                </tr>
+                        <tr>
+                            <td>
+                                Ideas
+                            </td>
+                            <td colSpan={2}>
+                                <Form inline className={"justify-content-md-end"} onSubmit = {this.onSubmit}>
+                                    <FormGroup>
+                                        <Input type="text" name="search" id="search" placeholder="Buscar" onChange = {this.search}/>
+                                        <Button type={"submit"}>
+                                            <FaSearch/>
+                                        </Button>
+                                    </FormGroup>
+                                </Form>
+                            </td>
+                        </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <th scope = "row">1</th>
-                                <td>One</td>
-                                <td>
-                                    <Button color={"link"}>
-                                        ShowDetails
-                                    </Button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th scope = "row">1</th>
-                                <td>One</td>
-                                <td>
-                                    <Button color={"link"}>
-                                        ShowDetails
-                                    </Button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th scope = "row">1</th>
-                                <td>One</td>
-                                <td>
-                                    <Button color={"link"}>
-                                        ShowDetails
-                                    </Button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th scope = "row">1</th>
-                                <td>One</td>
-                                <td>
-                                    <Button color={"link"}>
-                                        ShowDetails
-                                    </Button>
-                                </td>
-                            </tr>
+                          <List/>
                         </tbody>
                     </Table>
                 </Row>
                 <Row className={"justify-content-md-center"}>
-                    <Paginator page={9}/>
+                    <Paginator initPage={initPage} perTag = {perTag} currentPage = {currentPage} max ={max} onArrowMove={this.onArrowMove}
+                    onPageMove = {this.onPageMove}/>
                 </Row>
-        </React.Fragment>
-    )
+            </React.Fragment>
+        )
+    }
 }
 
-export {CreateIdea, ListIdea, Desc};
+export {Create, ListIdea, Desc};
 
             /* {(props.create)? } */
