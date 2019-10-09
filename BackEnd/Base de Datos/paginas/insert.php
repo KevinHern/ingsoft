@@ -17,8 +17,6 @@
 	REGISTER CATEGORY IDEA:		catid
 	REGISTER STATE IDEA:		staid
 	REGISTER IDEA:				idea
-	REGISTER IND. TELEPHONE:	indtel
-	REGISTER ORD. TELEPHONE:	orgtel
 	REGISTER BOOKMARK:			book
 
 	*/
@@ -288,85 +286,6 @@
 			$link = OpenConUser("e");
 
 			$query = "INSERT INTO idea VALUES(DEFAULT, '$uid', $cantInt, '$title','$description', $category, $state);";
-
-			$result = pg_query($link, $query) or die('Query failed: ' . pg_result_error());
-
-			if ($result)
-			{
-				$json = array('status' => 1);
-				echo json_encode($json);
-			}
-			else
-			{
-				$json = array('status' => 0);
-				echo json_encode($json);
-			}
-
-			CloseCon($link);
-			break;
-
-		//---- REGISTER IND. TELEPHONE ----//
-		case 'indtel':
-			/*
-			INPUTS:
-			1. User's ID
-			2. Telephone number
-			3. Number extension
-
-			------------
-
-			OUTPUTS:
-			1. Status: 1 if success, 0 otherwise
-
-			*/
-
-			$uid = $_POST["uid"];
-			$number = $_POST["number"];
-			$extension = $_POST["extension"];
-
-			$link = OpenConUser("u");
-
-			$query = "INSERT INTO telephoneind VALUES(DEFAULT, '$uid', '$number', $extension);";
-
-			$result = pg_query($link, $query) or die('Query failed: ' . pg_result_error());
-
-			if ($result)
-			{
-				$json = array('status' => 1);
-				echo json_encode($json);
-			}
-			else
-			{
-				$json = array('status' => 0);
-				echo json_encode($json);
-			}
-
-			CloseCon($link);
-			break;
-
-		//---- REGISTER ORG. TELEPHONE ----//
-		case 'orgtel':
-			/*
-			INPUTS:
-			1. User's ID
-			2. Telephone number
-			3. Number extension
-
-			------------
-
-			OUTPUTS:
-			1. Status: 1 if success, 0 otherwise
-
-			*/
-
-			$uid = $_POST["uid"];
-
-			$number = $_POST["number"];
-			$extension = $_POST["extension"];
-
-			$link = OpenConUser("u");
-
-			$query = "INSERT INTO telephoneorg VALUES(DEFAULT, '$uid', '$number', $extension);";
 
 			$result = pg_query($link, $query) or die('Query failed: ' . pg_result_error());
 

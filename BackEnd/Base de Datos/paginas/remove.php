@@ -17,8 +17,6 @@
 	DELETE CATEGORY IDEA:	catid
 	DELETE STATE IDEA:		staid
 	DELETE IDEA:			idea
-	DELETE IND. TELEPHONE:	indtel
-	DELETE ORD. TELEPHONE:	orgtel
 	DELETE BOOKMARK:		book
 
 	*/
@@ -117,54 +115,6 @@
 			$link = OpenConUser("e");
 
 			$query = "DELETE FROM idea WHERE iid = $iid";
-
-			$result = pg_query($link, $query) or die('Query failed: ' . pg_result_error());
-
-			if ($result)
-			{
-				$json = array('status' => 1);
-				echo json_encode($json);
-			}
-			else
-			{
-				$json = array('status' => 0);
-				echo json_encode($json);
-			}
-
-			CloseCon($link);
-			break;
-
-		//---- DELETE IND. TELEPHONE ----//
-		case 'indtel':
-			$tid = $_POST["tid"];
-
-			$link = OpenConUser("u");
-
-			$query = "DELETE FROM telephoneind WHERE tid= $tid;";
-
-			$result = pg_query($link, $query) or die('Query failed: ' . pg_result_error());
-
-			if ($result)
-			{
-				$json = array('status' => 1);
-				echo json_encode($json);
-			}
-			else
-			{
-				$json = array('status' => 0);
-				echo json_encode($json);
-			}
-
-			CloseCon($link);
-			break;
-
-		//---- DELETE ORG. TELEPHONE ----//
-		case 'orgtel':
-			$tid = $_POST["tid"];
-
-			$link = OpenConUser("u");
-
-			$query = "DELETE FROM telephoneorg WHERE tid = $tid;";
 
 			$result = pg_query($link, $query) or die('Query failed: ' . pg_result_error());
 
