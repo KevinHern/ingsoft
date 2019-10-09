@@ -7,7 +7,7 @@ import Container from "reactstrap/es/Container";
 import { BrowserRouter as Router, Route,} from 'react-router-dom';
 import Paginator from "../Paginator";
 import { FaSearch } from 'react-icons/fa';
-import Create from './create';
+import CreateIdea  from './create';
 import Desc from './desc';
 import List from "./List";
 
@@ -140,6 +140,6 @@ class ListIdea extends Component {
     }
 }
 
-export {Create, ListIdea, Desc};
+export {CreateIdea, ListIdea, Desc};
 
             /* {(props.create)? } */

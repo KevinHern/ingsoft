@@ -6,6 +6,7 @@ import Input from "reactstrap/es/Input";
 import React, {Component} from "react";
 import {withRouter} from "react-router-dom";
 import * as ROUTES from '../../Constants/routes';
+import Container from "reactstrap/es/Container";
 
 //Missing phone field
 class OrganForm extends Component {
@@ -266,14 +267,22 @@ class IndForm extends Component {
     onChange = event => {
         if(event.target.name === 'e1' | event.target.name === 'f1'){
             this.modifyRole(event.target);
-        }else {
+        }else if(event.target.name === 'addPhone' ){
+
+        }else{
             this.setState({ [event.target.name]: event.target.value});
         }
         // console.log(this.state);
     };
 
     addExtra = () => {
-        this.setState()
+        let {phone} = this.state;
+        phone.join("");
+        this.setState({phone});
+    };
+
+    removeExtra = () => {
+
     };
 
 
@@ -353,12 +362,29 @@ class IndForm extends Component {
                         </Col>
                     </Row>
                     <Row form className={"mt-5 ml-3"}>
-                        <FormGroup row className={"justify-content-md-center mt-3"}>
-                            <Label sm={2} for="phone">Numero Telefonico</Label>
-                            <Col sm={5}>
-                                <Input name="phone" type={"text"} id="phone" onChange = {this.onChange} required/>
+                        <FormGroup row>
+                            <Label sm={2} for="phone" className={"mr-5"}>Numero Telefonico</Label>
+                            <Col sm={9}>
+                                <Container>
+                                    <Row>
+                                        <Col sm={6}>
+                                        <Input name="phone" type={"text"} id="phone" onChange = {this.onChange} required/>
+                                        </Col>
+                                        <Col sm={6}>
+                                            <Button  onClick={this.addExtra}>Extra Phone</Button>
+                                        </Col>
+                                    </Row>
+
+                                    <Row className={"mt-2"}>
+                                        <Col sm={6}>
+                                        <Input name="phone" type={"text"} id="phone" onChange = {this.onChange} required/>
+                                        </Col>
+                                        <Col sm={6}>
+                                        <Button  onClick={this.removeExtra}>Remove Phone</Button>
+                                        </Col>
+                                    </Row>
+                                </Container>
                             </Col>
-                            <Button onClick={this.addExtra}>Extra Phone</Button>
                         </FormGroup>
                     </Row>
                     <Row form className={"mt-5 ml-3"}>

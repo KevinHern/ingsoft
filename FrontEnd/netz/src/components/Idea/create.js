@@ -6,7 +6,7 @@ import {Button, Col, CustomInput, Media, Row} from "reactstrap";
 import Input from "reactstrap/es/Input";
 import Container from "reactstrap/es/Container";
 
-class Create extends Component {
+class CreateIdea extends Component {
 
     constructor(props) {
         super(props);
@@ -69,4 +69,4 @@ class Create extends Component {
     }
 }
 
-export default Create;
+export default CreateIdea;
