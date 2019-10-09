@@ -36,24 +36,13 @@ Create Table Organization(
 	Foreign Key(oid) References Users(uid) ON DELETE CASCADE
 );
 
-Create Table TelephoneInd(
-	tid serial,
+Create Table Telephone(
 	uid varchar(30),
 	number varchar(12),
 	extension int,
 
-	Primary Key(tid),
-	Foreign Key(uid) References Individual(inid) ON DELETE CASCADE
-);
-
-Create Table TelephoneOrg(
-	tid serial,
-	oid varchar(30),
-	number varchar(12),
-	extension int,
-
-	Primary Key(tid),
-	Foreign Key(oid) References Organization(oid) ON DELETE CASCADE
+	Primary Key(extension, number),
+	Foreign Key(uid) References Users(uid) ON DELETE CASCADE
 );
 
 Create Table CategoryIdea(
@@ -154,26 +143,24 @@ ALTER ROLE admin WITH SUPERUSER;
 --- Ordinary User ---
 CREATE ROLE orduser LOGIN password 'netzorduser';
 GRANT CONNECT ON DATABASE "NetZ" to orduser;
-GRANT SELECT, INSERT, UPDATE, DELETE ON users, individual, organization, telephoneind, telephoneorg TO orduser;
+GRANT SELECT, INSERT, UPDATE, DELETE ON users, individual, organization, telephone TO orduser;
 GRANT USAGE, SELECT ON SEQUENCE users_folderid_seq to orduser;
-GRANT USAGE, SELECT ON SEQUENCE telephoneind_tid_seq to orduser;
-GRANT USAGE, SELECT ON SEQUENCE telephoneorg_tid_seq to orduser;
 
 --- Entrepreneur ---
 CREATE ROLE entrepreneur LOGIN password 'netzentrepreneur';
 GRANT CONNECT ON DATABASE "NetZ" to entrepreneur;
-GRANT SELECT, INSERT, UPDATE, DELETE ON users, individual, organization, telephoneind, telephoneorg, idea TO entrepreneur;
+GRANT SELECT, INSERT, UPDATE, DELETE ON users, individual, organization, telephone, idea TO entrepreneur;
 GRANT SELECT ON categoryidea, stateidea, finBook TO entrepreneur;
 GRANT USAGE, SELECT ON SEQUENCE idea_iid_seq to entrepreneur;
 
 --- Financist ---
 CREATE ROLE financist LOGIN password 'netzfinancist';
 GRANT CONNECT ON DATABASE "NetZ" to financist;
-GRANT SELECT, INSERT, UPDATE, DELETE ON users, individual, organization, telephoneind, telephoneorg, finBook TO financist;
+GRANT SELECT, INSERT, UPDATE, DELETE ON users, individual, organization, telephone, finBook TO financist;
 GRANT SELECT ON idea, categoryidea, stateidea TO financist;
 
 --- Resource Business Guy ---
 CREATE ROLE resource LOGIN password 'netzresource';
 GRANT CONNECT ON DATABASE "NetZ" to resource;
-GRANT SELECT, INSERT, UPDATE, DELETE ON users, individual, organization, telephoneind, telephoneorg, resgive, resget TO resource;
+GRANT SELECT, INSERT, UPDATE, DELETE ON users, individual, organization, telephone, resgive, resget TO resource;
 GRANT SELECT ON categoryres TO resource;
