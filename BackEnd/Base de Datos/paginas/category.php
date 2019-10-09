@@ -1,5 +1,12 @@
 <?php
+	//Libraries
 	include 'connection.php';
+
+	/*
+	$json = file_get_contents('php://input');
+	//Converts it into a PHP object
+    $_POST = json_decode($json, true);
+    */
 	/*
 	INPUTS:
 	None
@@ -20,7 +27,7 @@
 
 	$result = pg_query($link, $query) or die('Query failed: ' . pg_result_error());
 
-	$categories = array();
+	$categories = array("status" => 1);
 
 	$i = 0;
 
