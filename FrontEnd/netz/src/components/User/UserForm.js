@@ -7,6 +7,7 @@ import React, {Component} from "react";
 import {withRouter} from "react-router-dom";
 import * as ROUTES from '../../Constants/routes';
 import Container from "reactstrap/es/Container";
+import PhoneItem from "./PhoneItem";
 
 //Missing phone field
 class OrganForm extends Component {
@@ -209,7 +210,7 @@ class IndForm extends Component {
             last1: '',
             role: 0,
             error: false,
-            phone: [],
+            phoneList: [""],
         };
         this._handleImageChange= this._handleImageChange.bind(this);
         this.modifyRole = this.modifyRole.bind(this);
@@ -240,6 +241,8 @@ class IndForm extends Component {
         }
 
         console.log(data['role']);
+
+        //When you are ready to send phones make sure you won't send empty strings or duplicate phone numbers
         try{
             const promisedToken =  await this.props.token();
             const [axiosRequest, fireStoreRequest] = await Promise.all([this.props.serverData(formData, promisedToken),
@@ -267,8 +270,12 @@ class IndForm extends Component {
     onChange = event => {
         if(event.target.name === 'e1' | event.target.name === 'f1'){
             this.modifyRole(event.target);
-        }else if(event.target.name === 'addPhone' ){
-
+        }else if(event.target.name === 'phone' ){
+           let {phoneList} = this.state;
+            let index = event.target.dataset['phone'];
+            console.log(phoneList);
+            phoneList[index]= event.target.value;
+            this.setState({phoneList});
         }else{
             this.setState({ [event.target.name]: event.target.value});
         }
@@ -276,13 +283,18 @@ class IndForm extends Component {
     };
 
     addExtra = () => {
-        let {phone} = this.state;
-        phone.join("");
-        this.setState({phone});
+        let {phoneList} = this.state;
+        phoneList.push("");
+        // console.log(phoneList);
+        this.setState({phoneList});
     };
 
-    removeExtra = () => {
-
+    removeExtra = (index) => {
+        let {phoneList} = this.state;
+        console.log(index);
+        console.log(phoneList.splice(index, 1));
+        console.log(phoneList);
+        this.setState({phoneList});
     };
 
 
@@ -305,6 +317,15 @@ class IndForm extends Component {
     render() {
         const {imagePreviewUrl} = this.state;
         const {error} = this.state;
+        let {phoneList} = this.state;
+        phoneList = phoneList.map((phone, index) => {
+                if(index === 0) {
+                    return <div  key = {index}></div>;
+                }else{
+                    return <PhoneItem key = {index} phone = {phone} idPhone = {index} changePhone = {this.onChange} removePhone = {this.removeExtra}/>
+                }
+            }
+        );
         return (
             <React.Fragment>
                 {(error)? <Alert color={"danger"}>{error}</Alert>: null}
@@ -368,21 +389,15 @@ class IndForm extends Component {
                                 <Container>
                                     <Row>
                                         <Col sm={6}>
-                                        <Input name="phone" type={"text"} id="phone" onChange = {this.onChange} required/>
+                                        <Input name="phone" type={"text"} id="phone" data-phone = {0} onChange = {this.onChange} required/>
                                         </Col>
                                         <Col sm={6}>
                                             <Button  onClick={this.addExtra}>Extra Phone</Button>
                                         </Col>
                                     </Row>
-
-                                    <Row className={"mt-2"}>
-                                        <Col sm={6}>
-                                        <Input name="phone" type={"text"} id="phone" onChange = {this.onChange} required/>
-                                        </Col>
-                                        <Col sm={6}>
-                                        <Button  onClick={this.removeExtra}>Remove Phone</Button>
-                                        </Col>
-                                    </Row>
+                                    {
+                                        phoneList
+                                    }
                                 </Container>
                             </Col>
                         </FormGroup>
