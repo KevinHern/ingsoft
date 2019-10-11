@@ -5,6 +5,7 @@ import Form from "reactstrap/es/Form";
 import Container from "reactstrap/es/Container";
 import axios from 'axios';
 import {GETUSER} from "../../Constants/Endpoint";
+import * as ROUTES from "../../Constants/routes";
 
 
 class OverviewInd extends Component {
@@ -12,57 +13,56 @@ class OverviewInd extends Component {
     constructor(props){
         super(props);
         this.state= {
-            name: 'Jose',
-            lastName: 'Jimenez',
-            nat: 'Guatemala',
-            birth: '02/09/2018',
-            bio: 'adfa',
-            org: 'asdfa',
+            firstname: '',
+            lastname: '',
+            nationality: '',
+            birthdate: '',
+            biography: '',
+            organization: '',
+            role: null,
+            email: '',
             fetched: false
         };
         // this.handleSubmit = this.handleSubmit.bind(this);
     }
 
 
-    componentDidUpdate(prevProps, prevState, snapshot) {
-        // console.log(prevProps);
-        // console.log('here');
-        const {fireBase} = this.props;
-        const {fetched} = this.state;
-        if(!fetched){
-            fireBase.token().then((response) => {
-                console.log(response);
-                axios({
-                    method: 'POST',
-                    url: GETUSER,
-                    data: {uid: response},
-                    headers: {'Content-Type': 'application/json'}
-                }).then((response) => {
-                    console.log(response.data);
-                    // this.set
-                    this.setState({fetched:true})
-                });
-            })
-        }
-    }
+    // componentDidUpdate(prevProps, prevState, snapshot) {
+    //     const {fireBase} = this.props;
+    //     const {fetched} = this.state;
+    //     if(!fetched){
+    //         fireBase.token().then((response) => {
+    //             console.log(response);
+    //             axios({
+    //                 method: 'POST',
+    //                 url: GETUSER,
+    //                 data: {uid: response},
+    //                 headers: {'Content-Type': 'application/json'}
+    //             }).then((response) => {
+    //                 console.log(response.data);
+    //                 this.setState({...response.data,  fetched:true})
+    //             });
+    //         })
+    //     }
+    // }
 
     componentDidMount() {
-        const {fireBase} = this.props;
-        const {authUser} = this.props;
-        console.log(fireBase);
-        if(authUser != null) {
-            fireBase.token().then((response) => {
-                axios({
-                    method: 'POST',
-                    url: GETUSER,
-                    data: {uid: response},
-                    headers: {'Content-Type': 'application/json'}
-                }).then((response) => {
-                    console.log(response.data);
-                });
-
-            })
-        }
+        // const {fireBase} = this.props;
+        // // const {authUser} = this.props;
+        // console.log(fireBase);
+        // if(authUser != null) {
+        //     fireBase.token().then((response) => {
+        //         axios({
+        //             method: 'POST',
+        //             url: GETUSER,
+        //             data: {uid: response},
+        //             headers: {'Content-Type': 'application/json'}
+        //         }).then((response) => {
+        //             console.log(response.data);
+        //         });
+        //
+        //     })
+        // }
     }
 
     // handleSubmit(e) {
@@ -70,48 +70,39 @@ class OverviewInd extends Component {
     //     console.log(e.target);
     // };
 
+    route = (goTo) =>{
+        this.props.history.push(goTo);
+    };
+
 
     render() {
-        const {name, lastName, nat, birth, bio, org} = this.state;
+        const {firstname, lastname, nationality, birthdate, biography, organization} = this.props;
         // const {authUser} = this.props;
-
         return (
             <React.Fragment>
                 <Row>
                     <Col md={"12"}>
                         <ButtonToolbar className={"justify-content-end"}>
                             <ButtonGroup>
-                                <Button color={"info"}>Principal</Button>
-                                <Button color={"info"}>Listar Ideas</Button>
+                                <Button color={"info"} onClick={()  => {this.route(ROUTES.HOME)}}>Principal</Button>
+                                <Button color={"info"} onClick={() => {this.route(ROUTES.LISTIDEA)}}>Listar Ideas</Button>
                             </ButtonGroup>
                         </ButtonToolbar>
                     </Col>
                 </Row>
                 <Row>
-                    <Col sm={{ size: 'auto', offset: 3 }}>
-                        <Container className={"justify-content-center"} >
-                            <Row> Primer Nombre</Row>
-                            <Row> {name}</Row>
-                        </Container>
+                    <Col sm={{ size: 6, offset: 3 }}>
+                             Primer Nombre
                     </Col>
-                    <Col sm={{ size: 'auto', offset: 3 }}>
-                        <Container className={"justify-content-center"} >
-                            <Row>Segundo Nombre</Row>
-                            <Row> {name}</Row>
-                        </Container>
+                    <Col sm={{ size: 6, offset: 3 }}>
+                            {firstname}
                     </Col>
                 </Row>
                 <Row>
                     <Col sm={{ size: 'auto', offset: 3 }}>
                         <Container className={"justify-content-center"} >
                             <Row>Primer Apellido</Row>
-                            <Row> {lastName}</Row>
-                        </Container>
-                    </Col>
-                    <Col sm={{ size: 'auto', offset: 3 }}>
-                        <Container className={"justify-content-center"} >
-                            <Row>Segundo Apellido</Row>
-                            <Row> {lastName}</Row>
+                            <Row> {lastname}</Row>
                         </Container>
                     </Col>
                 </Row>
@@ -119,7 +110,7 @@ class OverviewInd extends Component {
                     <Col sm={{ size: 'auto', offset: 3 }}>
                         <Container className={"justify-content-center"} >
                             <Row>Nacionalidad</Row>
-                            <Row> {nat}</Row>
+                            <Row> {nationality}</Row>
                         </Container>
                     </Col>
                 </Row>
@@ -127,7 +118,7 @@ class OverviewInd extends Component {
                     <Col sm={{ size: 'auto', offset: 3 }}>
                         <Container className={"justify-content-center"} >
                             <Row>Fecha de Nacimiento</Row>
-                            <Row> {birth}</Row>
+                            <Row> {birthdate}</Row>
                         </Container>
                     </Col>
                 </Row>
@@ -135,16 +126,16 @@ class OverviewInd extends Component {
                     <Col sm={{ size: 'auto', offset: 3 }}>
                         <Container className={"justify-content-center"} >
                             <Row>Biografia</Row>
-                            <Row> {bio}</Row>
+                            <Row> {biography}</Row>
                         </Container>
                     </Col>
                 </Row>
                 {
-                    (org)? <Row>
+                    (organization)? <Row>
                         <Col sm={{ size: 'auto', offset: 3 }}>
                             <Container className={"justify-content-center"} >
                                 <Row>Organización afiliada</Row>
-                                <Row> {org}</Row>
+                                <Row> {organization}</Row>
                             </Container>
                         </Col>
                     </Row>: null

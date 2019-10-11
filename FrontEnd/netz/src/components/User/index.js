@@ -1,5 +1,7 @@
 import React, {Component} from 'react';
 import OverViewInd  from './overviewInd'
+import OverViewOrg from './overviewOrg';
+import UpdateFieldCom from './updateField';
 import {withAuthorization} from '../Session'
 import {withAuthorization2} from '../Session';
 /*
@@ -9,7 +11,7 @@ import {withAuthorization2} from '../Session';
  */
 import classnames from 'classnames';
 import {Organizacion, Individual} from './UserForm';
-import {INSERT} from "../../Constants/Endpoint";
+import {GETUSER, INSERT} from "../../Constants/Endpoint";
 import withAuthentication from '../Session/withAuthentication';
 
 
@@ -124,11 +126,58 @@ class TabConfigManager extends Component {
     }
 }
 
+
+
+class OverViewManager extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            fetched: false,
+
+        };
+    }
+
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        // console.log(prevProps);
+        // console.log('here');
+        const {fireBase} = this.props;
+        const {fetched} = this.state;
+        if(!fetched){
+            fireBase.token().then((response) => {
+                console.log(response);
+                axios({
+                    method: 'POST',
+                    url: GETUSER,
+                    data: {uid: response},
+                    headers: {'Content-Type': 'application/json'}
+                }).then((response) => {
+                    console.log(response.data);
+                    this.setState({...response.data,  fetched:true})
+                });
+            })
+        }
+    }
+
+
+    render() {
+        const {fetched, userType} = this.state;
+        console.log(userType);
+        return (
+            (fetched)? (userType)? <OverViewInd {... this.state}/>:<OverViewOrg {... this.state}/> : null
+        );
+    }
+}
+
+
+
+
+
 const condition = (role) => role === undefined | role === 0;
 // const TabConfig = withAuthorization2(condition)(TabConfigManager);
 const TabConfig = withAuthentication(TabConfigManager);
-const  OverView = withAuthentication(OverViewInd);
-export {TabConfig, OverView};
+const  OverView = withAuthentication(OverViewManager);
+const UpdateField = withAuthentication(UpdateFieldCom);
+export {TabConfig, OverView, UpdateField};
 
 
 
