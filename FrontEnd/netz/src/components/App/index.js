@@ -30,7 +30,7 @@ const App = () => {
                             <Route path={ROUTES.UCONFIG} component = {TabConfig}/>
                             <Route path={ROUTES.CREATEIDEA} component = {CreateIdea}/>
                             <Route path={ROUTES.OVERVIEW} component = {OverView}/>
-                            <Route path={ROUTES.LISTIDEA} component = {ListIdea}/>
+                            <Route path={ROUTES.LISTIDEA+'/:newIdea?'} component = {ListIdea}/>
                             <Route path={ROUTES.DESCIDEA} component = {Desc}/>
                         <Footer/>
             </Router>

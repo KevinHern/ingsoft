@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import OverView from './overviewInd'
+import OverViewInd  from './overviewInd'
 import {withAuthorization} from '../Session'
 import {withAuthorization2} from '../Session';
 /*
@@ -10,6 +10,7 @@ import {withAuthorization2} from '../Session';
 import classnames from 'classnames';
 import {Organizacion, Individual} from './UserForm';
 import {INSERT} from "../../Constants/Endpoint";
+import withAuthentication from '../Session/withAuthentication';
 
 
 import {TabContent, TabPane, Nav, NavItem, NavLink} from 'reactstrap'
@@ -125,7 +126,8 @@ class TabConfigManager extends Component {
 
 const condition = (role) => role === undefined | role === 0;
 // const TabConfig = withAuthorization2(condition)(TabConfigManager);
-const TabConfig = TabConfigManager;
+const TabConfig = withAuthentication(TabConfigManager);
+const  OverView = withAuthentication(OverViewInd);
 export {TabConfig, OverView};
 
 

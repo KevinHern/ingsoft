@@ -69,7 +69,7 @@ class CreateIdeaCom extends Component {
         }).then(response => {
             console.log(response.data);
             if(response.data['status']){
-                this.props.history.push('/listidea');
+                this.props.history.push('/listidea/new');
             }else{
                 console.log('error en el servidor');
             }
