@@ -1,19 +1,10 @@
 <?php
 	//Libraries
-    include_once 'Permission.php';
 	include 'connection.php';
 	include 'imgdirectory.php';
-	include_once 'getSub.php';
-    permission();
-//    Won't be need, using formdata not a json
-//    $json = file_get_contents('php://input');
-//     Converts it into a PHP object
-//    $_POST = json_decode($json, true);
-//    $option =  $us['option'];
+
+
 	$option = $_POST["option"];
-    http_response_code(200);
-    header("Content-type: application/json");
-//    echo  "desc" .$_POST["desc"];
 
 	//----- AGREEMENT -----//
 	/*
@@ -26,8 +17,6 @@
 	REGISTER CATEGORY IDEA:		catid
 	REGISTER STATE IDEA:		staid
 	REGISTER IDEA:				idea
-	REGISTER IND. TELEPHONE:	indtel
-	REGISTER ORD. TELEPHONE:	orgtel
 	REGISTER BOOKMARK:			book
 
 	*/
@@ -44,12 +33,10 @@
 		case 'user':
 			/*
 			INPUTS:
-			1. Entrepreneur's ID
-			2. Entrepreneur's email
-			3. Entrepreneur's password
-			4. Entrepreneur's role
-			5. Entrepreneur's folder id
-			6. User's role
+			1. User's ID
+			2. User's email
+			3. User's password
+			4. User's role
 
 			------------
 
@@ -57,7 +44,7 @@
 			1. Status: 1 if success, 0 otherwise
 			*/
 
-			$uid = getUid($_POST['uid']);
+			$uid = $_POST["uid"];
 			$email = $_POST["email"];
 			$password = $_POST["password"];
 			$role = $_POST["role"];
@@ -78,7 +65,7 @@
 				$json = array('status' => 0);
 				echo json_encode($json);
 			}
-
+			
 			CloseCon($link);
 			break;
 
@@ -101,14 +88,13 @@
 			1. Status: 1 if success, 0 otherwise
 			*/
 
-			$uid = getUid($_POST['uid']);
-			$firstname = $_POST["name1"];
-			$lastname = $_POST["last1"];
-			$nationality = $_POST["nat"];
-			$biography = $_POST["bio"];
+			$uid = $_POST["uid"];
+			$firstname = $_POST["firstName"];
+			$lastname = $_POST["lastName"];
+			$nationality = $_POST["nationality"];
+			$biography = $_POST["biography"];
 			$org = $_POST["org"];
-			$birthdate = $_POST["birth"];
-            $role = $_POST["role"];
+			$birthdate = $_POST["birthdate"];
 
 			$link = OpenConUser("u");
 
@@ -144,7 +130,7 @@
 
 			CloseCon($link);
 			break;
-
+		
 		//---- REGISTER ORGANIZATION ----//
 		case 'org':
 			/*
@@ -163,12 +149,11 @@
 
 			*/
 
-			$uid = getUid($_POST['uid']);
+			$uid = $_POST["uid"];
 			$name = $_POST["name"];
-			$description = $_POST["desc"];
+			$description = $_POST["description"];
 			$country = $_POST["country"];
-			$location = $_POST["addr"];
-			$role = $_POST["role"];
+			$location = $_POST["location"];
 
 			$link = OpenConUser("u");
 
@@ -289,7 +274,7 @@
 
 			*/
 
-			$uid = getUid($_POST['uid']);
+			$uid = $_POST["uid"];
 			$cantInt = 0;
 			$title = $_POST["title"];
 			$description = $_POST["description"];
@@ -299,85 +284,6 @@
 			$link = OpenConUser("e");
 
 			$query = "INSERT INTO idea VALUES(DEFAULT, '$uid', $cantInt, '$title','$description', $category, $state);";
-
-			$result = pg_query($link, $query) or die('Query failed: ' . pg_result_error());
-
-			if ($result)
-			{
-				$json = array('status' => 1);
-				echo json_encode($json);
-			}
-			else
-			{
-				$json = array('status' => 0);
-				echo json_encode($json);
-			}
-
-			CloseCon($link);
-			break;
-
-		//---- REGISTER IND. TELEPHONE ----//
-		case 'indtel':
-			/*
-			INPUTS:
-			1. User's ID
-			2. Telephone number
-			3. Number extension
-
-			------------
-
-			OUTPUTS:
-			1. Status: 1 if success, 0 otherwise
-
-			*/
-
-			$uid = getUid($_POST['uid']);
-			$number = $_POST["number"];
-			$extension = $_POST["extension"];
-
-			$link = OpenConUser("u");
-
-			$query = "INSERT INTO telephoneind VALUES(DEFAULT, '$uid', '$number', $extension);";
-
-			$result = pg_query($link, $query) or die('Query failed: ' . pg_result_error());
-
-			if ($result)
-			{
-				$json = array('status' => 1);
-				echo json_encode($json);
-			}
-			else
-			{
-				$json = array('status' => 0);
-				echo json_encode($json);
-			}
-
-			CloseCon($link);
-			break;
-
-		//---- REGISTER ORG. TELEPHONE ----//
-		case 'orgtel':
-			/*
-			INPUTS:
-			1. User's ID
-			2. Telephone number
-			3. Number extension
-
-			------------
-
-			OUTPUTS:
-			1. Status: 1 if success, 0 otherwise
-
-			*/
-
-			$uid = getUid($_POST['uid']);
-
-			$number = $_POST["number"];
-			$extension = $_POST["extension"];
-
-			$link = OpenConUser("u");
-
-			$query = "INSERT INTO telephoneorg VALUES(DEFAULT, '$uid', '$number', $extension);";
 
 			$result = pg_query($link, $query) or die('Query failed: ' . pg_result_error());
 

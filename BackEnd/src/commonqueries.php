@@ -34,7 +34,7 @@
 
 			$temp = array($name, $id);
 
-			array_push($array, $temp);
+			array_push($array, $temp)
 		}
 
 		CloseCon($link);
