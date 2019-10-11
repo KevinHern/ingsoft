@@ -21,7 +21,7 @@
 	$link = OpenConUser("u");
 
 	$number = $_POST["number"];
-	$ext = $_POST["ext"];
+	$ext = $_POST["extension"];
 	$uid = $_POST["uid"];
 
 	try

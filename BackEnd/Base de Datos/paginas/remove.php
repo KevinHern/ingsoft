@@ -14,8 +14,6 @@
 	-- Values that $option can take: --
 
 	DELETE ACCOUNT: 		acc
-	DELETE CATEGORY IDEA:	catid
-	DELETE STATE IDEA:		staid
 	DELETE IDEA:			idea
 	DELETE BOOKMARK:		book
 
@@ -57,54 +55,6 @@
 				echo json_encode($json);
 			}
 			
-			CloseCon($link);
-			break;
-
-		//---- DELETE CATEGORY IDEA ----//
-		case 'catid':
-			$id = $_POST["id"];
-
-			$link = OpenConAdmin();
-
-			$query = "DELETE FROM categoryidea WHERE id = $id;";
-
-			$result = pg_query($link, $query) or die('Query failed: ' . pg_result_error());
-
-			if ($result)
-			{
-				$json = array('status' => 1);
-				echo json_encode($json);
-			}
-			else
-			{
-				$json = array('status' => 0);
-				echo json_encode($json);
-			}
-
-			CloseCon($link);
-			break;
-
-		//---- DELETE STATE IDEA ----//
-		case 'staid':
-			$id = $_POST["id"];
-
-			$link = OpenConAdmin();
-
-			$query = "DELETE FROM stateidea WHERE id = $id;";
-
-			$result = pg_query($link, $query) or die('Query failed: ' . pg_result_error());
-
-			if ($result)
-			{
-				$json = array('status' => 1);
-				echo json_encode($json);
-			}
-			else
-			{
-				$json = array('status' => 0);
-				echo json_encode($json);
-			}
-
 			CloseCon($link);
 			break;
 

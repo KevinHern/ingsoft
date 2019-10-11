@@ -2,9 +2,9 @@
 	//Libraries
 	include 'connection.php';
 
-	//$json = file_get_contents('php://input');
+	$json = file_get_contents('php://input');
 	//Converts it into a PHP object
-    //$_POST = json_decode($json, true);
+    $_POST = json_decode($json, true);
 
 
 	$option = $_POST["option"];

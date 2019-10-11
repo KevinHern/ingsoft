@@ -30,7 +30,7 @@
 		foreach ($_POST["phone"] as $phone)
 		{
 			$number = $phone["number"];
-			$ext = $phone["ext"];
+			$ext = $phone["extension"];
 			$query = "INSERT INTO telephone VALUES('$uid', '$number', $ext);";
 			$result = pg_query($link, $query);
 		}

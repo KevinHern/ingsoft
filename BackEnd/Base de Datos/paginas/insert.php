@@ -33,12 +33,10 @@
 		case 'user':
 			/*
 			INPUTS:
-			1. Entrepreneur's ID
-			2. Entrepreneur's email
-			3. Entrepreneur's password
-			4. Entrepreneur's role
-			5. Entrepreneur's folder id
-			6. User's role
+			1. User's ID
+			2. User's email
+			3. User's password
+			4. User's role
 
 			------------
 
