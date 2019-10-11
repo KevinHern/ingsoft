@@ -1,6 +1,8 @@
 <?php
 	//Libraries
 	include '../connection.php';
+	include '../getSub';
+	permission();
 
 	/*
 	$json = file_get_contents('php://input');
@@ -20,7 +22,7 @@
 	1. Status: 1 if success, 0 otherwise
 	*/
 	$link = OpenConUser("u");
-	$uid = $_POST["uid"];
+	$uid = getUid($_POST["uid"]);
 
 	try
 	{

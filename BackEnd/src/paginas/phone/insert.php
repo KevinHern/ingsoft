@@ -1,7 +1,8 @@
 <?php
 	//Libraries
 	include '../connection.php';
-
+	include '../getSub.php';
+	permission();
 	
 	$json = file_get_contents('php://input');
 	//Converts it into a PHP object
@@ -22,7 +23,7 @@
 
 	$number = $_POST["number"];
 	$ext = $_POST["ext"];
-	$uid = $_POST["uid"];
+	$uid = getUid($_POST["uid"]);
 
 	try
 	{

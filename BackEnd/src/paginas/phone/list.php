@@ -1,7 +1,8 @@
 <?php
 	//Libraries
 	include '../connection.php';
-
+	include '../getSub.php';
+	permission();
 	/*
 	$json = file_get_contents('php://input');
 	//Converts it into a PHP object
@@ -22,7 +23,7 @@
 
 	$link = OpenConUser("u");
 
-	$uid = $_POST["uid"];
+	$uid = getUid($_POST["uid"]);
 	$phones = array('status' => 0);
 	try
 	{
@@ -35,7 +36,7 @@
 			$number = $line["number"];
 			$extension = $line["extension"];
 
-			$temp1 = array("number" => $number, "extension" => $extension);
+			$temp1 = array("number" => $number, "extension" => ((int)$extension));
 
 			$temp2 = array("phone$i" => $temp1);
 			$i = $i + 1;

@@ -1,6 +1,8 @@
 <?php
 	//Libraries
 	include '../connection.php';
+	include '../getSub.php';
+	permission();
 
 	/*
 	$json = file_get_contents('php://input');
@@ -22,7 +24,7 @@
 
 	$number = $_POST["number"];
 	$ext = $_POST["extension"];
-	$uid = $_POST["uid"];
+	$uid = getUid($_POST["uid"]);
 
 	try
 	{
