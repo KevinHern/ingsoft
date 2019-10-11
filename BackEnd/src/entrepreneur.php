@@ -168,7 +168,7 @@
 			$sname = $line["sname"];
 			$cantint = $line["cantint"];
 
-			$idea = array("status" => -1, "title" => $title, "description" => $description, "category" => $cname, "state" => $sname, "interested" => $cantint);
+			$idea = array("status" => -1, "title" => $title, "description" => $description, "category" => $cname, "state" => $sname, "interested" => ((int)$cantint));
 
 			//----- Extract Financists that are interested -----//
 
@@ -185,11 +185,11 @@
 			
 			if($total == 0)
 			{
-				$idea["status"] = 2;
+				$idea["status"] = 1;
 			}
 			else if ($tempres > $total)
 			{
-				$idea["status"] = 2;
+				$idea["status"] = 1;
 			}
 			else
 			{
@@ -206,6 +206,7 @@
 					$temp = array();
 					$type = $line["type"];
 					$utemp = $line["uid"];
+					$temp = array("uid" => $utemp, "type" => ((int)$type));
 
 					if ($type == 1)
 					{
@@ -218,7 +219,8 @@
 						$firstName = $line1["firstName"];
 						$lastName = $line1["lastName"];
 
-						$temp = array("uid" => $utemp, "type" => $type, "fname" => $firstName, "lname" => $lastName);
+						$t = array("firstname" => $firstName, "lastname" => $lastName);
+						$temp = array_merge($temp, $t);
 					}
 					else
 					{
@@ -230,10 +232,11 @@
 
 						$name = $line1["name"];
 
-						$temp = array("uid" => $utemp, "type" => $type, "fname" => $name);
+						$t = array("name" => $name);
+						$temp = array_merge($temp, $t);
 					}
 
-					$temp = array("f$i" => $temp);
+					$temp = array("financist$i" => $temp);
 
 					$idea = array_merge($idea, $temp);
 
