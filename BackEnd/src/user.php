@@ -25,10 +25,9 @@
 	$password = $line["password"];
 	$role = $line["role"];
 	$type = $line["type"];
-
 	$info = array("status" => -1);
 
-	$user = array("email" => $email, "password" => $password, "role" =>  $role);
+	$user = array("email" => $email, "password" => $password, "role" =>  $role, "userType" => ((int)$type));
 	
 	//----- INDIVIDUAL INFORMATION -----//
 	if ($type == 1)
