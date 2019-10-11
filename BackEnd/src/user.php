@@ -59,7 +59,7 @@
 			$birthdate = $line["birthdate"];
 			//$photo = $line["photo"];
 
-			$individual = array("fname" => $firstname, "lname" => $lastname, "nationality" => $nationality, "biography" => $biography, "organization" => $org, "birthdate" => $birthdate);
+			$individual = array("firstname" => $firstname, "lastname" => $lastname, "nationality" => $nationality, "biography" => $biography, "organization" => $org, "birthdate" => $birthdate);
 
 			$info = array_merge($info, $user, $individual);
 			$info["status"] = 1;

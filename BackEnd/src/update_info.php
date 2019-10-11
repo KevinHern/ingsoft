@@ -22,8 +22,6 @@
 	UPDATE USER INFORMATION: 		user
 	UPDATE INDIVIDUAL: 				ind
 	UPDATE ORGANIZATION:			org
-	UPDATE TELEPHONE INDIVIDUAL:	telind
-	UPDATE TELEPHONE ORGANIZATION:	telorg
 	UPDATE IDEA:					idea
 	UPDATE CATEGORY IDEA:			catid
 	UPDATE STATE IDEA:				staid
@@ -226,57 +224,6 @@
 			$field = MapTelephone($attr, $val);
 
 			$query = "UPDATE telephoneind SET $field WHERE tid = $tid;";
-			$json;
-			try
-			{
-				$result = pg_query($link, $query);
-				$json = array('status' => 1);
-				
-			}
-			catch (Exception $e)
-			{
-				$json = array('status' => 0, 'error' => $e);
-			}
-			finally
-			{
-				echo json_encode($json);
-			}
-			break;
-
-		//---------------------------------------//
-		//---- UPDATE ORGANIZATION TELEPHONE ----//
-		//---------------------------------------//
-		case 'telorg':
-			/*
-			INPUTS:
-			1. Telephone's ID
-			2. Field to modify
-			3. New field's Value
-
-			------------
-
-			OUTPUTS:
-			1. Status: 1 if success, 0 otherwise
-			*/
-
-			$attr = $_POST["attr"];		//Parameter that decides which table attribute must be updated
-			/*
-			-- Values that $attr can take: --
-			UPDATE NUMBER: 			n
-			UPDATE EXTENSION: 		e
-
-			*/
-		
-			$val = $_POST["val"];		//New value of the attribute
-
-			$link = OpenConUser("u");
-
-			//Extracts User ID
-			$tid = $_POST["tid"];
-
-			$field = MapTelephone($attr, $val);
-
-			$query = "UPDATE telephoneorg SET $field WHERE tid = $tid;";
 			$json;
 			try
 			{

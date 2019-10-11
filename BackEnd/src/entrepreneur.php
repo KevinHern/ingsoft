@@ -1,10 +1,11 @@
 <?php
 	//Libraries
 	include 'connection.php';
+	include '../src/'
 
-	$json = file_get_contents('php://input');
+	//$json = file_get_contents('php://input');
 	//Converts it into a PHP object
-    $_POST = json_decode($json, true);
+    //$_POST = json_decode($json, true);
 
 
 	$option = $_POST["option"];
@@ -56,18 +57,35 @@
 			$result = pg_query($link, $query);
 			$line = pg_fetch_array($result, NULL, PGSQL_ASSOC);
 
+			$ideas = array("status" => -1);
+
 			$total = $line["total"];
+			//$total = 0;
+			$maxpage = 0;
+			if(($total % $rows) == 0)
+			{
+				$maxpage = $total / $rows;
+			}	
+			else
+			{
+				$maxpage = intdiv($total, $rows) + 1;
+			}
+			$maxpage = array('maxpage' => $maxpage);
 
 			$tempres = ($page-1) * $rows;
 
-			$ideas = array("status" => -1);
-			if($total == 0)
-			{
-				$ideas["status"] = -1;
-			}
-			else if ($tempres > $total)
+			if ($total == 0)
 			{
 				$ideas["status"] = 0;
+				$msg = array('message' => "No existen ideas para esta categoria." );
+				$ideas = array_merge($ideas, $msg);
+
+			}
+			else if($tempres >= $total)
+			{
+				$ideas["status"] = 0;
+				$msg = array('message' => "No existe este numero de pagina de ideas." );
+				$ideas = array_merge($ideas, $msg);
 			}
 			else
 			{
@@ -78,19 +96,21 @@
 				$query = "SELECT iid, title FROM idea WHERE uid = '$uid' AND category = '$category' ORDER BY title";
 
 				$result = pg_query($link, $query);
-
+				$list = array();
 				while (($line = pg_fetch_array($result, NULL, PGSQL_ASSOC)) && ($i < $rows))
 				{
 					
 					$title = $line["title"];
 					$iid = $line["iid"];
 
-					$temp = array("title" => $title, "iid" => $iid);
+					$temp = array("iid" => ((int)$iid), "title" => $title);
 
-					$temp = array("i$i" => $temp);
-					$ideas = array_merge($ideas, $temp);
+					$temp = array("idea$i" => $temp);
+					$list = array_merge($list, $temp);
 					$i = $i + 1;
 				}
+				$list = array('ideas' => $list);
+				$ideas = array_merge($ideas, $maxpage, $list);
 				$ideas["status"] = 1;
 			}
 			
@@ -148,7 +168,7 @@
 			$sname = $line["sname"];
 			$cantint = $line["cantint"];
 
-			$idea = array("status" => -1, "title" => $title, "description" => $description, "category" => $cname, "state" => $sname, "interested" => $cantint);
+			$idea = array("status" => -1, "title" => $title, "description" => $description, "category" => $cname, "state" => $sname, "interested" => ((int)$cantint));
 
 			//----- Extract Financists that are interested -----//
 
@@ -165,11 +185,11 @@
 			
 			if($total == 0)
 			{
-				$idea["status"] = 2;
+				$idea["status"] = 1;
 			}
 			else if ($tempres > $total)
 			{
-				$idea["status"] = 2;
+				$idea["status"] = 1;
 			}
 			else
 			{
@@ -186,6 +206,7 @@
 					$temp = array();
 					$type = $line["type"];
 					$utemp = $line["uid"];
+					$temp = array("uid" => $utemp, "type" => ((int)$type));
 
 					if ($type == 1)
 					{
@@ -198,7 +219,8 @@
 						$firstName = $line1["firstName"];
 						$lastName = $line1["lastName"];
 
-						$temp = array("uid" => $utemp, "type" => $type, "fname" => $firstName, "lname" => $lastName);
+						$t = array("firstname" => $firstName, "lastname" => $lastName);
+						$temp = array_merge($temp, $t);
 					}
 					else
 					{
@@ -210,10 +232,11 @@
 
 						$name = $line1["name"];
 
-						$temp = array("uid" => $utemp, "type" => $type, "fname" => $name);
+						$t = array("name" => $name);
+						$temp = array_merge($temp, $t);
 					}
 
-					$temp = array("f$i" => $temp);
+					$temp = array("financist$i" => $temp);
 
 					$idea = array_merge($idea, $temp);
 
