@@ -4,6 +4,8 @@ import {Button, ButtonGroup, ButtonToolbar, Col, Row, FormGroup, Label, Input} f
 import Form from "reactstrap/es/Form";
 import Container from "reactstrap/es/Container";
 import axios from 'axios';
+import {GETUSER} from "../../Constants/Endpoint";
+
 
 class OverviewInd extends Component {
 
@@ -16,14 +18,51 @@ class OverviewInd extends Component {
             birth: '02/09/2018',
             bio: 'adfa',
             org: 'asdfa',
+            fetched: false
         };
         // this.handleSubmit = this.handleSubmit.bind(this);
     }
 
 
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        // console.log(prevProps);
+        // console.log('here');
+        const {fireBase} = this.props;
+        const {fetched} = this.state;
+        if(!fetched){
+            fireBase.token().then((response) => {
+                console.log(response);
+                axios({
+                    method: 'POST',
+                    url: GETUSER,
+                    data: {uid: response},
+                    headers: {'Content-Type': 'application/json'}
+                }).then((response) => {
+                    console.log(response.data);
+                    // this.set
+                    this.setState({fetched:true})
+                });
+            })
+        }
+    }
+
     componentDidMount() {
+        const {fireBase} = this.props;
+        const {authUser} = this.props;
+        console.log(fireBase);
+        if(authUser != null) {
+            fireBase.token().then((response) => {
+                axios({
+                    method: 'POST',
+                    url: GETUSER,
+                    data: {uid: response},
+                    headers: {'Content-Type': 'application/json'}
+                }).then((response) => {
+                    console.log(response.data);
+                });
 
-
+            })
+        }
     }
 
     // handleSubmit(e) {
@@ -34,6 +73,8 @@ class OverviewInd extends Component {
 
     render() {
         const {name, lastName, nat, birth, bio, org} = this.state;
+        // const {authUser} = this.props;
+
         return (
             <React.Fragment>
                 <Row>
@@ -41,6 +82,7 @@ class OverviewInd extends Component {
                         <ButtonToolbar className={"justify-content-end"}>
                             <ButtonGroup>
                                 <Button color={"info"}>Principal</Button>
+                                <Button color={"info"}>Listar Ideas</Button>
                             </ButtonGroup>
                         </ButtonToolbar>
                     </Col>

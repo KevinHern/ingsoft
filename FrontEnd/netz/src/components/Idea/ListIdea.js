@@ -1,10 +1,11 @@
-import {Button, ButtonGroup, ButtonToolbar, Col, Form, Row, Table} from "reactstrap";
+import {Alert, Button, ButtonGroup, ButtonToolbar, Col, Form, Row, Table} from "reactstrap";
 import FormGroup from "reactstrap/es/FormGroup";
 import Input from "reactstrap/es/Input";
 import List from "./List";
 import Paginator from "../Paginator";
 import React, {Component} from 'react';
 import {FaSearch} from "react-icons/fa";
+import * as ROUTES from '../../Constants/routes.js';
 
 
 class ListIdea extends Component {
@@ -17,7 +18,8 @@ class ListIdea extends Component {
             max: 5,
             search: '',
             perTag: 4,
-            perPage: 4
+            perPage: 4,
+            newIdea: false
         };
     }
 
@@ -35,6 +37,11 @@ class ListIdea extends Component {
         }else {
             this.setState({empty:true})
         }
+        const {newIdea} = this.props.match.params;
+        if(newIdea === 'new'){
+            this.setState({newIdea: true})
+        }
+        console.log(newIdea);
         // let max = 0;
         // this.setState({max})
     }
@@ -55,7 +62,7 @@ class ListIdea extends Component {
         e.preventDefault();
         console.log(move);
         const{max, perTag} = this.state;
-        let {initPage, currentPage} = this.state
+        let {initPage, currentPage} = this.state;
         //If we are at the first page don't try to go to the first group
         if(move === 'first'  && (initPage-1)) {
             initPage = initPage-perTag;
@@ -85,23 +92,35 @@ class ListIdea extends Component {
         this.setState({[e.target.name] : e.target.value});
     };
 
+    route = (goTo) => {
+        const{history} = this.props;
+        history.push(goTo);
+    };
+
 
     render() {
-        const{initPage, currentPage, max, perTag, empty} = this.state;
+        const{initPage, currentPage, max, perTag, empty, newIdea} = this.state;
         return (
             <React.Fragment>
                 <Row className={"justify-content-end"}>
                     <Col sm={4}>
                         <ButtonToolbar className={"justify-content-end"}>
                             <ButtonGroup>
-                                <Button color={"info"} onClick={() => {}}>Crear Idea</Button>
-                                <Button color={"info"}>Principal</Button>
-                                <Button color={"info"}>Cuenta</Button>
+                                <Button color={"info"} onClick={() => {this.route(ROUTES.CREATEIDEA)}}>Crear Idea</Button>
+                                <Button color={"info"}  onClick={() => {this.route(ROUTES.HOME)}}>Principal</Button>
+                                <Button color={"info"}  onClick={() => {this.route(ROUTES.OVERVIEW)}}>Cuenta</Button>
                             </ButtonGroup>
                         </ButtonToolbar>
                     </Col>
                 </Row>
-                <Row className={"justify-content-md-center mt-3"}>
+                {
+                    (newIdea) ? <Row className={"justify-content-md-center mt-3"}>
+                                    <Col sm={"12"}>
+                                        <Alert color={"success"}>Nueva Idea creada</Alert>
+                                    </Col>
+                                </Row>: null
+                }
+                <Row className={"justify-content-md-center mt-1"}>
                     <Table hover responsive={true} size={""}>
                         <thead>
                         <tr>

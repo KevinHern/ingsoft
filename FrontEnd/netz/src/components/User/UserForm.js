@@ -18,9 +18,9 @@ class OrganForm extends Component {
         this.state= {
             logo: '',
             name: '',
-            desc: "",
+            description: "",
             country: "",
-            addr: "",
+            location: "",
             role: 0,
             error:false,
             phone: "",
@@ -66,9 +66,9 @@ class OrganForm extends Component {
             const [axiosRequest, fireStoreRequest] = await Promise.all([this.props.serverData(formData, promisedToken),
             this.props.setRole(data['role'])]) ; // This two in parallel, save to databases
             const response = axiosRequest.data; //Check response from axios for server status.
-            this.props.setClaims(data['role']).then((result) => {
-                console.log(result);
-            });
+            // this.props.setClaims(data['role']).then((result) => {
+            //     console.log(result);
+            // });
             if(response['status'] === 1){
                 // console.log('success');
                 this.props.history.push(ROUTES.HOME);
@@ -118,7 +118,7 @@ class OrganForm extends Component {
                     <FormGroup row className={"justify-content-md-center"}>
                         <Label sm={2} for="desc">Describa la organización</Label>
                         <Col sm={5}>
-                            <Input name="desc" type={"textarea"} id="desc" onChange = {this.onChange} required/>
+                            <Input name="description" type={"textarea"} id="description" onChange = {this.onChange} required/>
                         </Col>
                     </FormGroup>
                     <FormGroup row className={"justify-content-md-center mt-3"}>
@@ -130,7 +130,7 @@ class OrganForm extends Component {
                     <FormGroup row className={"justify-content-md-center mt-3"}>
                         <Label sm={2} for="direccion">Dirección</Label>
                         <Col sm={5}>
-                            <Input name="addr" type={"text"} id="addr" onChange = {this.onChange} required/>
+                            <Input name="location" type={"text"} id="location" onChange = {this.onChange} required/>
                         </Col>
                     </FormGroup>
                     <FormGroup row className={"justify-content-md-center mt-3"}>
@@ -202,12 +202,12 @@ class IndForm extends Component {
         super(props);
         this.state= {
             photo: '',
-            bio: "",
-            birth: "",
-            nat: "",
-            org: "",
-            name1: "",
-            last1: '',
+            biography: "",
+            birthdate: "",
+            nationality: "",
+            organization: "",
+            firstname: "",
+            lastname: '',
             role: 0,
             error: false,
             phoneList: [""],
@@ -241,15 +241,17 @@ class IndForm extends Component {
         }
 
         console.log(data['role']);
+        console.log(data);
 
         //When you are ready to send phones make sure you won't send empty strings or duplicate phone numbers
         try{
             const promisedToken =  await this.props.token();
-            const [axiosRequest, fireStoreRequest] = await Promise.all([this.props.serverData(formData, promisedToken),
-                this.props.setRole(data['role'])]);
-            this.props.setClaims(data['role']).then((result) => {
-                console.log(result);
-            });
+            // const [axiosRequest, fireStoreRequest] = await Promise.all([this.props.serverData(formData, promisedToken),
+            //     this.props.setRole(data['role'])]);
+            const axiosRequest = await this.props.serverData(formData, promisedToken);
+            // this.props.setClaims(data['role']).then((result) => {
+            //     console.log(result);
+            // });
             const response = axiosRequest.data;
             if(response['status'] === 1){
                 console.log('success');
@@ -258,6 +260,7 @@ class IndForm extends Component {
                 // this.setState({error:error.message});
                 this.setState({error:"Error en el servidor"});
                 console.log('failure');
+                console.log(response);
             }
         }catch(error){
             console.log(error);
@@ -336,17 +339,17 @@ class IndForm extends Component {
                     <Row form className={"mt-5"}>
                         <Col md={4} className={" mr-4 ml-4"}>
                             <FormGroup row className={"justify-content-md-center"}>
-                                <Label for="name" sm={4}>Nombre</Label>
+                                <Label for="firstname" sm={4}>Nombre</Label>
                                 <Col sm={8}>
-                                    <Input name="name" type={"text"} id="name" onChange = {this.onChange} required/>
+                                    <Input name="firstname" type={"text"} id="firstname" onChange = {this.onChange} required/>
                                 </Col>
                             </FormGroup>
                         </Col>
                         <Col md={4}>
                             <FormGroup row className={"justify-content-md-center"}>
-                                <Label for="last1" sm={4}>Apellido</Label>
+                                <Label for="lastname" sm={4}>Apellido</Label>
                                 <Col sm={8}>
-                                    <Input name="last" type={"text"} id="last" onChange = {this.onChange} required/>
+                                    <Input name="lastname" type={"text"} id="lastname" onChange = {this.onChange} required/>
                                 </Col>
                             </FormGroup>
                         </Col>
@@ -356,7 +359,7 @@ class IndForm extends Component {
                             <legend>Nacionalidad</legend>
                             <FormGroup row sm={12}>
                                 <Col sm={12}>
-                                    <Input name="nat" type={"text"} id="nat"  onChange = {this.onChange} required/>
+                                    <Input name="nationality" type={"text"} id="nationality"  onChange = {this.onChange} required/>
                                 </Col>
                             </FormGroup>
                         </Col>
@@ -364,15 +367,15 @@ class IndForm extends Component {
                             <legend>Fecha de Nacimiento</legend>
                             <FormGroup row sm={12}>
                                 <Col sm={12}>
-                                    <Input name="birth" type={"date"} id="birth" onChange = {this.onChange} required/>
+                                    <Input name="birthdate" type={"date"} id="birthdate" onChange = {this.onChange} required/>
                                 </Col>
                             </FormGroup>
                         </Col>
                     </Row>
                     <Row form className={"mt-5 ml-3"}>
-                        <Label sm={2} for="bio">Breve Biografia</Label>
+                        <Label sm={2} for="biography">Breve Biografia</Label>
                         <Col sm={5}>
-                            <Input name="bio" type={"textarea"} id="bio" required onChange = {this.onChange}/>
+                            <Input name="biography" type={"textarea"} id="biography" required onChange = {this.onChange}/>
                         </Col>
                     </Row>
                     <Row form className={"mt-5 ml-3"}>
@@ -403,7 +406,7 @@ class IndForm extends Component {
                         </FormGroup>
                     </Row>
                     <Row form className={"mt-5 ml-3"}>
-                        <Label sm={2} for="direccion">Imagen de Perfil</Label>
+                        <Label sm={2} for="imagen">Imagen de Perfil</Label>
                         <Col sm={5}>
                             <CustomInput type="file" key={'perfil'} onChange={this._handleImageChange}
                                          label="Imagen de Perfil" id="perfil" name="perfil" accept={"image/*"} required/>
@@ -419,7 +422,7 @@ class IndForm extends Component {
                             <legend>Esta afiliado con una organización?</legend>
                             <FormGroup check>
                                 <Label check>
-                                    <CustomInput type="radio" onChange={this.props.handleRadio} id="si" name="aff"
+                                    <CustomInput type="radio" onChange={this.props.handleRadio} id="si" name="organization"
                                                  label="Si" value="si" key={"si"} />
                                 </Label>
                             </FormGroup>
