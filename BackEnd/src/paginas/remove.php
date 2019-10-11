@@ -1,6 +1,8 @@
 <?php
 	include 'connection.php';
 	include 'imgdirectory.php';
+	include '../getSub.php';
+	permission();
 
 	$json = file_get_contents('php://input');
 	//     Converts it into a PHP object
@@ -28,7 +30,7 @@
 
 		//---- DELETE ACCOUNT ----//
 		case 'acc':
-			$uid = $_POST["uid"];
+			$uid = getUid($_POST["uid"]);
 
 			$link = OpenConUser("u");
 
@@ -85,7 +87,7 @@
 		//---- DELETE BOOKMARK ----//
 		case 'book':
 			$iid = $_POST["iid"];
-			$finId = $_POST["finId"];
+			$finId = $_POST["finid"];
 
 			$link = OpenConUser("f");
 

@@ -1,7 +1,8 @@
 <?php
 	include 'connection.php';
 	include 'utilities.php';
-
+	include '../getSub.php';
+	permission();
 	//-----------------------------------------//
 	//---- FILE USED TO UPDATE INFORMATION ----//
 	//-----------------------------------------//
@@ -59,7 +60,7 @@
 			$link = OpenConUser("u");
 
 			//Extracts User ID
-			$uid = $_POST["uid"];
+			$uid = getUid($_POST["uid"]);
 
 			$field = MapUser($attr, $val);
 
@@ -114,11 +115,11 @@
 			$link = OpenConUser("u");
 
 			//Extracts User ID
-			$inid = $_POST["inid"];
+			$uid = getUid($_POST["uid"]);
 
 			$field = MapIndividual($attr);
 
-			$query = "UPDATE individual SET $field = '$val' WHERE inid = '$inid';";
+			$query = "UPDATE individual SET $field = '$val' WHERE inid = '$uid';";
 			$json;
 			try
 			{
@@ -168,11 +169,11 @@
 			$link = OpenConUser("u");
 
 			//Extracts User ID
-			$oid = $_POST["oid"];
+			$uid = getUid($_POST["uid"]);
 
 			$field = MapOrganization($attr);
 
-			$query = "UPDATE organization SET $field = '$val' WHERE oid = '$oid';";
+			$query = "UPDATE organization SET $field = '$val' WHERE oid = '$uid';";
 			$json;
 			try
 			{
