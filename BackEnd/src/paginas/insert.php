@@ -153,7 +153,7 @@
 
 			*/
 
-			$uid = $_POST["uid"];
+			$uid = getUid($_POST["uid"]);
 			$name = $_POST["name"];
 			$description = $_POST["description"];
 			$country = $_POST["country"];
