@@ -9,6 +9,8 @@ import {withAuthorization2} from '../Session';
  */
 import classnames from 'classnames';
 import {Organizacion, Individual} from './UserForm';
+import {INSERT} from "../../Constants/Endpoint";
+
 
 import {TabContent, TabPane, Nav, NavItem, NavLink} from 'reactstrap'
 import axios from "axios";
@@ -62,7 +64,7 @@ class TabConfigManager extends Component {
         formData.append('uid', token);
         return axios({
             method: 'POST',
-            url: 'http://localhost/ingsoft/src/insert.php',
+            url:  INSERT,
             data: formData,
             headers: { 'Content-Type': 'multipart/form-data'},
         })
