@@ -1,11 +1,11 @@
 <?php
 	//Libraries
 	include 'connection.php';
-/*
-	$json = file_get_contents('php://input');
+
+	//$json = file_get_contents('php://input');
 	//Converts it into a PHP object
-    $_POST = json_decode($json, true);
-*/
+    //$_POST = json_decode($json, true);
+
 
 	$option = $_POST["option"];
 
@@ -63,32 +63,48 @@
 			$result = pg_query($link, $query);
 			$line = pg_fetch_array($result, NULL, PGSQL_ASSOC);
 
+			$ideas = array("status" => -1);
+
 			$total = $line["total"];
+			//$total = 0;
+			$maxpage = 0;
+			if(($total % $rows) == 0)
+			{
+				$maxpage = $total / $rows;
+			}	
+			else
+			{
+				$maxpage = intdiv($total, $rows) + 1;
+			}
+			$maxpage = array('maxpage' => $maxpage);
 
 			$tempres = ($page-1) * $rows;
 
-			$ideas = array("status" => -1);
-
+			
 			if ($total == 0)
 			{
 				$ideas["status"] = 0;
+				$msg = array('message' => "No existen ideas para esta categoria." );
+				$ideas = array_merge($ideas, $msg);
 
 			}
-			else if($tempres > $total)
+			else if($tempres >= $total)
 			{
 				$ideas["status"] = 0;
+				$msg = array('message' => "No existe este numero de pagina de ideas." );
+				$ideas = array_merge($ideas, $msg);
 			}
 			else
 			{
 				//----- Extract Ideas filtered by category -----//
-				$query = "SELECT I.iid, I.uid, I.title, I.description, SI.name, U.uid, U.type FROM idea I, users U, stateidea SI  WHERE I.category = $category AND I.uid = U.uid AND SI.id = I.state ORDER BY title";
+				$query = "SELECT I.iid, I.uid, I.title, I.description, SI.name, U.uid, U.type FROM idea I, users U, stateidea SI  WHERE I.category = $category AND I.uid = U.uid AND SI.id = I.state";
 
-				$result = pg_query($link, $query) or die('Query failed: ' . pg_result_error());
+				$result = pg_query($link, $query);
 
 				pg_result_seek($result, (($page-1) * $rows));
 
 				$i = 0;
-
+				$list = array();
 				while (($line = pg_fetch_array($result, NULL, PGSQL_ASSOC)) && ($i < $rows))
 				{
 					
@@ -98,45 +114,43 @@
 					$description = $line["description"];
 					$state = $line["name"];
 
-					$temp = array("iid" => $iid, "title" => $title, "description" => $description, "state" => $state);
-
 					//--- Entrepreneur's Basic Information ---//
 					$uid = $line["uid"];
 					$type = $line["type"];
 
+					$temp = array("iid" => ((int)$iid), "title" => $title, "description" => $description, "state" => ((int)$state), "uid" => $uid, "type" => ((int)$type));
+
 					if ($type == 1)
 					{
 						$query = "SELECT firstname, lastname FROM individual WHERE inid = '$uid'";
-						$result1 = pg_query($link, $query) or die('Query failed: ' . pg_result_error());
+						$result1 = pg_query($link, $query);
 						$line1 = pg_fetch_array($result1, NULL, PGSQL_ASSOC);
 
 						$firstname = $line1["firstname"];
 						$lastname = $line1["lastname"];
 
 						//--- Individual's Basic Information ---//
-						$t = array("uid" => $uid, "type" => $type, "fname" => $firstname, "lname" => $lastname);
+						$t = array("firstname" => $firstname, "lastname" => $lastname);
 						$temp = array_merge($temp, $t);
-
-						$temp = array("e$i" => $temp);
 					}
 					else
 					{
 						$query = "SELECT name FROM organization WHERE oid = '$uid'";
-						$result1 = pg_query($link, $query) or die('Query failed: ' . pg_result_error());
+						$result1 = pg_query($link, $query);
 						$line1 = pg_fetch_array($result1, NULL, PGSQL_ASSOC);
 
 						//--- Organization's Basic Information ---//
 						$name = $line1["name"];
 
-						$t = array("uid" => $uid, "type" => $type, "name" => $name);
+						$t = array("name" => $name);
 						$temp = array_merge($temp, $t);
-
-						$temp = array("e$i" => $temp);
 					}
-
-					$ideas = array_merge($ideas, $temp);
+					$temp = array("idea$i" => $temp);
+					$list = array_merge($list, $temp);
 					$i = $i + 1;
 				}
+				$list = array('ideas' => $list);
+				$ideas = array_merge($ideas, $maxpage, $list);
 				$ideas["status"] = 1;
 			}
 
@@ -185,32 +199,49 @@
 			$result = pg_query($link, $query);
 			$line = pg_fetch_array($result, NULL, PGSQL_ASSOC);
 
+			$ideas = array("status" => -1);
+
 			$total = $line["total"];
+			//$total = 0;
+			$maxpage = 0;
+			if(($total % $rows) == 0)
+			{
+				$maxpage = $total / $rows;
+			}	
+			else
+			{
+				$maxpage = intdiv($total, $rows) + 1;
+			}
+			$maxpage = array('maxpage' => $maxpage);
 
 			$tempres = ($page-1) * $rows;
 
-			$ideas = array("status" => -1);
+			
 
 			if ($total == 0)
 			{
 				$ideas["status"] = 0;
+				$msg = array('message' => "No existen ideas para esta categoria." );
+				$ideas = array_merge($ideas, $msg);
 
 			}
-			else if($tempres > $total)
+			else if($tempres >= $total)
 			{
 				$ideas["status"] = 0;
+				$msg = array('message' => "No existe este numero de pagina de ideas." );
+				$ideas = array_merge($ideas, $msg);
 			}
 			else
 			{
 				//----- Extract Ideas from bookmark filtered by category -----//
-				$query = "SELECT I.iid, I.title, I.description, SI.name, U.uid, U.type FROM idea I, finbook FB, users U, stateid SI WHERE I.category = '$category' AND I.iid = FB.iid AND FB.finid = '$uid' AND I.uid = U.uid AND SI.id = I.state ORDER BY title";
+				$query = "SELECT I.iid, I.title, I.description, SI.name, U.uid, U.type FROM idea I, finbook FB, users U, stateidea SI WHERE I.category = '$category' AND I.iid = FB.iid AND FB.finid = '$uid' AND I.uid = U.uid AND SI.id = I.state";
 
-				$result = pg_query($link, $query) or die('Query failed: ' . pg_result_error());
+				$result = pg_query($link, $query);
 
 				pg_result_seek($result, (($page-1) * $rows));
 
 				$i = 0;
-
+				$list = array();
 				while (($line = pg_fetch_array($result, NULL, PGSQL_ASSOC)) && ($i < $rows))
 				{
 					
@@ -220,45 +251,43 @@
 					$description = $line["description"];
 					$state = $line["name"];
 
-					$temp = array("iid" => $iid, "title" => $title, "description" => $description, "state" => $state);
-
 					//--- Entrepreneur's Basic Information ---//
 					$uid = $line["uid"];
 					$type = $line["type"];
 
+					$temp = array("iid" => ((int)$iid), "title" => $title, "description" => $description, "state" => ((int)$state), "uid" => $uid, "type" => ((int)$type));
+
 					if ($type == 1)
 					{
 						$query = "SELECT firstname, lastname FROM individual WHERE inid = '$uid'";
-						$result1 = pg_query($link, $query) or die('Query failed: ' . pg_result_error());
+						$result1 = pg_query($link, $query);
 						$line1 = pg_fetch_array($result1, NULL, PGSQL_ASSOC);
 
 						$firstname = $line1["firstname"];
 						$lastname = $line1["lastname"];
 
 						//--- Individual's Basic Information ---//
-						$t = array("uid" => $uid, "type" => $type, "fname" => $firstname, "lname" => $lastname);
+						$t = array("firstname" => $firstname, "lastname" => $lastname);
 						$temp = array_merge($temp, $t);
-
-						$temp = array("e$i" => $temp);
 					}
 					else
 					{
 						$query = "SELECT name FROM organization WHERE oid = '$uid'";
-						$result1 = pg_query($link, $query) or die('Query failed: ' . pg_result_error());
+						$result1 = pg_query($link, $query);
 						$line1 = pg_fetch_array($result1, NULL, PGSQL_ASSOC);
 
 						//--- Organization's Basic Information ---//
 						$name = $line1["name"];
 
-						$t = array("uid" => $uid, "type" => $type, "name" => $name);
+						$t = array("name" => $name);
 						$temp = array_merge($temp, $t);
-
-						$temp = array("e$i" => $temp);
 					}
-
-					$ideas = array_merge($ideas, $temp);
+					$temp = array("idea$i" => $temp);
+					$list = array_merge($list, $temp);
 					$i = $i + 1;
 				}
+				$list = array('ideas' => $list);
+				$ideas = array_merge($ideas, $maxpage, $list);
 				$ideas["status"] = 1;
 			}
 
