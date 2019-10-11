@@ -1,7 +1,7 @@
 Create Table Users(
     uid varchar(30),
     email varchar(50),
-    password varchar(16),
+    password varchar(30),
     role smallint,
     folderId serial,
     type int,
@@ -39,9 +39,8 @@ Create Table Organization(
 Create Table Telephone(
 	uid varchar(30),
 	number varchar(12),
-	extension int,
 
-	Primary Key(extension, number),
+	Primary Key(number),
 	Foreign Key(uid) References Users(uid) ON DELETE CASCADE
 );
 
