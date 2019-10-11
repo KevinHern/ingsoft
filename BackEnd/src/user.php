@@ -1,6 +1,6 @@
 <?php
 	include 'connection.php';
-
+	include 'getSub.php';
 	/*
 	INPUTS:
 	1. User Id
@@ -12,7 +12,7 @@
 
 	$link = OpenConUser("u");
 
-	$uid = $_POST["uid"];
+	$uid = getUid();
 
 	//----- Basic User information -----//
 	$query = "SELECT email, password, role, type FROM users WHERE uid = '$uid'";
