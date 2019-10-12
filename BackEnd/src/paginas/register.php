@@ -14,7 +14,6 @@
 
 	-- Values that $option can take: --
 
-	REGISTER USER 				user
 	REGISTER INDIVIDUAL: 		ind
 	REGISTER ORGANIZATION: 		org
 	REGISTER CATEGORY IDEA:		catid
@@ -31,45 +30,6 @@
 	/*--------------------------------*/
 	/*--------------USER--------------*/
 	/*--------------------------------*/
-
-		//---- REGISTER USER ----//
-		case 'user':
-			/*
-			INPUTS:
-			1. User's ID
-			2. User's email
-			3. User's password
-
-			------------
-
-			OUTPUTS:
-			1. Status: 1 if success, 0 otherwise
-			*/
-
-			$uid = $_POST["uid"];
-			$email = $_POST["email"];
-			$password = $_POST["password"];
-			$role = $_POST["role"];
-
-			$link = OpenConUser("u");
-
-			$query = "INSERT INTO users () VALUES('$uid', '$email', '$password', 0, DEFAULT, 1);";
-
-			$result = pg_query($link, $query);
-
-			if ($result)
-			{
-				$json = array('status' => 1);
-				echo json_encode($json);
-			}
-			else
-			{
-				$json = array('status' => 0, "message" => "Ocurrió un error, dato ya ingresado");
-				echo json_encode($json);
-			}
-			
-			CloseCon($link);
-			break;
 
 		//---- REGISTER INDIVIDUAL ----//
 		case 'ind':
@@ -126,7 +86,7 @@
 				$exito = StoreFile($name, $tmp_name, "profile", $folderid);
 
 				// Change Role
-				$query = "UPDATE users SET role = $role WHERE uid = '$uid';";
+				$query = "UPDATE users SET role = $role, type = 1 WHERE uid = '$uid';";
 				$result = pg_query($link, $query);
 
 				// Insert Phones
@@ -206,7 +166,7 @@
 				$exito = StoreFile($logoname, $tmp_name, "profile", $folderid);
 
 				// Change Role
-				$query = "UPDATE users SET role = $role WHERE uid = '$uid';";
+				$query = "UPDATE users SET role = $role, type = 0 WHERE uid = '$uid';";
 				$result = pg_query($link, $query);
 
 				// Insert Phones
