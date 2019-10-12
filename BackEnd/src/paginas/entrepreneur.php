@@ -169,7 +169,7 @@
 			{
 				//----- Extract Idea's basic information -----//
 				$query = "SELECT I.title, I.description, CI.name as cname, SI.name as sname, I.cantInt FROM idea I, categoryIdea CI, stateidea SI WHERE I.iid = $iid AND I.category = CI.id AND I.state = SI.id";
-				$result = pg_query($link, $query) or die('Query failed: ' . pg_result_error());
+				$result = pg_query($link, $query);
 				$line = pg_fetch_array($result, NULL, PGSQL_ASSOC);
 
 				$title = $line["title"];
@@ -183,7 +183,7 @@
 
 				//--- Extract total number of rows ---//
 				$query = "SELECT COUNT(uid) as total FROM finbook IB, users U WHERE IB.finid = U.uid AND IB.iid = $iid";
-				$result = pg_query($link, $query) or die('Query failed: ' . pg_result_error());
+				$result = pg_query($link, $query);
 				$line = pg_fetch_array($result, NULL, PGSQL_ASSOC);
 				$total = $line["total"];
 
@@ -212,7 +212,7 @@
 					
 					//--- Extract Financists ---//
 					$query = "SELECT U.uid, U.type FROM finbook IB, users U WHERE IB.finid = U.uid AND IB.iid = $iid";
-					$result = pg_query($link, $query) or die('Query failed: ' . pg_result_error());
+					$result = pg_query($link, $query);
 					pg_result_seek($result, $tempres);
 
 					$i = 0;
