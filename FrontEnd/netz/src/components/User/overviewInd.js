@@ -5,7 +5,6 @@ import Form from "reactstrap/es/Form";
 import Container from "reactstrap/es/Container";
 import axios from 'axios';
 import {GETUSER} from "../../Constants/Endpoint";
-import * as ROUTES from "../../Constants/routes";
 
 
 class OverviewInd extends Component {
@@ -80,16 +79,6 @@ class OverviewInd extends Component {
         // const {authUser} = this.props;
         return (
             <React.Fragment>
-                <Row>
-                    <Col md={"12"}>
-                        <ButtonToolbar className={"justify-content-end"}>
-                            <ButtonGroup>
-                                <Button color={"info"} onClick={()  => {this.route(ROUTES.HOME)}}>Principal</Button>
-                                <Button color={"info"} onClick={() => {this.route(ROUTES.LISTIDEA)}}>Listar Ideas</Button>
-                            </ButtonGroup>
-                        </ButtonToolbar>
-                    </Col>
-                </Row>
                 <Row>
                     <Col sm={{ size: 6, offset: 3 }}>
                              Primer Nombre

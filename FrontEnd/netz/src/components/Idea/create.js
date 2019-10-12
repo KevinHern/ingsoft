@@ -2,13 +2,14 @@ import React, {Component} from 'react';
 import Form from "reactstrap/es/Form";
 import FormGroup from "reactstrap/es/FormGroup";
 import Label from "reactstrap/es/Label";
-import {Button, Col, CustomInput, Media, Row} from "reactstrap";
+import {Button, ButtonGroup, ButtonToolbar, Col, CustomInput, Media, Row} from "reactstrap";
 import Input from "reactstrap/es/Input";
 import Container from "reactstrap/es/Container";
-import {CATEGORY, INSERT} from "../../Constants/Endpoint";
+import {CATEGORY, REGISTER} from "../../Constants/Endpoint";
 import axios from 'axios';
 import {withRouter} from 'react-router-dom';
 import withAuthentication from '../Session/withAuthentication.js'
+import * as ROUTES from "../../Constants/routes";
 
 
 class CreateIdeaCom extends Component {
@@ -62,7 +63,7 @@ class CreateIdeaCom extends Component {
         formData.append('category', cat);
         formData.append('state', "1");
         axios({
-            url: INSERT,
+            url: REGISTER,
             method: 'post',
             data: formData,
             headers: { 'Content-Type': 'multipart/form-data'},
@@ -76,6 +77,11 @@ class CreateIdeaCom extends Component {
         })
     }
 
+    route = (goTo) => {
+        const{history} = this.props;
+        history.push(goTo);
+    };
+
     render() {
         const {cats}  = this.state;
         const catsOp = cats.map((cat) => {
@@ -83,6 +89,16 @@ class CreateIdeaCom extends Component {
         });
         return (
             <React.Fragment>
+                    <Row className={"justify-content-end"}>
+                        <Col sm={4}>
+                            <ButtonToolbar className={"justify-content-end"}>
+                                <ButtonGroup>
+                                    <Button color={"info"} onClick={() => {this.route(ROUTES.LISTIDEA)}}>Listar Ideas</Button>
+                                    <Button color={"info"}  onClick={() => {this.route(ROUTES.OVERVIEW)}}>Cuenta</Button>
+                                </ButtonGroup>
+                            </ButtonToolbar>
+                        </Col>
+                    </Row>
                     <Row>
                         <Col sm="12" md={{size: 6, offset: 3}}>.
                             <h1>Crear Idea</h1>

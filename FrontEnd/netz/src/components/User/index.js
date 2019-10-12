@@ -4,6 +4,7 @@ import OverViewOrg from './overviewOrg';
 import UpdateFieldCom from './updateField';
 import {withAuthorization} from '../Session'
 import {withAuthorization2} from '../Session';
+
 /*
  classnames permite agregar clases a un component, condicionalmente
  osea le doy una condicion y si es verdadera agrega la clase si es falsa
@@ -11,14 +12,13 @@ import {withAuthorization2} from '../Session';
  */
 import classnames from 'classnames';
 import {Organizacion, Individual} from './UserForm';
-import {GETUSER, INSERT} from "../../Constants/Endpoint";
+import {GETUSER, REGISTER} from "../../Constants/Endpoint";
 import withAuthentication from '../Session/withAuthentication';
 
 
-import {TabContent, TabPane, Nav, NavItem, NavLink} from 'reactstrap'
+import {TabContent, TabPane, Nav, NavItem, NavLink, Col, ButtonToolbar, ButtonGroup, Button, Row} from 'reactstrap'
 import axios from "axios";
-import {auth} from "firebase";
-// import {withFirebase} from "../Firebase";
+import * as ROUTES from "../../Constants/routes";
 
 class TabConfigManager extends Component {
     constructor(props) {
@@ -67,7 +67,7 @@ class TabConfigManager extends Component {
         formData.append('uid', token);
         return axios({
             method: 'POST',
-            url:  INSERT,
+            url:  REGISTER,
             data: formData,
             headers: { 'Content-Type': 'multipart/form-data'},
         })
@@ -138,8 +138,6 @@ class OverViewManager extends Component {
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
-        // console.log(prevProps);
-        // console.log('here');
         const {fireBase} = this.props;
         const {fetched} = this.state;
         if(!fetched){
@@ -152,18 +150,39 @@ class OverViewManager extends Component {
                     headers: {'Content-Type': 'application/json'}
                 }).then((response) => {
                     console.log(response.data);
-                    this.setState({...response.data,  fetched:true})
+                    if(response.data['status']){
+                        this.setState({...response.data})
+                    }else{
+                        this.setState({error: "No se pudo recolectar la informacion del usuario"})
+                    }
                 });
-            })
+            });
+            this.setState({fetched: true});
         }
     }
+
+    route = (goTo) =>{
+        this.props.history.push(goTo);
+    };
 
 
     render() {
         const {fetched, userType} = this.state;
         console.log(userType);
         return (
-            (fetched)? (userType)? <OverViewInd {... this.state}/>:<OverViewOrg {... this.state}/> : null
+            <React.Fragment>
+                <Row>
+                    <Col md={"12"}>
+                        <ButtonToolbar className={"justify-content-end"}>
+                            <ButtonGroup>
+                                {/*<Button color={"info"} onClick={()  => {this.route(ROUTES.HOME)}}>Principal</Button>*/}
+                                    <Button color={"info"} onClick={() => {this.route(ROUTES.LISTIDEA)}}>Listar Ideas</Button>
+                            </ButtonGroup>
+                        </ButtonToolbar>
+                    </Col>
+                </Row>
+                {(fetched)? (userType)? <OverViewInd {... this.state} />:<OverViewOrg {... this.state} /> : null}
+            </React.Fragment>
         );
     }
 }

@@ -1,14 +1,13 @@
 import React, {Component} from 'react';
-class OverviewOrg extends Component {
+
+class NoMatch extends Component {
     render() {
         return (
             <div>
-
+                404
             </div>
         );
     }
 }
 
-
-
-export default OverviewOrg;
+export default NoMatch;

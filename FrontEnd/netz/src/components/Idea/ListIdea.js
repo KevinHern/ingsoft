@@ -6,6 +6,9 @@ import Paginator from "../Paginator";
 import React, {Component} from 'react';
 import {FaSearch} from "react-icons/fa";
 import * as ROUTES from '../../Constants/routes.js';
+import axios from 'axios';
+import {GETUSER, ENTREPRENEUR} from "../../Constants/Endpoint";
+import withAuthentication from "../Session/withAuthentication";
 
 
 class ListIdea extends Component {
@@ -19,7 +22,10 @@ class ListIdea extends Component {
             search: '',
             perTag: 4,
             perPage: 4,
-            newIdea: false
+            newIdea: false,
+            fetched: false,
+            ideas: [],
+            error: null
         };
     }
 
@@ -35,26 +41,60 @@ class ListIdea extends Component {
         if(maxResults) {
 
         }else {
-            this.setState({empty:true})
+            // this.setState({empty:true})
         }
         const {newIdea} = this.props.match.params;
         if(newIdea === 'new'){
-            this.setState({newIdea: true})
+            // this.setState({newIdea: true})
         }
-        console.log(newIdea);
+        // console.log(newIdea);
         // let max = 0;
         // this.setState({max})
     }
 
-    fetchPage = (page) => {
-        const {perPage, search} =this.state;
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        const {perPage, search, fetched} =this.state;
+        const {fireBase} = this.props;
+        const {prevFetched} = prevState;
+        if(!fetched){
+            fireBase.token().then((response) => {
+                axios({
+                    method: 'POST',
+                    url: ENTREPRENEUR ,
+                    data: {
+                        uid: response,
+                        option: 'gi',
+                        rows: 7,
+                        page: 1,
+                        category: 1,
+                    },
+                    headers: {'Content-Type': 'application/json'}
+                }).then((response) => {
+                    // console.log(response.config);
+                    let{status, maxPage, ideas} = response.data;
+                    // console.log(response.data);
+                    if(status){
+                        const ideaList = [];
+                        Object.values(ideas).map(item => ideaList.push(item));
+                        this.setState({maxPage, ideas: ideaList});
+                    }else{
+                        this.setState({error: "No Fue Posible recuperar las ideas"});
+                    }
+                })
+            });
+            this.setState({fetched:true});
+        }
+    }
 
-    };
 
 
     onPageMove = (currentPage) => {
         this.fetchPage(currentPage);
         this.setState({currentPage});
+    };
+
+    showDetails = (id) => {
+        this.props.history.push(ROUTES.DESCIDEA.replace(':id', id));
     };
 
 
@@ -99,7 +139,7 @@ class ListIdea extends Component {
 
 
     render() {
-        const{initPage, currentPage, max, perTag, empty, newIdea} = this.state;
+        const{initPage, currentPage, max, perTag, empty, newIdea, ideas, error} = this.state;
         return (
             <React.Fragment>
                 <Row className={"justify-content-end"}>
@@ -107,7 +147,7 @@ class ListIdea extends Component {
                         <ButtonToolbar className={"justify-content-end"}>
                             <ButtonGroup>
                                 <Button color={"info"} onClick={() => {this.route(ROUTES.CREATEIDEA)}}>Crear Idea</Button>
-                                <Button color={"info"}  onClick={() => {this.route(ROUTES.HOME)}}>Principal</Button>
+                                {/*<Button color={"info"}  onClick={() => {this.route(ROUTES.HOME)}}>Principal</Button>*/}
                                 <Button color={"info"}  onClick={() => {this.route(ROUTES.OVERVIEW)}}>Cuenta</Button>
                             </ButtonGroup>
                         </ButtonToolbar>
@@ -140,7 +180,9 @@ class ListIdea extends Component {
                         </tr>
                         </thead>
                         <tbody>
-                        <List/>
+                        {
+                            (error)? <Alert>No fue posible listar ideas</Alert> : <List  ideas={ideas} showDetails = {this.showDetails}/>
+                        }
                         </tbody>
                     </Table>
                 </Row>
@@ -153,4 +195,4 @@ class ListIdea extends Component {
     }
 }
 
-export default ListIdea;
+export default withAuthentication(ListIdea);

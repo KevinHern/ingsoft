@@ -4,7 +4,7 @@ import PaginationItem from "reactstrap/es/PaginationItem";
 import PaginationLink from "reactstrap/es/PaginationLink";
 
 function Item(props) {
-    console.log(props.no);
+    // console.log(props.no);
     return(
         <PaginationItem active = {props.active} onClick = {() => {props.onPageMove(props.no)}}>
             <PaginationLink   >

@@ -28,15 +28,15 @@ function Header(props) {
                                 <AuthUserContext.Consumer>
                                 {(authUser) => {
                                     if(authUser){
-                                       return <Signed/>
-                                       console.log("Signed");
-                                       console.log(authUser);
+                                       return <Signed/>;
+                                       // console.log("Signed");
+                                       // console.log(authUser);
                                     }else{
                                         if((pathname).toLowerCase() === ROUTES.SIGN_IN.toLocaleLowerCase()){
-                                            console.log("Unsigned Show Sign UP");
+                                            // console.log("Unsigned Show Sign UP");
                                             return <Unsigned signIn ={true}/>
                                         }else{
-                                            console.log("Unsigned Show Sign In");
+                                            // console.log("Unsigned Show Sign In");
                                             return <Unsigned signIn ={false}/>
                                         }
                                     }

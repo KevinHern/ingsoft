@@ -1,47 +1,28 @@
-import React from 'react';
+import React, {Component} from 'react';
 import {Button} from "reactstrap";
+class List extends Component {
 
-function List(props) {
-    return (
-        <React.Fragment>
-            <tr>
-                <th scope="row">1</th>
-                <td>One</td>
-                <td>
-                    <Button color={"link"}>
-                        ShowDetails
-                    </Button>
-                </td>
-            </tr>
-            <tr>
-                <th scope="row">1</th>
-                <td>One</td>
-                <td>
-                    <Button color={"link"}>
-                        ShowDetails
-                    </Button>
-                </td>
-            </tr>
-            <tr>
-                <th scope="row">1</th>
-                <td>One</td>
-                <td>
-                    <Button color={"link"}>
-                        ShowDetails
-                    </Button>
-                </td>
-            </tr>
-            <tr>
-                <th scope="row">1</th>
-                <td>One</td>
-                <td>
-                    <Button color={"link"}>
-                        ShowDetails
-                    </Button>
-                </td>
-            </tr>
-        </React.Fragment>
-    );
+    constructor(props){
+        super(props)
+    }
+    render() {
+        let {ideas} = this.props;
+        ideas = ideas.map((idea, index) => {
+                return (
+                    <tr key={idea.iid+idea.title}>
+                        <th scope="row" >{index+1}</th>
+                        <td>{idea.title}</td>
+                        <td>
+                            <Button color={"link"} onClick={() => {this.props.showDetails(idea.iid)}}>
+                                ShowDetails
+                            </Button>
+                        </td>
+                </tr>)
+        });
+        return (<React.Fragment>
+                    {ideas}
+        </React.Fragment>)
+    }
 }
 
 export default List;
