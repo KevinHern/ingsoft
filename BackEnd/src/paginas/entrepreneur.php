@@ -50,7 +50,7 @@
 			$rows = $_POST["rows"];
 			$page = $_POST["page"];
 			$filter = $_POST["filter"];
-			$filter = "%(".strtolower($filter)."|".$filter."|".strtoupper($filter).")%";
+			
 
 			$ideas = array("status" => -1);
 			$maxpage = 0;
@@ -59,7 +59,17 @@
 			try
 			{
 				//----- Extract total number of rows -----//
-				$query = "SELECT COUNT(iid) as total FROM idea WHERE uid = '$uid' AND title LIKE $filter";
+				$query = "";
+				if ($filter == "")
+				{
+					$query = "SELECT COUNT(iid) as total FROM idea WHERE uid = '$uid'";
+				}
+				else
+				{
+					$filter = "%(".strtolower($filter)."|".$filter."|".strtoupper($filter).")%";
+					$query = "SELECT COUNT(iid) as total FROM idea WHERE uid = '$uid' AND title LIKE '$filter'";
+				}
+
 				$result = pg_query($link, $query);
 				$line = pg_fetch_array($result, NULL, PGSQL_ASSOC);
 				$total = $line["total"];
