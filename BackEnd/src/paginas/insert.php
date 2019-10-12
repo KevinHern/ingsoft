@@ -39,7 +39,6 @@
 			1. User's ID
 			2. User's email
 			3. User's password
-			4. User's role
 
 			------------
 
@@ -54,9 +53,9 @@
 
 			$link = OpenConUser("u");
 
-			$query = "INSERT INTO users () VALUES('$uid', '$email', '$password', $role, DEFAULT, 1);";
+			$query = "INSERT INTO users () VALUES('$uid', '$email', '$password', 0, DEFAULT, 1);";
 
-			$result = pg_query($link, $query) or die('Query failed: ' . pg_result_error());
+			$result = pg_query($link, $query);
 
 			if ($result)
 			{
@@ -65,7 +64,7 @@
 			}
 			else
 			{
-				$json = array('status' => 0);
+				$json = array('status' => 0, "message" => "Ocurrió un error, dato ya ingresado");
 				echo json_encode($json);
 			}
 			
@@ -98,12 +97,13 @@
 			$biography = $_POST["biography"];
 			$org = $_POST["organization"];
 			$birthdate = $_POST["birthdate"];
+			$role = $_POST["role"];
 
 			$link = OpenConUser("u");
 
 			$query = "SELECT folderid FROM users WHERE uid = '$uid';";
 
-			$result = pg_query($link, $query) or die('Query failed: ' . pg_result_error());
+			$result = pg_query($link, $query);
 
 			$line = pg_fetch_array($result, NULL, PGSQL_ASSOC);
 
@@ -111,24 +111,25 @@
 
 			CreateDir($folderid);
 
-			//Photo
+			//Photo 
 			$name = $_FILES["photo"]["name"];
 			$tmp_name = $_FILES["photo"]["tmp_name"];
 
-			$query = "INSERT INTO individual VALUES('$uid', '$firstname', '$lastname', '$nationality', '$biography', '$org', '$birthdate', 'img/$folderid') ;";
-
-			$result = pg_query($link, $query) or die('Query failed: ' . pg_result_error());
-
-			if ($result)
+			try
 			{
+				$query = "INSERT INTO individual VALUES('$uid', '$firstname', '$lastname', '$nationality', '$biography', '$org', '$birthdate', 'img/$folderid') ;";
+				$result = pg_query($link, $query);
 				$exito = StoreFile($name, $tmp_name, "profile", $folderid);
+				$query = "UPDATE users SET role = $role WHERE uid = '$uid';";
+				$result = pg_query($link, $query);
 				$json = array('status' => 1);
 				echo json_encode($json);
+
 			}
-			else
+			catch (Exception $e)
 			{
 				$json = array('status' => 0);
-				$json = array('message' => $result);
+				$json = array('message' => $e);
 				echo json_encode($json);
 			}
 
