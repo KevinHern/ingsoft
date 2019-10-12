@@ -1,7 +1,9 @@
 <?php
 	//Libraries
 	include 'connection.php';
-	include '../src/'
+	include '../src/';
+	include '../getSub.php';
+	permission();
 
 	//$json = file_get_contents('php://input');
 	//Converts it into a PHP object
@@ -43,7 +45,7 @@
 
 			*/
 
-			$uid = $_POST["uid"];
+			$uid = getUid($_POST["uid"]);
 
 			$rows = $_POST["rows"];
 			$page = $_POST["page"];
