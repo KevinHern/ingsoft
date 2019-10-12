@@ -94,11 +94,20 @@ class Desc extends Component {
     deleteIdea = () => {
         const{id} = this.props.match.params;
         axios({
-
-
+                method: 'POST',
+                url: REMOVE,
+                data: {
+                    option: 'idea',
+                    iid:id
+                },
+                headers: {'Content-Type': 'application/json'}
             },
-            ).then(() => {
-
+            ).then((response) => {
+                if(response.data['status']) {
+                    this.route(ROUTES.LISTIDEA);
+                }else{
+                    console.log('Fallo');
+                }
         });
     };
 
@@ -144,8 +153,8 @@ class Desc extends Component {
                                             <Button color="secondary" onClick={this.toggleDelete}>Cancelar</Button>
                                         </ModalFooter>
                                     </Modal>
-                                    <Button color={"info"}>Cuenta</Button>
-                                    <Button color={"info"}>Principal</Button>
+                                    <Button color={"info"} onClick={() => this.route(ROUTES.OVERVIEW)}>Cuenta</Button>
+                                    <Button color={"info"} onClick={() => this.route(ROUTES.HOME)}>Principal</Button>
                                 </ButtonGroup>
                             </ButtonToolbar>
                         </Col>
