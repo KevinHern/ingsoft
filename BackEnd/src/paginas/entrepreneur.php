@@ -170,7 +170,7 @@
 			$sname = $line["sname"];
 			$cantint = $line["cantint"];
 
-			$idea = array("status" => -1, "title" => $title, "description" => $description, "category" => $cname, "state" => $sname, "interested" => ((int)$cantint));
+			$details = array("status" => 0);
 
 			//----- Extract Financists that are interested -----//
 
@@ -181,20 +181,32 @@
 			$line = pg_fetch_array($result, NULL, PGSQL_ASSOC);
 
 			$total = $line["total"];
+			//$total = 0;
+			$maxpage = 0;
+			if(($total % $rows) == 0)
+			{
+				$maxpage = $total / $rows;
+			}	
+			else
+			{
+				$maxpage = intdiv($total, $rows) + 1;
+			}
+			$maxpage = array('maxpage' => $maxpage);
 
 			$tempres = ($page-1) * $rows;
 
 			
 			if($total == 0)
 			{
-				$idea["status"] = 1;
+				$details["status"] = 1;
 			}
 			else if ($tempres > $total)
 			{
-				$idea["status"] = 1;
+				$details["status"] = 1;
 			}
 			else
 			{
+				$details = array("status" => -1, "title" => $title, "description" => $description, "category" => $cname, "state" => $sname, "interested" => ((int)$cantint), "maxPage" => $maxpage);
 				//--- Extract Financists ---//
 				$query = "SELECT U.uid, U.type FROM finbook IB, users U WHERE IB.finid = U.uid AND IB.iid = $iid";
 
@@ -203,6 +215,7 @@
 				pg_result_seek($result, $tempres);
 
 				$i = 0;
+				$financists = array();
 				while (($line = pg_fetch_array($result, NULL, PGSQL_ASSOC)) && ($i < $rows))
 				{
 					$temp = array();
@@ -238,17 +251,15 @@
 						$temp = array_merge($temp, $t);
 					}
 
-					$temp = array("financist$i" => $temp);
-
-					$idea = array_merge($idea, $temp);
-
+					$financists = array("financist$i" => $temp);
 					$i = $i + 1;
 				}
-
-				$idea["status"] = 1;
+				$financists = array("financists" => $financists);
+				$details = array_merge($details, $financists);
+				$details["status"] = 1;
 			}
 
-			echo json_encode($idea);
+			echo json_encode($details);
 
 			break;
 
