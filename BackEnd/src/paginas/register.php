@@ -220,7 +220,7 @@
 
 				$json = array('status' => 1);
 			}
-			catch
+			catch(Exception $e)
 			{
 				$json = array('status' => 0, 'message' => "Ocurrió un error al registrar la organización.");
 			}
