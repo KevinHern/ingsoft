@@ -189,11 +189,10 @@
 			{
 				$maxpage = intdiv($total, $rows) + 1;
 			}
-			$maxpage = array('maxpage' => $maxpage);
 
 			$tempres = ($page-1) * $rows;
 
-			$details = array("status" => -1, "title" => $title, "description" => $description, "category" => $cname, "state" => $sname, "interested" => ((int)$cantint));
+			$details = array("status" => -1, "title" => $title, "description" => $description, "category" => $cname, "state" => $sname, "interested" => ((int)$cantint), "maxpage" => $maxpage);
 			if($total == 0)
 			{
 				$details["status"] = 1;
