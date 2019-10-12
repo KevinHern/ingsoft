@@ -15,9 +15,7 @@
 	$info = array("status" => -1);
 
 	$link = OpenConUser("u");
-
 	
-
 	try
 	{
 		//----- Basic User information -----//
