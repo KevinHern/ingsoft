@@ -13,7 +13,6 @@ const SignUpPage = () => (
     </div>
 );
 const INITIAL_STATE = {
-    username: '',
     email: '',
     passwordOne: '',
     passwordTwo: '',
@@ -76,7 +75,6 @@ class SignUpFormBase extends Component {
 
     render() {
         const {
-            username,
             email,
             passwordOne,
             passwordTwo,
@@ -86,21 +84,13 @@ class SignUpFormBase extends Component {
         const isInvalid =
             passwordOne !== passwordTwo ||
             passwordOne === '' ||
-            email === '' ||
-            username === '';
-
+            email === ''
         return (
             <React.Fragment>
             {(error)? <Alert color={"danger"}>{error.message}</Alert>: null}
                <Form onSubmit = {this.onSubmit}  key={"SignUp"}   className="align-middle">
                    <FormGroup row className="justify-content-md-center mt-3">
                        <h1>SignUp</h1>
-                   </FormGroup>
-                   <FormGroup row className="justify-content-md-center">
-                       <Label for="userName" sm={2}>Nombre</Label>
-                       <Col sm={5}>
-                           <Input onChange = {this.onChange} type="type" name="username" id="username"/>
-                       </Col>
                    </FormGroup>
                    <FormGroup row className="justify-content-md-center">
                        <Label for = "email" sm={2}>Email</Label>

@@ -12,11 +12,12 @@ import Landing from '../LandingPage/LandingPage';
 import HomePage from '../HomePage/HomePage'
 import React from 'react';
 import {withAuthentication} from "../Session";
-import {TabConfig, OverView} from "../User";
+import {TabConfig, OverView, UpdateField} from "../User";
 import {CreateIdea, ListIdea, Desc} from '../Idea';
 import './App.css';
 import Container from "reactstrap/es/Container";
 // import SignOutButton from '../LoginPages/SignOut';
+
 
 const App = () => {
     return (
@@ -29,7 +30,8 @@ const App = () => {
                             <Route path={ROUTES.HOME} component = {HomePage}/>
                             <Route path={ROUTES.UCONFIG} component = {TabConfig}/>
                             <Route path={ROUTES.CREATEIDEA} component = {CreateIdea}/>
-                            <Route path={ROUTES.OVERVIEW} component = {OverView}/>
+                            <Route exact path={ROUTES.OVERVIEW} component = {OverView}/>
+                            <Route path={ROUTES.OVERVIEW+'/update/:typeMode/:field/:value'} component = {UpdateField}/>
                             <Route path={ROUTES.LISTIDEA+'/:newIdea?'} component = {ListIdea}/>
                             <Route path={ROUTES.DESCIDEA} component = {Desc}/>
                         <Footer/>

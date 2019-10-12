@@ -1,6 +1,8 @@
 <?php
 	//Libraries
 	include 'connection.php';
+	include '../Permission.php';
+	permission();
 
 	/*
 	$json = file_get_contents('php://input');
