@@ -278,7 +278,7 @@
 
 			*/
 
-			$uid = $_POST["uid"];
+			$uid = getUid($_POST["uid"]);
 			$cantInt = 0;
 			$title = $_POST["title"];
 			$description = $_POST["description"];
@@ -318,7 +318,7 @@
 			1. Status: 1 if success, 0 otherwise
 
 			*/
-			$iid = $_POST["iid"];
+			$iid = getUid($_POST["iid"]);
 			$finId = $_POST["finId"];
 
 			$link = OpenConUser("f");

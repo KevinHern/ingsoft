@@ -1,11 +1,13 @@
 <?php
 	//Libraries
 	include 'connection.php';
-	include '../src/'
+	include '../Permission.php';
+	include '../getSub.php';
+	permission();
 
-	//$json = file_get_contents('php://input');
-	//Converts it into a PHP object
-    //$_POST = json_decode($json, true);
+	$json = file_get_contents('php://input');
+//	Converts it into a PHP object
+    $_POST = json_decode($json, true);
 
 
 	$option = $_POST["option"];
@@ -43,7 +45,7 @@
 
 			*/
 
-			$uid = $_POST["uid"];
+			$uid = getUid($_POST["uid"]);
 
 			$rows = $_POST["rows"];
 			$page = $_POST["page"];
