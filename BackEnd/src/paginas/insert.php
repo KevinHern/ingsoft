@@ -98,6 +98,7 @@
 			$org = $_POST["organization"];
 			$birthdate = $_POST["birthdate"];
 			$role = $_POST["role"];
+			$phones = $_POST["phones"];
 
 			$link = OpenConUser("u");
 
@@ -117,19 +118,36 @@
 
 			try
 			{
-				$query = "INSERT INTO individual VALUES('$uid', '$firstname', '$lastname', '$nationality', '$biography', '$org', '$birthdate', 'img/$folderid') ;";
+				/// Register Individual
+				$query = "INSERT INTO individual VALUES('$uid', '$firstname', '$lastname', '$nationality', '$biography', '$org', '$birthdate', 'img/$folderid');";
 				$result = pg_query($link, $query);
+
+				//Store Profile Picture
 				$exito = StoreFile($name, $tmp_name, "profile", $folderid);
+
+				// Change Role
 				$query = "UPDATE users SET role = $role WHERE uid = '$uid';";
 				$result = pg_query($link, $query);
+
+				// Insert Phones
+				foreach ($phones as $phone)
+				{ 
+					$uid = $phone["uid"];
+					$number = $phone["number"];
+					$query = "INSERT INTO telephone VALUES('$uid', 'number');";
+					$result = pg_query($link, $query);
+				}
+
 				$json = array('status' => 1);
-				echo json_encode($json);
 
 			}
 			catch (Exception $e)
 			{
 				$json = array('status' => 0);
-				$json = array('message' => $e);
+				$json = array('message' => "Ocurrió un error al registrar el usuario.");
+			}
+			finally
+			{
 				echo json_encode($json);
 			}
 
@@ -159,6 +177,8 @@
 			$description = $_POST["description"];
 			$country = $_POST["country"];
 			$location = $_POST["location"];
+			$role = $_POST["role"];
+			$phones = $_POST["phones"];
 
 			$link = OpenConUser("u");
 
@@ -176,19 +196,36 @@
 			$logoname = $_FILES["logo"]["name"];
 			$tmp_name = $_FILES["logo"]["tmp_name"];
 
-			$query = "INSERT INTO organization VALUES('$uid', '$name', '$description', '$country', '$location', 'img/$folderid') ;";
-
-			$result = pg_query($link, $query) or die('Query failed: ' . pg_result_error());
-
-			if ($result)
+			try
 			{
+				//Register Organization
+				$query = "INSERT INTO organization VALUES('$uid', '$name', '$description', '$country', '$location', 'img/$folderid') ;";
+				$result = pg_query($link, $query) or die('Query failed: ' . pg_result_error());
+
+				//Store Profile Picture
 				$exito = StoreFile($logoname, $tmp_name, "profile", $folderid);
+
+				// Change Role
+				$query = "UPDATE users SET role = $role WHERE uid = '$uid';";
+				$result = pg_query($link, $query);
+
+				// Insert Phones
+				foreach ($phones as $phone)
+				{ 
+					$uid = $phone["uid"];
+					$number = $phone["number"];
+					$query = "INSERT INTO telephone VALUES('$uid', 'number');";
+					$result = pg_query($link, $query);
+				}
+
 				$json = array('status' => 1);
-				echo json_encode($json);
 			}
-			else
+			catch
 			{
-				$json = array('status' => 0);
+				$json = array('status' => 0, 'message' => "Ocurrió un error al registrar la organización.");
+			}
+			finally
+			{
 				echo json_encode($json);
 			}
 
