@@ -109,7 +109,7 @@
 			break;
 
 		//---- DELETE STATE IDEA ----//
-		case 'catid':
+		case 'staid':
 			$id = $_POST["id"];
 
 			$link = OpenConUser("e");
