@@ -198,7 +198,6 @@
 				$cname = $line["cname"];
 				$sname = $line["sname"];
 				$cantint = $line["cantint"];
-				$details = array("status" => -1, "title" => $title, "description" => $description, "category" => $cname, "state" => $sname, "interested" => ((int)$cantint), "maxpage" => $maxpage);
 
 				//----- Extract Financists that are interested -----//
 
@@ -217,6 +216,7 @@
 				{
 					$maxpage = intdiv($total, $rows) + 1;
 				}
+				$details = array("status" => -1, "title" => $title, "description" => $description, "category" => $cname, "state" => $sname, "interested" => ((int)$cantint), "maxpage" => $maxpage);
 
 				$tempres = ($page-1) * $rows;
 
