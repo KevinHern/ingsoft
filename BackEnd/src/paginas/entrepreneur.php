@@ -3,6 +3,7 @@
 	include 'connection.php';
 	include '../Permission.php';
 	include '../getSub.php';
+	include 'utilities.php';
 	permission();
 
 	$json = file_get_contents('php://input');
@@ -66,8 +67,8 @@
 				}
 				else
 				{
-					$filter = "%(".strtolower($filter)."|".$filter."|".strtoupper($filter).")%";
-					$query = "SELECT COUNT(iid) as total FROM idea WHERE uid = '$uid' AND title LIKE '$filter'";
+					$filter = GenRegex($filter);
+					$query = "SELECT COUNT(iid) as total FROM idea WHERE uid = '$uid' AND title SIMILAR TO '%$filter%'";
 				}
 
 				$result = pg_query($link, $query);
@@ -106,13 +107,11 @@
 					$query = "";
 					if ($filter == "")
 					{
-						$query = "SELECT COUNT(iid) as total FROM idea WHERE uid = '$uid'";
 						$query = "SELECT iid, title FROM idea WHERE uid = '$uid' ORDER BY title";
 					}
 					else
 					{
-						$filter = "%(".strtolower($filter)."|".$filter."|".strtoupper($filter).")%";
-						$query = "SELECT iid, title FROM idea WHERE uid = '$uid' AND category like $filter ORDER BY title";
+						$query = "SELECT iid, title FROM idea WHERE uid = '$uid' AND title SIMILAR TO '%$filter%' ORDER BY title";
 					}
 					
 					$result = pg_query($link, $query);
