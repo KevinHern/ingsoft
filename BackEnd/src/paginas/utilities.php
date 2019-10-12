@@ -7,94 +7,18 @@
 		$str;
 		switch ($parameter)
 		{
-			case 'e':
+			case 'email':
 				$str = "email = '$val'";
 				break;
 
-			case 'p':
+			case 'password':
 				$str = "password = '$val'";
 				break;
 
-			case 'r':
+			case 'role':
 				$str = "role = $val";
 				break;
 			
-		}
-
-		return $str;
-	}
-
-	function MapIndividual($parameter)
-	{
-		$str;
-		switch ($parameter)
-		{
-			case 'f':
-				$str = "firstname";
-				break;
-
-			case 'l':
-				$str = "lastname";
-				break;
-
-			case 'n':
-				$str = "nationality";
-				break;
-
-			case 'b':
-				$str = "biography";
-				break;
-
-			case 'o':
-				$str = "org";
-				break;
-
-			case 'bd':
-				$str = "birthdate";
-				break;
-			
-		}
-
-		return $str;
-	}
-
-	function MapOrganization($parameter)
-	{
-		$str;
-		switch ($parameter)
-		{
-			case 'n':
-				$str = "name";
-				break;
-
-			case 'd':
-				$str = "description";
-				break;
-			
-			case 'c':
-				$str = "country";
-				break;
-
-			case 'l':
-				$str = "location";
-				break;
-		}
-
-		return $str;
-	}
-
-	function MapTelephone($parameter, $val)
-	{
-		$str;
-		switch ($parameter)
-		{
-			case 'n':
-				$str = "number = '$val'";
-				break;
-
-			case 'e':
-				$str = "extension = $val";
-				break;
 		}
 
 		return $str;
@@ -105,19 +29,19 @@
 		$str;
 		switch ($parameter)
 		{
-			case 't':
+			case 'title':
 				$str = "title = '$val'";
 				break;
 
-			case 'd':
+			case 'description':
 				$str = "description = '$val'";
 				break;
 
-			case 'c':
+			case 'category':
 				$str = "category = $val";
 				break;
 
-			case 's':
+			case 'state':
 				$str = "state = $val";
 				break;
 		}
@@ -125,59 +49,27 @@
 		return $str;
 	}
 
-	function MapIdeaMisc($parameter)
+	function GenRegex($string)
 	{
-		$str;
-		switch ($parameter)
-		{
-			case 'n':
-				$str = "name";
-				break;
+		$caps = strtoupper($string[0]);
+		$lower = strtolower($caps);
+
+		$regex = "(".$caps."|".$lower.")";
+		for ($i=1; $i < strlen($string); $i++)
+		{ 
+			$char = $string[$i];
+			if ($char == " ")
+			{
+				$regex .= " ";
+			}
+			else
+			{
+				$caps = strtoupper($char);
+				$lower = strtolower($char);
+				$regex .= "(".$caps."|".$lower.")";
+			}
 		}
 
-		return $str;
+		return $regex;
 	}
-
-	/*
-	//function: Get category ideas
-	function GetCategories($role)
-	{
-		/*
-		INPUTS:
-		1. Role of user
-
-		-------------
-
-		OUTSPUTS:
-		1. Array of Categories
-
-		for each category:
-		1.1 Name
-		1.2 Id
-
-		
-		$link = OpenConUser($role);
-
-		$query = "SELECT * FROM categoryidea ORDER BY name";
-
-		$result = pg_query($link, $query) or die('Query failed: ' . pg_result_error());
-
-		$array = array();
-
-		while ($line = pg_fetch_array($result, NULL, PGSQL_ASSOC))
-		{
-			$name = $line["name"];
-			$id = $line["id"];
-
-			$temp = array($name, $id);
-
-			array_push($array, $temp);
-		}
-
-		CloseCon($link);
-
-		return $array;
-	}*/
-
-
 ?>
