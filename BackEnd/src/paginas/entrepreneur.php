@@ -103,7 +103,18 @@
 				else
 				{
 					//Get Ideas
-					$query = "SELECT iid, title FROM idea WHERE uid = '$uid' AND category like $filter ORDER BY title";
+					$query = "";
+					if ($filter == "")
+					{
+						$query = "SELECT COUNT(iid) as total FROM idea WHERE uid = '$uid'";
+						$query = "SELECT iid, title FROM idea WHERE uid = '$uid' ORDER BY title";
+					}
+					else
+					{
+						$filter = "%(".strtolower($filter)."|".$filter."|".strtoupper($filter).")%";
+						$query = "SELECT iid, title FROM idea WHERE uid = '$uid' AND category like $filter ORDER BY title";
+					}
+					
 					$result = pg_query($link, $query);
 					pg_result_seek($result, $tempres);
 
