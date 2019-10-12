@@ -11,42 +11,43 @@
 	//Converts it into a PHP object
     $_POST = json_decode($json, true);
 
+	$uid = getUid($_POST['uid']);
+	$info = array("status" => -1);
+
 	$link = OpenConUser("u");
 
-	$uid = getUid($_POST['uid']);
-
-	//----- Basic User information -----//
-	$query = "SELECT email, password, role, type FROM users WHERE uid = '$uid'";
-	$result = pg_query($link, $query);
-	$line = pg_fetch_array($result, NULL, PGSQL_ASSOC);
-
 	
 
-	$email = $line["email"];
-	$password = $line["password"];
-	$role = $line["role"];
-	$type = $line["type"];
-	
-	$info = array("status" => -1);
-	//----- INDIVIDUAL INFORMATION -----//
-	if ($type == 1)
+	try
 	{
-		/*
-		OUTPUTS:
-		1. Status: 1 if success, 0 if failure, -1 if crash
-		2. Email
-		3. Password
-		4. Role
-		5. First Names
-		6. Last Names
-		7. Nationality
-		8. Biography
-		9. Afiliated Organization
-		10. Birthdate
-		*/
-		try
+		//----- Basic User information -----//
+		$query = "SELECT email, password, role, type FROM users WHERE uid = '$uid'";
+		$result = pg_query($link, $query);
+		$line = pg_fetch_array($result, NULL, PGSQL_ASSOC);
+
+		$email = $line["email"];
+		$password = $line["password"];
+		$role = $line["role"];
+		$type = $line["type"];
+
+		$user = array("email" => $email, "password" => $password, "role" =>  $role, "userType" => ((int)$type));
+
+		if ($type == 1)
 		{
-			$user = array("email" => $email, "password" => $password, "role" =>  $role, "userType" => ((int)$type));
+			//----- INDIVIDUAL INFORMATION -----//
+			/*
+			OUTPUTS:
+			1. Status: 1 if success, 0 if failure, -1 if crash
+			2. Email
+			3. Password
+			4. Role
+			5. First Names
+			6. Last Names
+			7. Nationality
+			8. Biography
+			9. Afiliated Organization
+			10. Birthdate
+			*/
 
 			// Extract all Individual Data
 			$query = "SELECT * FROM individual WHERE inid = '$uid'";
@@ -81,30 +82,22 @@
 			$info = array_merge($info, $user, $individual, $phones);
 			$info["status"] = 1;
 		}
-		catch (Exception $e) {
-			$info = array("status" => 0, "message" => "Ocurrió un error al extraer los datos del usuario.");
-		}
-		finally
+		else
 		{
-			echo json_encode($info);
-		}
-	}
-	else
-	{
-		/*
-		OUTPUTS:
-		1. Status: 1 if success, 0 if failure, -1 if crash
-		2. Email
-		3. Password
-		4. Role
-		5. Name
-		6. Description
-		7. Country
-		8. location
-		9. Logo
-		*/
-		try
-		{
+			//----- ORGANIZATION INFORMATION -----//
+			/*
+			OUTPUTS:
+			1. Status: 1 if success, 0 if failure, -1 if crash
+			2. Email
+			3. Password
+			4. Role
+			5. Name
+			6. Description
+			7. Country
+			8. location
+			9. Logo
+			*/
+
 			$user = array("email" => $email, "password" => $password, "role" =>  $role, "userType" => ((int)$type));
 
 			$query = "SELECT * FROM organization WHERE oid = '$uid'";
@@ -120,7 +113,7 @@
 			//Organization Information
 			$organization = array('name' => $name, 'description' =>  $description, 'country' => $country, 'location' => $location);
 
-			//Exgtract phone
+			//Extract phone
 			$query = "SELECT * FROM telephone WHERE uid = '$uid' LIMIT 1;";
 			$result = pg_query($link, $query);
 			$line = pg_fetch_array($result, NULL, PGSQL_ASSOC);
@@ -130,12 +123,15 @@
 			$info = array_merge($info, $user, $organization, $phone);
 			$info["status"] = 1;
 		}
-		catch (Exception $e) {
-			$info = array("status" => 0, "message" => "Ocurrió un error al extraer los datos del usuario.");
-		}
-		finally
-		{
-			echo json_encode($info);
-		}
+
+	}
+	catch (Exception $e)
+	{
+		$info = array("status" => 0, "message" => "Ocurrió un error al extraer los datos del usuario.");
+	}
+	finally
+	{
+		CloseCon($link);
+		echo json_encode($info);
 	}
 ?>
