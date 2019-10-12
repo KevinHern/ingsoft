@@ -34,30 +34,30 @@
 
 			$link = OpenConUser("u");
 
-			$query = "SELECT folderid FROM users WHERE uid = '$uid';";
-
-			$result = pg_query($link, $query) or die('Query failed: ' . pg_result_error());
-			$line = pg_fetch_array($result, NULL, PGSQL_ASSOC);
-			$folderid = $line["folderid"];
-
-			DeleteDir($folderid);
-
-			$query = "DELETE FROM users WHERE uid = '$uid';";
-
-			$result = pg_query($link, $query) or die('Query failed: ' . pg_result_error());
-
-			if ($result)
+			try
 			{
+				$query = "SELECT folderid FROM users WHERE uid = '$uid';";
+
+				$result = pg_query($link, $query);
+				$line = pg_fetch_array($result, NULL, PGSQL_ASSOC);
+				$folderid = $line["folderid"];
+
+				DeleteDir($folderid);
+
+				$query = "DELETE FROM users WHERE uid = '$uid';";
+				$result = pg_query($link, $query);
+
 				$json = array('status' => 1);
-				echo json_encode($json);
 			}
-			else
+			catch(Exception $e)
 			{
-				$json = array('status' => 0);
+				$json = array('status' => 0, 'message' => "Ocurrió un error al eliminar la cuenta.");
+			}
+			finally
+			{
+				CloseCon($link);
 				echo json_encode($json);
 			}
-			
-			CloseCon($link);
 			break;
 
 		//---- DELETE IDEA ----//
@@ -66,47 +66,95 @@
 
 			$link = OpenConUser("e");
 
-			$query = "DELETE FROM idea WHERE iid = $iid";
-
-			$result = pg_query($link, $query) or die('Query failed: ' . pg_result_error());
-
-			if ($result)
+			try
 			{
+				$query = "DELETE FROM idea WHERE iid = $iid";
+
+				$result = pg_query($link, $query);
 				$json = array('status' => 1);
-				echo json_encode($json);
 			}
-			else
+			catch (Exception $e)
 			{
-				$json = array('status' => 0);
+				$json = array('status' => 0, 'message' => "Ocurrió un error al eliminar la idea.");
+			}
+			finally
+			{
+				CloseCon($link);
 				echo json_encode($json);
 			}
+			break;
 
-			CloseCon($link);
+		//---- DELETE CATEGORY IDEA ----//
+		case 'catid':
+			$id = $_POST["id"];
+
+			$link = OpenConUser("e");
+
+			try
+			{
+				$query = "DELETE FROM categoryidea WHERE id = $id";
+
+				$result = pg_query($link, $query);
+				$json = array('status' => 1);
+			}
+			catch (Exception $e)
+			{
+				$json = array('status' => 0, 'message' => "Ocurrió un error al eliminar la categoría.");
+			}
+			finally
+			{
+				CloseCon($link);
+				echo json_encode($json);
+			}
+			break;
+
+		//---- DELETE STATE IDEA ----//
+		case 'catid':
+			$id = $_POST["id"];
+
+			$link = OpenConUser("e");
+
+			try
+			{
+				$query = "DELETE FROM stateidea WHERE id = $id";
+
+				$result = pg_query($link, $query);
+				$json = array('status' => 1);
+			}
+			catch (Exception $e)
+			{
+				$json = array('status' => 0, 'message' => "Ocurrió un error al eliminar el estado.");
+			}
+			finally
+			{
+				CloseCon($link);
+				echo json_encode($json);
+			}
 			break;
 
 		//---- DELETE BOOKMARK ----//
 		case 'book':
 			$iid = $_POST["iid"];
-			$finId = $_POST["finid"];
+			$finid = $_POST["finid"];
 
 			$link = OpenConUser("f");
 
-			$query = "DELETE FROM finBook WHERE iid = $iid AND finId = '$finId';";
-
-			$result = pg_query($link, $query) or die('Query failed: ' . pg_result_error());
-
-			if ($result)
+			try
 			{
+				$query = "DELETE FROM finBook WHERE iid = $iid AND finid = '$finid';";
+
+				$result = pg_query($link, $query);
 				$json = array('status' => 1);
-				echo json_encode($json);
 			}
-			else
+			catch (Exception $e)
 			{
-				$json = array('status' => 0);
-				echo json_encode($json);
+				$json = array('status' => 0, 'message' => "Ocurrió un error al borrar la idea del bookmark.");
 			}
-
-			CloseCon($link);
+			finally
+			{
+				CloseCon($link);
+				echo json_encode($json);
+			}		
 			break;
 	}
 ?>

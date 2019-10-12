@@ -62,22 +62,20 @@
 
 			$link = OpenConUser("u");
 
-			$query = "SELECT folderid FROM users WHERE uid = '$uid';";
-
-			$result = pg_query($link, $query);
-
-			$line = pg_fetch_array($result, NULL, PGSQL_ASSOC);
-
-			$folderid = $line["folderid"];
-
-			CreateDir($folderid);
-
-			//Photo 
-			$name = $_FILES["photo"]["name"];
-			$tmp_name = $_FILES["photo"]["tmp_name"];
-
 			try
 			{
+				//Extract User's Directory ID
+				$query = "SELECT folderid FROM users WHERE uid = '$uid';";
+				$result = pg_query($link, $query);
+				$line = pg_fetch_array($result, NULL, PGSQL_ASSOC);
+				$folderid = $line["folderid"];
+
+				CreateDir($folderid);
+
+				//Photo 
+				$name = $_FILES["photo"]["name"];
+				$tmp_name = $_FILES["photo"]["tmp_name"];
+
 				/// Register Individual
 				$query = "INSERT INTO individual VALUES('$uid', '$firstname', '$lastname', '$nationality', '$biography', '$org', '$birthdate', 'img/$folderid');";
 				$result = pg_query($link, $query);
@@ -103,15 +101,13 @@
 			}
 			catch (Exception $e)
 			{
-				$json = array('status' => 0);
-				$json = array('message' => "Ocurrió un error al registrar el usuario.");
+				$json = array('status' => 0, 'message' => "Ocurrió un error al registrar el usuario.");
 			}
 			finally
 			{
+				CloseCon($link);
 				echo json_encode($json);
 			}
-
-			CloseCon($link);
 			break;
 		
 		//---- REGISTER ORGANIZATION ----//
@@ -142,25 +138,23 @@
 
 			$link = OpenConUser("u");
 
-			$query = "SELECT folderid FROM users WHERE uid = '$uid';";
-
-			$result = pg_query($link, $query) or die('Query failed: ' . pg_result_error());
-
-			$line = pg_fetch_array($result, NULL, PGSQL_ASSOC);
-
-			$folderid = $line["folderid"];
-
-			CreateDir($folderid);
-
-			//Photo
-			$logoname = $_FILES["logo"]["name"];
-			$tmp_name = $_FILES["logo"]["tmp_name"];
-
 			try
 			{
+				//Extract User's Directory ID
+				$query = "SELECT folderid FROM users WHERE uid = '$uid';";
+				$result = pg_query($link, $query);
+				$line = pg_fetch_array($result, NULL, PGSQL_ASSOC);
+				$folderid = $line["folderid"];
+
+				CreateDir($folderid);
+
+				//Photo
+				$logoname = $_FILES["logo"]["name"];
+				$tmp_name = $_FILES["logo"]["tmp_name"];
+
 				//Register Organization
 				$query = "INSERT INTO organization VALUES('$uid', '$name', '$description', '$country', '$location', 'img/$folderid') ;";
-				$result = pg_query($link, $query) or die('Query failed: ' . pg_result_error());
+				$result = pg_query($link, $query);
 
 				//Store Profile Picture
 				$exito = StoreFile($logoname, $tmp_name, "profile", $folderid);
@@ -186,10 +180,11 @@
 			}
 			finally
 			{
+				CloseCon($link);
 				echo json_encode($json);
 			}
 
-			CloseCon($link);
+			
 			break;
 
 		//---- REGISTER CATEGORY IDEA ----//
@@ -205,24 +200,24 @@
 			*/
 
 			$name = $_POST["name"];
-
 			$link = OpenConAdmin();
 
-			$query = "INSERT INTO categoryidea VALUES(DEFAULT, '$name');";
-
-			$result = pg_query($link, $query) or die('Query failed: ' . pg_result_error());
-
-			if ($result)
+			try
 			{
+				$query = "INSERT INTO categoryidea VALUES(DEFAULT, '$name');";
+				$result = pg_query($link, $query);
+
 				$json = array('status' => 1);
-				echo json_encode($json);
 			}
-			else
+			catch(Exception $e)
 			{
-				$json = array('status' => 0);
-				echo json_encode($json);
+				$json = array('status' => 0, 'message' => "Ocurrió un error al registrar la categoría.");
 			}
-			CloseCon($link);
+			finally
+			{
+				CloseCon($link);
+				echo json_encode($json);
+			}			
 			break;
 
 		//---- REGISTER STATE IDEA ----//
@@ -239,24 +234,24 @@
 			*/
 
 			$name = $_POST["name"];
-
 			$link = OpenConAdmin();
 
-			$query = "INSERT INTO stateidea VALUES(DEFAULT, '$name');";
-
-			$result = pg_query($link, $query) or die('Query failed: ' . pg_result_error());
-
-			if ($result)
+			try
 			{
+				$query = "INSERT INTO stateidea VALUES(DEFAULT, '$name');";
+				$result = pg_query($link, $query);
+
 				$json = array('status' => 1);
-				echo json_encode($json);
 			}
-			else
+			catch(Exception $e)
 			{
-				$json = array('status' => 0);
-				echo json_encode($json);
+				$json = array('status' => 0, 'message' => "Ocurrió un error al registrar el estado.");
 			}
-			CloseCon($link);
+			finally
+			{
+				CloseCon($link);
+				echo json_encode($json);
+			}	
 			break;
 
 		//---- REGISTER IDEA ----//
@@ -285,22 +280,21 @@
 
 			$link = OpenConUser("e");
 
-			$query = "INSERT INTO idea VALUES(DEFAULT, '$uid', $cantInt, '$title','$description', $category, $state);";
-
-			$result = pg_query($link, $query) or die('Query failed: ' . pg_result_error());
-
-			if ($result)
+			try
 			{
+				$query = "INSERT INTO idea VALUES(DEFAULT, '$uid', $cantInt, '$title','$description', $category, $state);";
+				$result = pg_query($link, $query);
 				$json = array('status' => 1);
-				echo json_encode($json);
 			}
-			else
+			catch (Exception $e)
 			{
-				$json = array('status' => 0);
+				$json = array('status' => 0, 'message' => "Ocurrió un error al registrar la idea.");
+			}
+			finally
+			{
+				CloseCon($link);
 				echo json_encode($json);
 			}
-
-			CloseCon($link);
 			break;
 
 		//---- REGISTER BOOKMARK ----//
@@ -317,26 +311,25 @@
 
 			*/
 			$iid = getUid($_POST["iid"]);
-			$finId = $_POST["finId"];
+			$finid = $_POST["finid"];
 
 			$link = OpenConUser("f");
 
-			$query = "INSERT INTO finbook VALUES($iid, '$finId');";
-
-			$result = pg_query($link, $query) or die('Query failed: ' . pg_result_error());
-
-			if ($result)
+			try
 			{
+				$query = "INSERT INTO finbook VALUES($iid, '$finid');";
+				$result = pg_query($link, $query);
 				$json = array('status' => 1);
-				echo json_encode($json);
 			}
-			else
+			catch
 			{
-				$json = array('status' => 0);
+				$json = array('status' => 0, 'message' => "Ocurrió un error al añadir la idea al bookmark.");
+			}
+			finally
+			{
+				CloseCon($link);
 				echo json_encode($json);
 			}
-
-			CloseCon($link);
 			break;
 	}
 ?>
