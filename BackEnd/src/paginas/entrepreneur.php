@@ -90,7 +90,7 @@
 				if ($total == 0)
 				{
 					$ideas["status"] = 0;
-					$msg = array('message' => "No existen ideas para esta categoria." );
+					$msg = array('message' => "No existen ideas similares al filtro." );
 					$ideas = array_merge($ideas, $msg);
 
 				}
