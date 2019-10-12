@@ -170,8 +170,6 @@
 			$sname = $line["sname"];
 			$cantint = $line["cantint"];
 
-			$details = array("status" => 0);
-
 			//----- Extract Financists that are interested -----//
 
 			//--- Extract total number of rows ---//
@@ -195,18 +193,18 @@
 
 			$tempres = ($page-1) * $rows;
 
-			
+			$details = array("status" => -1, "title" => $title, "description" => $description, "category" => $cname, "state" => $sname, "interested" => ((int)$cantint));
 			if($total == 0)
 			{
 				$details["status"] = 1;
 			}
-			else if ($tempres > $total)
+			else if ($tempres >= $total)
 			{
 				$details["status"] = 1;
 			}
 			else
 			{
-				$details = array("status" => -1, "title" => $title, "description" => $description, "category" => $cname, "state" => $sname, "interested" => ((int)$cantint), "maxPage" => $maxpage);
+				
 				//--- Extract Financists ---//
 				$query = "SELECT U.uid, U.type FROM finbook IB, users U WHERE IB.finid = U.uid AND IB.iid = $iid";
 
@@ -251,11 +249,11 @@
 						$temp = array_merge($temp, $t);
 					}
 
-					$financists = array("financist$i" => $temp);
+					$financists = array_merge($financists, $temp);
 					$i = $i + 1;
 				}
 				$financists = array("financists" => $financists);
-				$details = array_merge($details, $financists);
+				$details = array_merge($details, $maxpage, $financists);
 				$details["status"] = 1;
 			}
 
