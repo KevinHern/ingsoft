@@ -26,10 +26,8 @@
 	$password = $line["password"];
 	$role = $line["role"];
 	$type = $line["type"];
-	$info = array("status" => -1);
-
-	$user = array("email" => $email, "password" => $password, "role" =>  $role, "userType" => ((int)$type));
 	
+	$info = array("status" => -1);
 	//----- INDIVIDUAL INFORMATION -----//
 	if ($type == 1)
 	{
@@ -46,7 +44,11 @@
 		9. Afiliated Organization
 		10. Birthdate
 		*/
-		try {
+		try
+		{
+			$user = array("email" => $email, "password" => $password, "role" =>  $role, "userType" => ((int)$type));
+
+			// Extract all Individual Data
 			$query = "SELECT * FROM individual WHERE inid = '$uid'";
 			$result = pg_query($link, $query);
 			$line = pg_fetch_array($result, NULL, PGSQL_ASSOC);
@@ -59,14 +61,28 @@
 			$birthdate = $line["birthdate"];
 			//$photo = $line["photo"];
 
+			//Individual Information
 			$individual = array("firstname" => $firstname, "lastname" => $lastname, "nationality" => $nationality, "biography" => $biography, "organization" => $org, "birthdate" => $birthdate);
 
-			$info = array_merge($info, $user, $individual);
+			//Extract all phones
+			$query = "SELECT * FROM telephone WHERE uid = '$uid'";
+			$result = pg_query($link, $query);
+
+			$phones = array();
+			$i = 0;
+			while ($line = pg_fetch_array($result, NULL, PGSQL_ASSOC))
+			{
+				$number = $line["number"];
+				$temp = array("phone$i" => $number);
+				$phones = array_merge($phones, $temp);
+			}
+			$phones = array("phones" => $phones);
+
+			$info = array_merge($info, $user, $individual, $phones);
 			$info["status"] = 1;
 		}
 		catch (Exception $e) {
-			echo "error";
-			$info["status"] = 0;
+			$info = array("status" => 0, "message" => "Ocurrió un error al extraer los datos del usuario.");
 		}
 		finally
 		{
@@ -87,7 +103,10 @@
 		8. location
 		9. Logo
 		*/
-		try {
+		try
+		{
+			$user = array("email" => $email, "password" => $password, "role" =>  $role, "userType" => ((int)$type));
+
 			$query = "SELECT * FROM organization WHERE oid = '$uid'";
 			$result = pg_query($link, $query);
 			$line = pg_fetch_array($result, NULL, PGSQL_ASSOC);
@@ -98,14 +117,21 @@
 			$location = $line["location"];
 			//$logo = $line["logo"];
 
+			//Organization Information
 			$organization = array('name' => $name, 'description' =>  $description, 'country' => $country, 'location' => $location);
 
-			$info = array_merge($info, $user, $organization);
+			//Exgtract phone
+			$query = "SELECT * FROM telephone WHERE uid = '$uid' LIMIT 1;";
+			$result = pg_query($link, $query);
+			$line = pg_fetch_array($result, NULL, PGSQL_ASSOC);
+
+			$phone = array("phone" => $line["number"]);
+
+			$info = array_merge($info, $user, $organization, $phone);
 			$info["status"] = 1;
 		}
 		catch (Exception $e) {
-			echo "error";
-			$info["status"] = 0;
+			$info = array("status" => 0, "message" => "Ocurrió un error al extraer los datos del usuario.");
 		}
 		finally
 		{
