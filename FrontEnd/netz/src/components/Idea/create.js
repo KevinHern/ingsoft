@@ -5,7 +5,7 @@ import Label from "reactstrap/es/Label";
 import {Button, ButtonGroup, ButtonToolbar, Col, CustomInput, Media, Row} from "reactstrap";
 import Input from "reactstrap/es/Input";
 import Container from "reactstrap/es/Container";
-import {CATEGORY, REGISTER} from "../../Constants/Endpoint";
+import {CATEGORY, REGISTER, STATE} from "../../Constants/Endpoint";
 import axios from 'axios';
 import {withRouter} from 'react-router-dom';
 import withAuthentication from '../Session/withAuthentication.js'
@@ -21,6 +21,8 @@ class CreateIdeaCom extends Component {
             title: '',
             description: '',
             cat: 0,
+            state: 0,
+            states: []
         };
         this.onSubmit = this.onSubmit.bind(this);
     }
@@ -41,6 +43,21 @@ class CreateIdeaCom extends Component {
                 console.log("error")
             }
         })
+        axios({
+            url: STATE,
+            method: 'post',
+        }).then(response => {
+            let states = [];
+            if(response.data['status']) {
+                delete response.data['status'];
+                Object.values(response.data).map(item => states.push(item));
+                // console.log(cats);
+                const state = states[0].id;
+                this.setState({states, state})
+            }else{
+                console.log("error")
+            }
+        })
 
     }
 
@@ -53,7 +70,7 @@ class CreateIdeaCom extends Component {
         e.preventDefault();
         console.log(this.props);
         const {fireBase} = this.props;
-        const { title, description, cat} = this.state;
+        const { title, description, cat, state} = this.state;
         const token =  await fireBase.token();
         const formData = new FormData;
         formData.append('option', 'idea');
@@ -61,7 +78,7 @@ class CreateIdeaCom extends Component {
         formData.append('title', title);
         formData.append('description', description);
         formData.append('category', cat);
-        formData.append('state', "1");
+        formData.append('state', state);
         axios({
             url: REGISTER,
             method: 'post',
@@ -83,9 +100,12 @@ class CreateIdeaCom extends Component {
     };
 
     render() {
-        const {cats}  = this.state;
+        const {cats, states}  = this.state;
         const catsOp = cats.map((cat) => {
             return <option key = {cat.name} value = {cat.id}>{cat.name}</option>
+        });
+        const stateOp = states.map((state) => {
+            return <option key = {state.name} value = {state.id}>{state.name}</option>
         });
         return (
             <React.Fragment>
@@ -112,7 +132,7 @@ class CreateIdeaCom extends Component {
                                         Titulo
                                     </Label>
                                     <Col sm={8}>
-                                        <Input name="title" type={"text"} id="name" onChange = {this.changeState}/>
+                                        <Input name="title" type={"text"} id="name" onChange = {this.changeState} required/>
                                     </Col>
                                 </FormGroup>
                                 <FormGroup row>
@@ -120,7 +140,17 @@ class CreateIdeaCom extends Component {
                                         Descripción
                                     </Label>
                                     <Col sm={8}>
-                                        <Input name="description" type={"textarea"} id="name" onChange = {this.changeState}/>
+                                        <Input name="description" type={"textarea"} id="name" onChange = {this.changeState} required/>
+                                    </Col>
+                                </FormGroup>
+                                <FormGroup row>
+                                    <Label sm={2}>
+                                        Estado
+                                    </Label>
+                                    <Col sm={8}>
+                                        <Input type="select" name="state" id="stateSelect" onChange = {this.changeState} required>
+                                            {stateOp}
+                                        </Input>
                                     </Col>
                                 </FormGroup>
                                 <FormGroup row>
@@ -128,7 +158,7 @@ class CreateIdeaCom extends Component {
                                         Categoría
                                     </Label>
                                     <Col sm={8}>
-                                        <Input type="select" name="cat" id="exampleSelect" onChange = {this.changeState}>
+                                        <Input type="select" name="cat" id="catSelect" onChange = {this.changeState} required>
                                             {catsOp}
                                         </Input>
                                     </Col>

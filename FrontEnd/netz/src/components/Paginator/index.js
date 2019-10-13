@@ -6,7 +6,11 @@ import PaginationLink from "reactstrap/es/PaginationLink";
 function Item(props) {
     // console.log(props.no);
     return(
-        <PaginationItem active = {props.active} onClick = {() => {props.onPageMove(props.no)}}>
+        <PaginationItem active = {props.active} onClick = {() => {
+                if(props.currentPage !== props.no) {
+                    props.onPageMove(props.no)
+                }
+        }}>
             <PaginationLink   >
                 {props.no}
             </PaginationLink>
@@ -23,9 +27,9 @@ function Paginator(props) {
             break;
         }
         if(currentPage === i) {
-            pages.push(<Item no={i} key = {i}  active = {true} onPageMove = {props.onPageMove}/>);
+            pages.push(<Item no={i} key = {i}  active = {true} currentPage = {currentPage} onPageMove = {props.onPageMove}/>);
         }else{
-            pages.push(<Item no={i} key = {i}  active = {false} onPageMove = {props.onPageMove}/>);
+            pages.push(<Item no={i} key = {i}  active = {false}  currentPage = {currentPage} onPageMove = {props.onPageMove}/>);
         }
     };
     return (
@@ -42,7 +46,7 @@ function Paginator(props) {
             <PaginationItem disabled={currentPage === max} onClick={ (e) => {props.onArrowMove(e, 'next')}}>
                 <PaginationLink next  />
             </PaginationItem>
-            <PaginationItem   disabled={currentPage === max } onClick={ (e) => {props.onArrowMove(e, 'last')}}>
+            <PaginationItem   disabled={currentPage*perTag >= max || currentPage === max} onClick={ (e) => {props.onArrowMove(e, 'last')}}>
                 <PaginationLink last/>
             </PaginationItem>
         </Pagination>
