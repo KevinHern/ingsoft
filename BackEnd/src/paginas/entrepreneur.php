@@ -188,7 +188,7 @@
 			try
 			{
 				//----- Extract Idea's basic information -----//
-				$query = "SELECT I.title, I.description, CI.name as cname, SI.name as sname, I.cantInt FROM idea I, categoryIdea CI, stateidea SI WHERE I.iid = $iid AND I.category = CI.id AND I.state = SI.id";
+				$query = "SELECT I.title, I.description, CI.name as cname, CI.id as cid, SI.name as sname, SI.id as sid, I.cantInt FROM idea I, categoryIdea CI, stateidea SI WHERE I.iid = $iid AND I.category = CI.id AND I.state = SI.id";
 				$result = pg_query($link, $query);
 				$line = pg_fetch_array($result, NULL, PGSQL_ASSOC);
 
@@ -196,6 +196,8 @@
 				$description = $line["description"];
 				$cname = $line["cname"];
 				$sname = $line["sname"];
+				$cid = $line["cid"];
+				$sid = $line["sid"];
 				$cantint = $line["cantint"];
 
 				//----- Extract Financists that are interested -----//
@@ -215,7 +217,7 @@
 				{
 					$maxpage = intdiv($total, $rows) + 1;
 				}
-				$details = array("status" => -1, "title" => $title, "description" => $description, "category" => $cname, "state" => $sname, "interested" => ((int)$cantint), "maxpage" => $maxpage);
+				$details = array("status" => -1, "title" => $title, "description" => $description, "category" => $cname, "categoryid" => ((int)$cid), "state" => $sname, "stateid" => ((int)$sid),  "interested" => ((int)$cantint), "maxpage" => $maxpage);
 
 				$tempres = ($page-1) * $rows;
 
