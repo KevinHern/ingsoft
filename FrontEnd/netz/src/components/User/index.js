@@ -168,7 +168,6 @@ class OverViewManager extends Component {
 
     render() {
         const {fetched, userType} = this.state;
-        console.log(userType);
         return (
             <React.Fragment>
                 <Row>
@@ -181,7 +180,7 @@ class OverViewManager extends Component {
                         </ButtonToolbar>
                     </Col>
                 </Row>
-                {(fetched)? (userType)? <OverViewInd {... this.state} />:<OverViewOrg {... this.state} /> : null}
+                {(fetched)? ((userType)? <OverViewInd {... this.state} />: <OverViewOrg {... this.state} /> ): null}
             </React.Fragment>
         );
     }

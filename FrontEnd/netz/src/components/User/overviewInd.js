@@ -9,6 +9,9 @@ import ListGroup from "reactstrap/es/ListGroup";
 import ListGroupItem from "reactstrap/es/ListGroupItem";
 
 
+
+
+
 class OverviewInd extends Component {
 
     constructor(props){
@@ -77,8 +80,11 @@ class OverviewInd extends Component {
 
 
     render() {
-        const {firstname, lastname, nationality, birthdate, biography, organization} = this.props;
+        const {firstname, lastname, nationality, birthdate, biography, organization, email, role, phones} = this.props;
         // const {authUser} = this.props;
+        const phoneList = phones.map((phone) =>
+                <div>{phone}</div>
+        );
         return (
             <React.Fragment>
                 <Container>
@@ -95,7 +101,7 @@ class OverviewInd extends Component {
                                         <Row>
                                             <Col sm={{ size: 9}}>
                                                 <h4>
-                                                    Nombre:
+                                                    Nombre
                                                 </h4>
 
                                             </Col>
@@ -111,6 +117,136 @@ class OverviewInd extends Component {
                                                  {firstname} {lastname}
                                             </Col>
                                         </Row>
+                                    </Container>
+                                </ListGroupItem>
+                            </ListGroup>
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col sm={{ size: 6, offset: 3 }}>
+                            <ListGroup>
+                                <ListGroupItem>
+                                    <Container className={"justify-content-center"} >
+                                        <Row>
+                                            <Col sm={{ size: 9}}>
+                                                <h4>
+                                                    Email
+                                                </h4>
+
+                                            </Col>
+                                            <Col  sm={{ size: 2}}>
+                                                <Button color={'warning'}>
+                                                    Modify
+                                                </Button>
+                                            </Col>
+
+                                        </Row>
+                                        <Row>
+                                            <Col sm={{ size: 6}}>
+                                                {email}
+                                            </Col>
+                                        </Row>
+                                    </Container>
+                                </ListGroupItem>
+                            </ListGroup>
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col sm={{ size: 6, offset: 3 }}>
+                            <ListGroup>
+                                <ListGroupItem>
+                                    <Container className={"justify-content-center"} >
+                                        <Row>
+                                            <Col sm={{ size: 9}}>
+                                                <h4>
+                                                    Password
+                                                </h4>
+
+                                            </Col>
+                                            <Col  sm={{ size: 2}}>
+                                                <Button color={'warning'}>
+                                                    Modify
+                                                </Button>
+                                            </Col>
+
+                                        </Row>
+                                        <Row>
+                                            <Col sm={{ size: 6}}>
+                                                **********
+                                            </Col>
+                                        </Row>
+                                    </Container>
+                                </ListGroupItem>
+                            </ListGroup>
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col sm={{ size: 6, offset: 3 }}>
+                            <ListGroup>
+                                <ListGroupItem>
+                                    <Container className={"justify-content-center"} >
+                                        <Row>
+                                            <Col sm={{ size: 9}}>
+                                                <h4>
+                                                    Roles
+                                                </h4>
+
+                                            </Col>
+                                            <Col  sm={{ size: 2}}>
+                                                <Button color={'warning'}>
+                                                    Modify
+                                                </Button>
+                                            </Col>
+
+                                        </Row>
+                                        <Row>
+                                            <Col sm={{ size: 6}}>
+                                                {(role !== "0")?
+                                                    (role === "1")?
+                                                        <p> Emprendedor </p>
+                                                        :
+                                                        (role === "2")?
+                                                            <p> Financista </p>
+                                                            :
+                                                            <div>
+                                                                <p> Emprendedor  </p>
+                                                                <p> Financista  </p>
+                                                            </div>
+                                                    : <p> No tiene roles asignados </p>}
+                                            </Col>
+                                        </Row>
+
+                                    </Container>
+                                </ListGroupItem>
+                            </ListGroup>
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col sm={{ size: 6, offset: 3 }}>
+                            <ListGroup>
+                                <ListGroupItem>
+                                    <Container className={"justify-content-center"} >
+                                        <Row>
+                                            <Col sm={{ size: 9}}>
+                                                <h4>
+                                                    Teléfonos
+                                                </h4>
+                                            </Col>
+                                            <Col  sm={{ size: 2}}>
+                                                <Button color={'warning'}>
+                                                    Modify
+                                                </Button>
+                                            </Col>
+
+                                        </Row>
+                                        <Row>
+                                            <Col sm={{ size: 6}}>
+                                                <div>
+                                                    {phoneList}
+                                                </div>
+                                            </Col>
+                                        </Row>
+
                                     </Container>
                                 </ListGroupItem>
                             </ListGroup>
@@ -184,9 +320,8 @@ class OverviewInd extends Component {
                                         <Row>
                                             <Col sm={{ size: 9}}>
                                                 <h4>
-                                                    Biografia
+                                                    Biografía
                                                 </h4>
-
                                             </Col>
                                             <Col  sm={{ size: 2}}>
                                                 <Button color={'warning'}>

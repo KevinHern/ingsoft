@@ -9,6 +9,8 @@ import * as ROUTES from '../../Constants/routes';
 import Container from "reactstrap/es/Container";
 import PhoneItem from "./PhoneItem";
 import axios from 'axios';
+import {UPDATE_PHONE} from "../../Constants/Endpoint";
+
 //Missing phone field
 class OrganForm extends Component {
 
@@ -230,11 +232,13 @@ class IndForm extends Component {
     }
 
 
-    storePhoneList = () => {
+    storePhoneList = (uid) => {
+        const{phoneList} = this.state;
         return axios({
-            
-
-
+            method: 'POST',
+            url: UPDATE_PHONE,
+            data:   {uid, phone: phoneList},
+            headers: { 'Content-Type': 'application/json'},
         });
 
     };
@@ -257,7 +261,7 @@ class IndForm extends Component {
         try{
             const promisedToken =  await this.props.token();
             const [axiosRequest, fireStoreRequest] = await Promise.all([this.props.serverData(formData, promisedToken),
-                this.props.setRole(data['role'])]);
+                this.props.setRole(data['role']), this.storePhoneList(promisedToken)]);
             // const axiosRequest = await this.props.serverData(formData, promisedToken);
             const axiosRequestPhones = await this.storePhoneList();
             // this.props.setClaims(data['role']).then((result) => {
