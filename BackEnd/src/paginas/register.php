@@ -58,7 +58,7 @@
 			$org = $_POST["organization"];
 			$birthdate = $_POST["birthdate"];
 			$role = $_POST["role"];
-			$phones = $_POST["phones"];
+//			$phones = $_POST["phones"];
 
 			$link = OpenConUser("u");
 
@@ -88,15 +88,15 @@
 				$result = pg_query($link, $query);
 
 				// Insert Phones
-				foreach ($phones as $phone)
-				{ 
-					$uid = $phone["uid"];
-					$number = $phone["number"];
-					$query = "INSERT INTO telephone VALUES('$uid', 'number');";
-					$result = pg_query($link, $query);
-				}
-
-				$json = array('status' => 1);
+//				foreach ($phones as $phone)
+//				{
+//					$uid = $phone["uid"];
+//					$number = $phone["number"];
+//					$query = "INSERT INTO telephone VALUES('$uid', 'number');";
+//					$result = pg_query($link, $query);
+//				}
+//
+//				$json = array('status' => 1);
 
 			}
 			catch (Exception $e)
@@ -134,7 +134,7 @@
 			$country = $_POST["country"];
 			$location = $_POST["location"];
 			$role = $_POST["role"];
-			$phones = $_POST["phones"];
+			$phone = $_POST["phone"];
 
 			$link = OpenConUser("u");
 
@@ -162,15 +162,19 @@
 				// Change Role
 				$query = "UPDATE users SET role = $role, type = 0 WHERE uid = '$uid';";
 				$result = pg_query($link, $query);
+				$query = "INSERT INTO telephone VALUES('$uid', '$phone');";
+				$result = pg_query($link, $query);
 
-				// Insert Phones
-				foreach ($phones as $phone)
-				{ 
-					$uid = $phone["uid"];
-					$number = $phone["number"];
-					$query = "INSERT INTO telephone VALUES('$uid', 'number');";
-					$result = pg_query($link, $query);
-				}
+
+
+                // Insert Phones
+//				foreach ($phones as $phone)
+//				{
+//					$uid = $phone["uid"];
+//					$number = $phone["number"];
+//					$query = "INSERT INTO telephone VALUES('$uid', 'number');";
+//					$result = pg_query($link, $query);
+//				}
 
 				$json = array('status' => 1);
 			}
@@ -321,7 +325,7 @@
 				$result = pg_query($link, $query);
 				$json = array('status' => 1);
 			}
-			catch
+			catch (Exception $e)
 			{
 				$json = array('status' => 0, 'message' => "Ocurrió un error al añadir la idea al bookmark.");
 			}

@@ -4,3 +4,6 @@ export const GETUSER = 'http://localhost/ingsoft/src/paginas/user.php';
 export const ENTREPRENEUR = 'http://localhost/ingsoft/src/paginas/entrepreneur.php';
 export const REMOVE = 'http://localhost/ingsoft/src/paginas/remove.php';
 export const STATE = 'http://localhost/ingsoft/src/paginas/state.php';
+export const UPDATE = 'http://localhost/ingsoft/src/paginas/update_info.php';
+export const UPDATE_PHONE = 'http://localhost/ingsoft/src/paginas/phone/update.php';
+export const SIGNUP = 'http://localhost/ingsoft/src/SignUp.php';

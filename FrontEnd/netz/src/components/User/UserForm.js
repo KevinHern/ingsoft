@@ -8,7 +8,7 @@ import {withRouter} from "react-router-dom";
 import * as ROUTES from '../../Constants/routes';
 import Container from "reactstrap/es/Container";
 import PhoneItem from "./PhoneItem";
-
+import axios from 'axios';
 //Missing phone field
 class OrganForm extends Component {
 
@@ -73,6 +73,7 @@ class OrganForm extends Component {
                 // console.log('success');
                 this.props.history.push(ROUTES.HOME);
             }else {
+                console.log(response);
                 this.setState({error:"Error en el servidor"});
                 // console.log('failure');
             }
@@ -228,6 +229,15 @@ class IndForm extends Component {
         }
     }
 
+
+    storePhoneList = () => {
+        return axios({
+            
+
+
+        });
+
+    };
     //Send data to server
     async handleSubmit(e) {
         e.preventDefault();
@@ -246,9 +256,10 @@ class IndForm extends Component {
         //When you are ready to send phones make sure you won't send empty strings or duplicate phone numbers
         try{
             const promisedToken =  await this.props.token();
-            // const [axiosRequest, fireStoreRequest] = await Promise.all([this.props.serverData(formData, promisedToken),
-            //     this.props.setRole(data['role'])]);
-            const axiosRequest = await this.props.serverData(formData, promisedToken);
+            const [axiosRequest, fireStoreRequest] = await Promise.all([this.props.serverData(formData, promisedToken),
+                this.props.setRole(data['role'])]);
+            // const axiosRequest = await this.props.serverData(formData, promisedToken);
+            const axiosRequestPhones = await this.storePhoneList();
             // this.props.setClaims(data['role']).then((result) => {
             //     console.log(result);
             // });

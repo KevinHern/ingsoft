@@ -4,11 +4,11 @@
 	include '../getSub';
 	permission();
 
-	/*
+
 	$json = file_get_contents('php://input');
 	//Converts it into a PHP object
     $_POST = json_decode($json, true);
-    */
+
 	/*
 	INPUTS:
 	1. User's ID
@@ -32,8 +32,7 @@
 		foreach ($_POST["phone"] as $phone)
 		{
 			$number = $phone["number"];
-			$ext = $phone["extension"];
-			$query = "INSERT INTO telephone VALUES('$uid', '$number', $ext);";
+			$query = "INSERT INTO telephone VALUES('$uid', '$number');";
 			$result = pg_query($link, $query);
 		}
 

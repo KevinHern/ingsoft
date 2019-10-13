@@ -24,6 +24,7 @@ class ListIdea extends Component {
             perPage: 3,
             newIdea: false,
             deleteIdea: false,
+            modifyIdea: false,
             fetched: false,
             ideas: [],
             error: null
@@ -33,26 +34,19 @@ class ListIdea extends Component {
     onSubmit = (e)   => {
         e.preventDefault();
         const{search} = this.state;
-        console.log(search);
+        // console.log(search);
     };
 
 
     componentDidMount() {
-        const maxResults = 10;
-        if(maxResults) {
-
-        }else {
-            // this.setState({empty:true})
-        }
         const {changedIdea} = this.props.match.params;
         if(changedIdea === 'new'){
             this.setState({newIdea: true})
         }else  if(changedIdea === 'delete'){
             this.setState({deleteIdea: true})
+        } else  if(changedIdea === 'modify'){
+            this.setState({modifyIdea: true})
         }
-        // console.log(newIdea);
-        // let max = 0;
-        // this.setState({max})
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
@@ -82,8 +76,8 @@ class ListIdea extends Component {
             }).then((response) => {
                 // console.log(response.config);
                 let{status, maxpage, ideas} = response.data;
-                console.log(response.data);
-                console.log(response.config);
+                // console.log(response.data);
+                // console.log(response.config);
                 if(status){
                     const ideaList = [];
                     Object.values(ideas).map(item => ideaList.push(item));
@@ -139,7 +133,7 @@ class ListIdea extends Component {
         }
 
         this.onPageMove(currentPage);
-        console.log(`Current page:  ${currentPage}  init page:  ${initPage}`);
+        // console.log(`Current page:  ${currentPage}  init page:  ${initPage}`);
         this.setState({currentPage, initPage});
     };
 
@@ -155,7 +149,7 @@ class ListIdea extends Component {
 
 
     render() {
-        const{initPage, currentPage, max, perTag, newIdea, ideas, error, deleteIdea} = this.state;
+        const{initPage, currentPage, max, perTag, newIdea, ideas, error, deleteIdea, modifyIdea} = this.state;
         return (
             <React.Fragment>
                 <Row className={"justify-content-end"}>
@@ -181,6 +175,14 @@ class ListIdea extends Component {
                     (deleteIdea) ? <Row className={"justify-content-md-center mt-3"}>
                         <Col sm={"12"}>
                             <UncontrolledAlert color={"danger"}>Idea Eliminada</UncontrolledAlert>
+                        </Col>
+                    </Row>: null
+                }
+
+                {
+                    (modifyIdea) ? <Row className={"justify-content-md-center mt-3"}>
+                        <Col sm={"12"}>
+                            <UncontrolledAlert color={"success"}>Idea Modificada</UncontrolledAlert>
                         </Col>
                     </Row>: null
                 }

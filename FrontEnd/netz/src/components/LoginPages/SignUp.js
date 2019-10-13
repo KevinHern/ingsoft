@@ -5,6 +5,7 @@ import * as ROUTES from '../../Constants/routes';
 import GoogleSign from "./GoogleSignUpButton";
 import {Form, FormGroup, Label, Button, Input, Col, FormText, Alert} from "reactstrap";
 import ButtonGroup from "reactstrap/es/ButtonGroup";
+import {SIGNUP} from "../../Constants/Endpoint";
 
 
 const SignUpPage = () => (
@@ -32,6 +33,8 @@ class SignUpFormBase extends Component {
     //     this.props.fireBase.getRedirectResult(this.props.history, API_PATH);
     // }
 
+
+    //Using FireStore
     onSubmit = event => {
         event.preventDefault();
         const { username, email, passwordOne } = this.state;
@@ -41,14 +44,13 @@ class SignUpFormBase extends Component {
         return fireBase.withEmailAndPassword(email, passwordOne)
             .then(authUser => {
                 console.log(authUser);
+                //Setting a user in Firestore, but now without a name
                 fireBase.user(authUser.user.uid).set({
-                            username,
                            email,
                            role
                        }).then(() =>  {
                             console.log("Just before axios");
-                            const API_PATH = 'http://localhost/ingsoft/src/SignUp.php';
-                            fireBase.getIdToken(API_PATH, this.state)
+                            fireBase.getIdToken(SIGNUP, this.state)
                                 .then(() => {
                                     //Always to UCONFIG
                                     this.props.history.push(ROUTES.UCONFIG);
@@ -57,13 +59,15 @@ class SignUpFormBase extends Component {
                                 console.log(error);
                             });
                             this.setState({ ...INITIAL_STATE });
-               }).catch(function (error) {
+               }).catch((error) => {
                     this.setState({ error });
+                    console.log("FireStore user");
                     console.log(error);
                });
             })
             .catch(error => {
                 this.setState({ error });
+                console.log("With email and password");
                 console.log(error);
             });
     };
