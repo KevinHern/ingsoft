@@ -1,6 +1,8 @@
 <?php
 	include 'connection.php';
 	include 'imgdirectory.php';
+	include '../getSub.php';
+	permission();
 	//--------------------------------------------//
 	//---- FILE USED TO UPDATE PROFILE PHOTOS ----//
 	//--------------------------------------------//
@@ -17,7 +19,7 @@
 	*/
 
 	//Extracts User ID
-	$uid = $_POST["uid"];
+	$uid = getUid($_POST["uid"]);
 
 	$link = OpenConUser("u");
 
