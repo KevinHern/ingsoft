@@ -4,11 +4,11 @@
 	include '../getSub.php';
 	permission();
 
-	/*
+
 	$json = file_get_contents('php://input');
 	//Converts it into a PHP object
     $_POST = json_decode($json, true);
-    */
+    
 	/*
 	INPUTS:
 	1. User's ID
@@ -34,7 +34,7 @@
 	}
 	catch (Exception $e)
 	{
-		$json = array('status' => 0, 'message' => "Ocurrio un error");
+		$json = array('status' => 0, 'message' => "Ocurrió un error");
 	}
 	finally
 	{

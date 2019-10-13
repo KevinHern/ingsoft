@@ -325,6 +325,5 @@
 				echo json_encode($json);
 			}
 			break;
-
 	}
 ?>
