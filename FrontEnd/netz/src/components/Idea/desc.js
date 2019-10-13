@@ -85,6 +85,11 @@ class Desc extends Component {
         this._isMounted = false;
     }
 
+    editIdea = () => {
+        const{id} = this.props.match.params;
+        this.route(ROUTES.UPDATEIDEA.replace(':id', id ));
+    };
+
     toggleDelete = () => {
         let {deleteIdea} = this.state;
         deleteIdea = !deleteIdea;
@@ -104,7 +109,11 @@ class Desc extends Component {
             },
             ).then((response) => {
                 if(response.data['status']) {
-                    this.route(ROUTES.LISTIDEA);
+                    if(response.data['status']){
+                        this.props.history.push(ROUTES.LISTIDEA+ '/delete');
+                    }else{
+                        console.log('Error en el servidor');
+                    }
                 }else{
                     console.log('Fallo');
                 }
@@ -132,7 +141,7 @@ class Desc extends Component {
                         <Col sm={4}>
                             <ButtonToolbar>
                                 <ButtonGroup>
-                                    <Button color={"info"}>Editar</Button>
+                                    <Button color={"info"} onClick={this.editIdea}>Editar</Button>
                                     <Button color={"info"} onClick={this.toggleDelete}>Eliminar</Button>
                                     <Modal isOpen={deleteIdea} toggle={this.toggleDelete}>
                                         <ModalHeader toggle={this.toggleDelete}>Desea Eliminar?</ModalHeader>

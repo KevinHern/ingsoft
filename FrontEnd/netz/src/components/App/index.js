@@ -34,8 +34,9 @@ const App = () => {
                                 <Route path={ROUTES.CREATEIDEA} component = {CreateIdea}/>
                                 <Route exact path={ROUTES.OVERVIEW} component = {OverView}/>
                                 <Route path={ROUTES.OVERVIEW+'/update/:typeMode/:field/:value'} component = {UpdateField}/>
-                                <Route path={ROUTES.LISTIDEA+'/:newIdea?'} component = {ListIdea}/>
+                                <Route path={ROUTES.LISTIDEA+'/:changedIdea?'} component = {ListIdea}/>
                                 <Route path={ROUTES.DESCIDEA} component = {Desc}/>
+                                <Route path={ROUTES.UPDATEIDEA} component = {CreateIdea}/>
                                 <Route>
                                     <NoMatch/>
                                 </Route>

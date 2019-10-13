@@ -5,7 +5,7 @@ import Label from "reactstrap/es/Label";
 import {Button, ButtonGroup, ButtonToolbar, Col, CustomInput, Media, Row} from "reactstrap";
 import Input from "reactstrap/es/Input";
 import Container from "reactstrap/es/Container";
-import {CATEGORY, REGISTER, STATE} from "../../Constants/Endpoint";
+import {CATEGORY, ENTREPRENEUR, REGISTER, STATE} from "../../Constants/Endpoint";
 import axios from 'axios';
 import {withRouter} from 'react-router-dom';
 import withAuthentication from '../Session/withAuthentication.js'
@@ -22,12 +22,16 @@ class CreateIdeaCom extends Component {
             description: '',
             cat: 0,
             state: 0,
-            states: []
+            states: [],
+            id: null
         };
         this.onSubmit = this.onSubmit.bind(this);
     }
 
     componentDidMount() {
+        console.log(this.props.history);
+        console.log();
+
         axios({
             url: CATEGORY,
             method: 'post',
@@ -42,7 +46,7 @@ class CreateIdeaCom extends Component {
             }else{
                 console.log("error")
             }
-        })
+        });
         axios({
             url: STATE,
             method: 'post',
@@ -57,41 +61,69 @@ class CreateIdeaCom extends Component {
             }else{
                 console.log("error")
             }
-        })
-
+        });
+        const id = this.props.match.params['id'];
+        if(id) {
+            axios({
+                method: 'POST',
+                url: ENTREPRENEUR,
+                data: {
+                    iid: id,
+                    option: 'id',
+                    rows: 3,
+                    page: 1,
+                },
+                headers: {'Content-Type': 'application/json'}
+            }).then((response) => {
+                const{states, cats} = this.state;
+                console.log(response);
+                this.setState({
+                    title:response.data.title,
+                    description: response.data.description,
+                    state: response.data.stateid,
+                    cat: response.data.categoryid,
+                });
+            });
+            this.setState({id});
+        }
     }
 
     changeState = (e) => {
         // console.log(e.target.value);
+        console.log(e.target.value);
         this.setState({[e.target.name]: e.target.value})
     };
 
     async onSubmit(e){
         e.preventDefault();
         console.log(this.props);
-        const {fireBase} = this.props;
-        const { title, description, cat, state} = this.state;
-        const token =  await fireBase.token();
-        const formData = new FormData;
-        formData.append('option', 'idea');
-        formData.append('uid', token);
-        formData.append('title', title);
-        formData.append('description', description);
-        formData.append('category', cat);
-        formData.append('state', state);
-        axios({
-            url: REGISTER,
-            method: 'post',
-            data: formData,
-            headers: { 'Content-Type': 'multipart/form-data'},
-        }).then(response => {
-            console.log(response.data);
-            if(response.data['status']){
-                this.props.history.push('/listidea/new');
-            }else{
-                console.log('error en el servidor');
-            }
-        })
+        try{
+            const {fireBase} = this.props;
+            const { title, description, cat, state} = this.state;
+            const token =  await fireBase.token();
+            const formData = new FormData;
+            formData.append('option', 'idea');
+            formData.append('uid', token);
+            formData.append('title', title);
+            formData.append('description', description);
+            formData.append('category', cat);
+            formData.append('state', state);
+            axios({
+                url: REGISTER,
+                method: 'post',
+                data: formData,
+                headers: { 'Content-Type': 'multipart/form-data'},
+            }).then(response => {
+                if(response.data['status']){
+                    this.props.history.push('/listidea/new');
+                }else{
+                    console.log('error en el servidor');
+                }
+            })
+        }catch(error) {
+            console.log(error);
+        }
+
     }
 
     route = (goTo) => {
@@ -100,12 +132,15 @@ class CreateIdeaCom extends Component {
     };
 
     render() {
-        const {cats, states}  = this.state;
+        const {cats, states, id, title, description, state, cat}  = this.state;
+        // console.log(description);
+        console.log("state"+ state);
+        console.log('cat' + cat);
         const catsOp = cats.map((cat) => {
-            return <option key = {cat.name} value = {cat.id}>{cat.name}</option>
+            return <option key = {cat.name} value = {cat.id} selected={(cat.id === cat)? "selected": ""}>{cat.name}</option>
         });
         const stateOp = states.map((state) => {
-            return <option key = {state.name} value = {state.id}>{state.name}</option>
+            return <option key = {state.name} value = {state.id} selected={(state.id === state)? "selected": ""}>{state.name}</option>
         });
         return (
             <React.Fragment>
@@ -120,8 +155,14 @@ class CreateIdeaCom extends Component {
                         </Col>
                     </Row>
                     <Row>
-                        <Col sm="12" md={{size: 6, offset: 3}}>.
-                            <h1>Crear Idea</h1>
+                        <Col sm="12" md={{size: 6, offset: 3}}>
+                            {
+                                (id)?
+                                    <h1>Modificar Idea</h1>
+                                    :
+                                    <h1>Crear Idea</h1>
+
+                            }
                         </Col>
                     </Row>
                     <Row>
@@ -132,7 +173,7 @@ class CreateIdeaCom extends Component {
                                         Titulo
                                     </Label>
                                     <Col sm={8}>
-                                        <Input name="title" type={"text"} id="name" onChange = {this.changeState} required/>
+                                        <Input name="title" type={"text"} id="name"   defaultValue = {title} onChange = {this.changeState} required/>
                                     </Col>
                                 </FormGroup>
                                 <FormGroup row>
@@ -140,7 +181,7 @@ class CreateIdeaCom extends Component {
                                         Descripción
                                     </Label>
                                     <Col sm={8}>
-                                        <Input name="description" type={"textarea"} id="name" onChange = {this.changeState} required/>
+                                        <Input name="description" type={"text"} id="description"  defaultValue = {description}  onChange = {this.changeState} required/>
                                     </Col>
                                 </FormGroup>
                                 <FormGroup row>
@@ -148,7 +189,7 @@ class CreateIdeaCom extends Component {
                                         Estado
                                     </Label>
                                     <Col sm={8}>
-                                        <Input type="select" name="state" id="stateSelect" onChange = {this.changeState} required>
+                                        <Input type="select" name="state" id="stateSelect" onChange = {this.changeState}  required>
                                             {stateOp}
                                         </Input>
                                     </Col>
@@ -164,7 +205,6 @@ class CreateIdeaCom extends Component {
                                     </Col>
                                 </FormGroup>
                                 <FormGroup row className={"justify-content-md-center mt-3"}>
-
                                     <Button color="primary">{(this.props.message)?  this.props.message: "Crear"}</Button>
                                 </FormGroup>
                             </Form>

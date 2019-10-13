@@ -7,6 +7,7 @@ export const OVERVIEW = '/overview'; //Late on this one
 export const CREATEIDEA = '/createIdea'; //Configure button, fetch and save
 export const DESCIDEA = '/descIdea/:id'; // Configure buttons and fetch
 export const LISTIDEA= '/listIdea'; //Configure fetch and buttons
+export const UPDATEIDEA = '/updateIdea/:id';
 // export const ACCOUNT = '/account';
 // export const ADMIN = '/admin';
 // export const PASSWORD_FORGET = '/pw-forget';

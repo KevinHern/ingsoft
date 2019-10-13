@@ -1,4 +1,4 @@
-import {Alert, Button, ButtonGroup, ButtonToolbar, Col, Form, Row, Table} from "reactstrap";
+import {UncontrolledAlert, Button, ButtonGroup, ButtonToolbar, Col, Form, Row, Table} from "reactstrap";
 import FormGroup from "reactstrap/es/FormGroup";
 import Input from "reactstrap/es/Input";
 import List from "./List";
@@ -23,6 +23,7 @@ class ListIdea extends Component {
             perTag: 3,
             perPage: 3,
             newIdea: false,
+            deleteIdea: false,
             fetched: false,
             ideas: [],
             error: null
@@ -43,9 +44,11 @@ class ListIdea extends Component {
         }else {
             // this.setState({empty:true})
         }
-        const {newIdea} = this.props.match.params;
-        if(newIdea === 'new'){
-            // this.setState({newIdea: true})
+        const {changedIdea} = this.props.match.params;
+        if(changedIdea === 'new'){
+            this.setState({newIdea: true})
+        }else  if(changedIdea === 'delete'){
+            this.setState({deleteIdea: true})
         }
         // console.log(newIdea);
         // let max = 0;
@@ -152,7 +155,7 @@ class ListIdea extends Component {
 
 
     render() {
-        const{initPage, currentPage, max, perTag, empty, newIdea, ideas, error} = this.state;
+        const{initPage, currentPage, max, perTag, newIdea, ideas, error, deleteIdea} = this.state;
         return (
             <React.Fragment>
                 <Row className={"justify-content-end"}>
@@ -169,9 +172,17 @@ class ListIdea extends Component {
                 {
                     (newIdea) ? <Row className={"justify-content-md-center mt-3"}>
                                     <Col sm={"12"}>
-                                        <Alert color={"success"}>Nueva Idea creada</Alert>
+                                        <UncontrolledAlert color={"success"}>Nueva Idea creada</UncontrolledAlert>
                                     </Col>
                                 </Row>: null
+                }
+
+                {
+                    (deleteIdea) ? <Row className={"justify-content-md-center mt-3"}>
+                        <Col sm={"12"}>
+                            <UncontrolledAlert color={"danger"}>Idea Eliminada</UncontrolledAlert>
+                        </Col>
+                    </Row>: null
                 }
                 <Row className={"justify-content-md-center mt-1"}>
                     <Table hover responsive={true} size={""}>
@@ -194,7 +205,7 @@ class ListIdea extends Component {
                         </thead>
                         <tbody>
                         {
-                            (error)? <tr><td colSpan={2}><Alert>No fue posible listar ideas</Alert></td></tr> : <List  ideas={ideas} showDetails = {this.showDetails}/>
+                            (error)? <tr><td colSpan={2}><UncontrolledAlert>No fue posible listar ideas</UncontrolledAlert></td></tr> : <List  ideas={ideas} showDetails = {this.showDetails}/>
                         }
                         </tbody>
                     </Table>
