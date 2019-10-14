@@ -305,8 +305,9 @@
 		case 'book':
 			/*
 			INPUTS:
-			1. Idea's ID
-			2. Financist Id
+			1. Financist Id
+			2. List of Ideas
+				2.1 Idea's ID
 
 			------------
 
@@ -314,16 +315,21 @@
 			1. Status: 1 if success, 0 otherwise
 
 			*/
-			$iid = getUid($_POST["iid"]);
-			$finid = $_POST["finid"];
+			$uid = getUid($_POST["uid"]);
+			$ideas = $_POST["ideas"];
 
 			$link = OpenConUser("f");
 
 			try
 			{
-				$query = "INSERT INTO finbook VALUES($iid, '$finid');";
-				$result = pg_query($link, $query);
-				$json = array('status' => 1);
+				foreach ($ideas as $idea)
+				{
+					$iid = $idea["iid"];
+					$query = "INSERT INTO finbook VALUES($iid, '$uid');";
+					$result = pg_query($link, $query);
+					$json = array('status' => 1);
+				}
+				
 			}
 			catch (Exception $e)
 			{
