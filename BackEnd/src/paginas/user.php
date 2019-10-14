@@ -74,6 +74,7 @@
 				$number = $line["number"];
 				$temp = array("phone$i" => $number);
 				$phones = array_merge($phones, $temp);
+				$i += 1;
 			}
 			$phones = array("phones" => $phones);
 
