@@ -6,6 +6,10 @@ import ListGroupItemText from "reactstrap/es/ListGroupItemText";
 import FormGroup from "reactstrap/es/FormGroup";
 import axios from 'axios';
 import Paginator from "../Paginator";
+import {CATEGORY, FINANCIST} from "../../Constants/Endpoint";
+import Idea from './Idea';
+import {UpdateFieldCom} from "../User/Modify";
+import {Switch, Route} from 'react-router-dom';
 
 class SearchIdeas extends Component {
 
@@ -13,46 +17,91 @@ class SearchIdeas extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            cat: "",
+            category: 1,
             cats: [
-                {id:1, name: "nombre1"},
-                {id:2, name: "nombre2"},
-                {id:3, name: "nombre3"},
-                {id:4, name: "nombre4"}
-            ]
+            ],
+            ideas: [],
+            page: 1,
+            rows: 3,
+            error: null
         };
     }
 
     componentDidMount() {
-        // new Promise(resolve => {
-        //     setTimeout(() => {
-        //         resolve('🤡');
-        //     }, 5000);
-        // });
-        // // axios
+        axios({
+            url: CATEGORY,
+            method: 'post',
+        }).then(response => {
+            let cats = [];
+            if(response.data['status']) {
+                delete response.data['status'];
+                Object.values(response.data).map(item => cats.push(item));
+                // console.log(cats);
+                const cat = cats[0].id;
+                this.setState({cats, cat})
+            }else{
+                console.log("error")
+            }
+        });
     }
 
+
+    toggleHeart = () => {
+
+    };
+
+
+
     fetchIdeas = (e) => {
+        const{category, rows, page} = this.state;
         e.preventDefault();
+        axios({
+            url: FINANCIST,
+            data: {
+                option: 'list',
+                rows:  rows,
+                page: page,
+                category:  category,
+            },
+            headers: { 'Content-Type': 'application/json'},
+            method: 'post',
+        }).then(response => {
+            let ideas = [];
+            console.log(response.data);
+
+            if(response.data['status']) {
+                const ideas  = [];
+                Object.values(response.data.ideas).map(idea => ideas.push(idea));
+                this.setState({ideas, error:null});
+            }else{
+                this.setState({error: response.data['message']});
+            }
+        });
     };
 
     onChange = (e) => {
-        this.setState({cat:e.target.value});
+        this.setState({[e.target.name] : e.target.value});
     };
 
 
     render() {
-        const{cats } = this.state;
-        // const listCats = cats.map((cat) => {
-        //     <li></li>
-        // });
+        const{cats, error, ideas} = this.state;
+        const catsOp = cats.map((cat) => {
+            return <option key = {cat.name} value = {cat.id} >{cat.name}</option>
+        });
+
+        const ideasDesc = ideas.map(idea => <Idea idea={idea} bookMarked = {false} key={idea.title+idea.uid} toggleHeart= {this.toggleHeart}/>);
         return (
-            <React.Fragment>
-                <Row className={"mt-5"}>
-                    <Col sm={{size: 4, offset:4}}>
+                <React.Fragment>
+                    {/*<Switch>*/}
+                    {/*    <Route path={`${path}/:typeMode/name`} render = {(props) =>*/}
+                    {/*        /!*<UpdateFieldCom {...props} inputs = {[{field: 'Nombre', type : 'text', value : firstname}, {field: 'Apellido', type : 'text', value : lastname}]} />}/>*!/*/}
+                    {/*</Switch>*/}
+                <Row className={"mt-5 justify-content-end"}>
+                    <Col sm={{size: 5}} className={""}>
                         <h1 >Buscar Ideas por Categoria</h1>
                     </Col>
-                    <Col   sm={{size: 4}}>
+                    <Col   sm={{size: 3}}>
                         <ButtonToolbar className={"justify-content-end"}>
                             <ButtonGroup>
                                 <Button color={"info"}>Principal</Button>
@@ -62,26 +111,21 @@ class SearchIdeas extends Component {
                         </ButtonToolbar>
                     </Col>
                 </Row>
-                <Row className={"mt-5"}>
-                    <Col sm={{size: 8, offset:3}}>
+                <Row className={"mt-5  justify-content-center"}>
+                    <Col sm={{size: 6, offset:3}}>
                         <Form>
                             <FormGroup row>
-                                <Label for="cat" sm={2} >Categorias</Label>
-                                <Col sm={{ size: 5}}>
-                                    <Input  type={'select'} id="cat" onChange={this.onChange} defaultValue={0}>
-                                        <option value={0}>Todas</option>
-                                        <option value={1}>aaa</option>
-                                        <option value={2}>bbb</option>
-                                        <option value={3}>ccc</option>
-                                        <option value={4}>ddd</option>
-                                        <option value={5}>eee</option>
+                                <Label for="cat" sm={3} >Categorias</Label>
+                                <Col sm={{ size: 3}}>
+                                    <Input  type={'select'} id="category"  name = "category" onChange={this.onChange} defaultValue={0}>
+                                        {catsOp}
                                     </Input>
                                 </Col>
                             </FormGroup>
                             <FormGroup row>
-                                <Label for="cat"   sm={2}>Ideas por Pagina</Label>
+                                <Label for="cat"   sm={3}>Ideas por Pagina</Label>
                                 <Col sm={{ size: 3}}>
-                                    <Input  type={'select'} id="cat" onChange={this.onChange} defaultValue={3}>
+                                    <Input  type={'select'} id="rows"  name = "rows"  onChange={this.onChange} defaultValue={3}>
                                         <option value={1} >1</option>
                                         <option value={2}>2</option>
                                         <option value={3}>3</option>
@@ -93,49 +137,16 @@ class SearchIdeas extends Component {
                         </Form>
                     </Col>
                 </Row>
-                <Row>
-                    <Col sm={{ size: 2, offset:5}} >
-                        <Button  className={"mt-4 ml-4"} color={'primary'} onClick={this.fetchIdeas}>Buscar</Button>
+                {
+                    (error)? <div>error</div>: <div>{ideasDesc}</div>
+                }
+                <Row className={"mt-4 justify-content-center"}>
+                    <Col sm={{ size: 1}} >
+                        <div className={"justify-content-center "}>
+                            <Button  color={'primary'} onClick={this.fetchIdeas}>Buscar</Button>
+                        </div>
                     </Col>
                 </Row>
-                <Row className={"mt-5"}>
-                    <Col sm={{size: 4, offset:4}}>
-                   <ListGroup className={"justify-content-center"}>
-                       <ListGroupItem>
-                           <ListGroupItemHeading>Title</ListGroupItemHeading>
-                           <ListGroupItemText>Praesent justo urna, congue ac mauris vel, faucibus facilisis est. Integer ante ex, pulvinar at facilisis non, so</ListGroupItemText>
-                           <ListGroupItemText  className="text-info">Author</ListGroupItemText>
-                       </ListGroupItem>
-                       <ListGroupItem tag="button" action>Dapibus ac facilisis in</ListGroupItem>
-                   </ListGroup>
-                    </Col>
-                </Row>
-                <Row className={"mt-5"}>
-                    <Col sm={{size: 4, offset:4}}>
-                        <ListGroup className={"justify-content-center"}>
-                            <ListGroupItem>
-                                <ListGroupItemHeading>Title</ListGroupItemHeading>
-                                <ListGroupItemText>Praesent justo urna, congue ac mauris vel, faucibus facilisis est. Integer ante ex, pulvinar at facilisis non, sollicitudin ut ligula. Nam tempor tempor lorem, sed porttitor dolor accumsan sed. Morbi ut finibus justo, id dictum enim</ListGroupItemText>
-                                <ListGroupItemText  className="text-info">Author</ListGroupItemText>
-                            </ListGroupItem>
-                            <ListGroupItem active tag="button" action>BookMark</ListGroupItem>
-                </ListGroup>
-                    </Col>
-                </Row>
-
-                <Row className={"mt-5"}>
-                    <Col sm={{size: 4, offset:4}}>
-                        <ListGroup className={"justify-content-center"}>
-                            <ListGroupItem>
-                                <ListGroupItemHeading>Title</ListGroupItemHeading>
-                                <ListGroupItemText>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam sed massa hendrerit, condimentum massa quis, sollicitudin risus. Maecenas orci nibh, viverra non tincidunt id, pretium vel orci. Fusce iaculis, dolor a fermentum lacinia, dui lectus semper mauris, vitae ornare lacus dolor vitae dolor. Vestibulum cursus tempus est, a fringilla ligula tincidunt posuere. Donec egestas elementum diam, ultrices condimentum elit consectetur in. Aenean luctus tortor a nisi eleifend posuere. Nam ac condimentum eros, et vestibulum nunc. In et molestie erat, non fringilla quam. Donec ut orci dapibus nibh accumsan tempus ac sit amet nunc. </ListGroupItemText>
-                                <ListGroupItemText  className="text-info">Author</ListGroupItemText>
-                            </ListGroupItem>
-                            <ListGroupItem color = "success"tag="button" action>BookMark</ListGroupItem>
-                        </ListGroup>
-                    </Col>
-                </Row>
-
                 <Row className={"justify-content-md-center mt-5"}>
                     <Paginator initPage={1} perTag = {3} currentPage = {1} max ={5} onArrowMove={this.onArrowMove}
                                onPageMove = {this.onPageMove}/>

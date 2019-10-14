@@ -18,6 +18,7 @@ import  Bandeja from '../Bandeja';
 import './App.css';
 import Container from "reactstrap/es/Container";
 import NoMatch from "../NoMatch/NoMatch";
+import {SearchIdeas} from '../Financist';
 // import SignOutButton from '../LoginPages/SignOut';
 
 
@@ -37,9 +38,11 @@ const App = () => {
                                 <Route path={ROUTES.OVERVIEW}  component = {OverView}/>
                                 {/*<Route path={ROUTES.OVERVIEW+'/update/:typeMode/:field/:value'} component = {UpdateField}/>*/}
                                 <Route path={ROUTES.LISTIDEA+'/:changedIdea?'} component = {ListIdea}/>
+                                <Route path={ROUTES.LISTIDEA+'/:changedIdea?'} component = {ListIdea}/>
                                 <Route path={ROUTES.DESCIDEA} component = {Desc}/>
                                 <Route path={ROUTES.UPDATEIDEA} component = {CreateIdea}/>
                                 <Route path={ROUTES.BANDEJA}  component = {Bandeja}/>
+                                <Route path={ROUTES.FINANCIST}  component = {SearchIdeas}/>
                                 <Route>
                                     <NoMatch/>
                                 </Route>

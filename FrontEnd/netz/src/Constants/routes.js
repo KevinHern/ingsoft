@@ -9,6 +9,7 @@ export const DESCIDEA = '/descIdea/:id'; // Configure buttons and fetch
 export const LISTIDEA= '/listIdea'; //Configure fetch and buttons
 export const UPDATEIDEA = '/updateIdea/:id';
 export const BANDEJA = '/bandeja';
+export const FINANCIST = '/financist';
 // export const ACCOUNT = '/account';
 // export const ADMIN = '/admin';
 // export const PASSWORD_FORGET = '/pw-forget';

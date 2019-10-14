@@ -10,6 +10,9 @@ const Signed = ({fireBase})  => (
             <NavLink href={ROUTES.HOME} className="text-md-center" >Home</NavLink>
         </NavItem>
         <NavItem>
+            <NavLink href={ROUTES.OVERVIEW} className="text-md-center" >Cuenta</NavLink>
+        </NavItem>
+        <NavItem>
             <NavLink href={ROUTES.BANDEJA} className="text-md-center" >Bandeja</NavLink>
         </NavItem>
         <NavItem>

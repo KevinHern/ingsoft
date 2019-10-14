@@ -7,3 +7,4 @@ export const STATE = 'http://localhost/ingsoft/src/paginas/state.php';
 export const UPDATE = 'http://localhost/ingsoft/src/paginas/update_info.php';
 export const UPDATE_PHONE = 'http://localhost/ingsoft/src/paginas/phone/update.php';
 export const SIGNUP = 'http://localhost/ingsoft/src/SignUp.php';
+export const FINANCIST = 'http://localhost/ingsoft/src/paginas/financist.php';
