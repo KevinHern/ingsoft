@@ -1,384 +1,327 @@
-import React, {Component} from 'react';
+import React from 'react';
 
-import {Button, ButtonGroup, ButtonToolbar, Col, Row, FormGroup, Label, Input} from "reactstrap";
-import Form from "reactstrap/es/Form";
+import {Button, Col, Row} from "reactstrap";
+import {Route, Switch, useRouteMatch} from 'react-router-dom';
 import Container from "reactstrap/es/Container";
-import axios from 'axios';
-import {GETUSER} from "../../Constants/Endpoint";
 import ListGroup from "reactstrap/es/ListGroup";
 import ListGroupItem from "reactstrap/es/ListGroupItem";
+import UpdateFieldCom from './updateField';
+import {Password, PhoneList, Email, Role} from './Modify/';
 
 
+function OverviewInd(props) {
+    const {firstname, lastname, nationality, birthdate, biography, organization, email, role, phones, route} = props;
+    // const {field} = this.state;
+    // const {authUser} = this.props;
+    let {path, url} = useRouteMatch();
+    console.log(path);
+    const phoneList = phones.map((phone) =>
+        <div>{phone}</div>
+    );
+    return (
+        <React.Fragment>
+            <Switch>
+                <Route path={`${path}/:typeMode/name`} render = {(props) => <UpdateFieldCom {...props} field ={'Nombre'}  nf={2} value={[firstname, lastname]}/>}/>
+                <Route path={`${path}/:typeMode/email`} render = {(props) => <Email  {...props} field ={'Email'}  nf={1} value={email} />}/>
+                <Route path={`${path}/:typeMode/password`} render = {(props) => <Password {...props} field ={'Clave'}  nf={1} value={''} />}/>
+                <Route path={`${path}/:typeMode/role`} render = {(props) => <Role {...props} field ={'Role'} nf={1} value={role} />}/>
+                <Route path={`${path}/:typeMode/phone`} render = {(props) => <PhoneList {...props} field ={'Telefono'}  nf={1} value={phones} />}/>
+                <Route path={`${path}/:typeMode/nat`} render = {(props) => <UpdateFieldCom {...props} field ={'Nacionalidad'} nf={1} value={nationality} />}/>
+                <Route path={`${path}/:typeMode/birth`} render = {(props) => <UpdateFieldCom {...props} field ={'Fecha de Nacimiento'} nf={1} value={birthdate} />}/>
+                <Route path={`${path}/:typeMode/bio`} render = {(props) => <UpdateFieldCom {...props} field ={'Biografía'} nf={1} value={biography}/>}/>
+                <Route exact path={path}>
+                    <Container>
+                        <Row>
+                            <Col sm={{size: 6, offset: 3}}>
+                                <h1>Informacion de Usuario</h1>
+                            </Col>
+                        </Row>
+                        <Row className={"mt-3"}>
+                            <Col sm={{size: 6, offset: 3}}>
+                                <ListGroup>
+                                    <ListGroupItem>
+                                        <Container className={"justify-content-center"}>
+                                            <Row>
+                                                <Col sm={{size: 9}}>
+                                                    <h4>
+                                                        Nombre
+                                                    </h4>
 
+                                                </Col>
+                                                <Col sm={{size: 2}}>
+                                                    <Button color={'warning'} onClick={() => route(`${path}/ind/name`)}>
+                                                        Modify
+                                                    </Button>
+                                                </Col>
 
+                                            </Row>
+                                            <Row>
+                                                <Col sm={{size: 6}}>
+                                                    {firstname} {lastname}
+                                                </Col>
+                                            </Row>
+                                        </Container>
+                                    </ListGroupItem>
+                                </ListGroup>
+                            </Col>
+                        </Row>
+                        <Row>
+                            <Col sm={{size: 6, offset: 3}}>
+                                <ListGroup>
+                                    <ListGroupItem>
+                                        <Container className={"justify-content-center"}>
+                                            <Row>
+                                                <Col sm={{size: 9}}>
+                                                    <h4>
+                                                        Email
+                                                    </h4>
 
-class OverviewInd extends Component {
+                                                </Col>
+                                                <Col sm={{size: 2}}>
+                                                    <Button color={'warning'} onClick={() => route(`${path}/ind/email`)}>
+                                                        Modify
+                                                    </Button>
+                                                </Col>
 
-    constructor(props){
-        super(props);
-        this.state= {
-            firstname: '',
-            lastname: '',
-            nationality: '',
-            birthdate: '',
-            biography: '',
-            organization: '',
-            role: null,
-            email: '',
-            fetched: false
-        };
-        // this.handleSubmit = this.handleSubmit.bind(this);
-    }
+                                            </Row>
+                                            <Row>
+                                                <Col sm={{size: 6}}>
+                                                    {email}
+                                                </Col>
+                                            </Row>
+                                        </Container>
+                                    </ListGroupItem>
+                                </ListGroup>
+                            </Col>
+                        </Row>
+                        <Row>
+                            <Col sm={{size: 6, offset: 3}}>
+                                <ListGroup>
+                                    <ListGroupItem>
+                                        <Container className={"justify-content-center"}>
+                                            <Row>
+                                                <Col sm={{size: 9}}>
+                                                    <h4>
+                                                        Password
+                                                    </h4>
 
+                                                </Col>
+                                                <Col sm={{size: 2}}>
+                                                    <Button color={'warning'} onClick={() => route(`${path}/ind/password`)}>
+                                                        Modify
+                                                    </Button>
+                                                </Col>
 
-    // componentDidUpdate(prevProps, prevState, snapshot) {
-    //     const {fireBase} = this.props;
-    //     const {fetched} = this.state;
-    //     if(!fetched){
-    //         fireBase.token().then((response) => {
-    //             console.log(response);
-    //             axios({
-    //                 method: 'POST',
-    //                 url: GETUSER,
-    //                 data: {uid: response},
-    //                 headers: {'Content-Type': 'application/json'}
-    //             }).then((response) => {
-    //                 console.log(response.data);
-    //                 this.setState({...response.data,  fetched:true})
-    //             });
-    //         })
-    //     }
-    // }
+                                            </Row>
+                                            <Row>
+                                                <Col sm={{size: 6}}>
+                                                    **********
+                                                </Col>
+                                            </Row>
+                                        </Container>
+                                    </ListGroupItem>
+                                </ListGroup>
+                            </Col>
+                        </Row>
+                        <Row>
+                            <Col sm={{size: 6, offset: 3}}>
+                                <ListGroup>
+                                    <ListGroupItem>
+                                        <Container className={"justify-content-center"}>
+                                            <Row>
+                                                <Col sm={{size: 9}}>
+                                                    <h4>
+                                                        Roles
+                                                    </h4>
 
-    componentDidMount() {
-        // const {fireBase} = this.props;
-        // // const {authUser} = this.props;
-        // console.log(fireBase);
-        // if(authUser != null) {
-        //     fireBase.token().then((response) => {
-        //         axios({
-        //             method: 'POST',
-        //             url: GETUSER,
-        //             data: {uid: response},
-        //             headers: {'Content-Type': 'application/json'}
-        //         }).then((response) => {
-        //             console.log(response.data);
-        //         });
-        //
-        //     })
-        // }
-    }
+                                                </Col>
+                                                <Col sm={{size: 2}}>
+                                                    <Button color={'warning'} onClick={() => route(`${path}/ind/role`)}>
+                                                        Modify
+                                                    </Button>
+                                                </Col>
 
-    // handleSubmit(e) {
-    //     e.preventDefault();
-    //     console.log(e.target);
-    // };
-
-    route = (goTo) =>{
-        this.props.history.push(goTo);
-    };
-
-
-    render() {
-        const {firstname, lastname, nationality, birthdate, biography, organization, email, role, phones} = this.props;
-        // const {authUser} = this.props;
-        const phoneList = phones.map((phone) =>
-                <div>{phone}</div>
-        );
-        return (
-            <React.Fragment>
-                <Container>
-                    <Row>
-                        <Col sm={{ size: 6, offset: 3 }}>
-                            <h1>Informacion de Usuario</h1>
-                        </Col>
-                    </Row>
-                    <Row className={"mt-3"}>
-                        <Col sm={{ size: 6, offset: 3 }}>
-                            <ListGroup>
-                                <ListGroupItem>
-                                    <Container className={"justify-content-center"} >
-                                        <Row>
-                                            <Col sm={{ size: 9}}>
-                                                <h4>
-                                                    Nombre
-                                                </h4>
-
-                                            </Col>
-                                            <Col  sm={{ size: 2}}>
-                                                <Button color={'warning'}>
-                                                    Modify
-                                                </Button>
-                                            </Col>
-
-                                        </Row>
-                                        <Row>
-                                            <Col sm={{ size: 6}}>
-                                                 {firstname} {lastname}
-                                            </Col>
-                                        </Row>
-                                    </Container>
-                                </ListGroupItem>
-                            </ListGroup>
-                        </Col>
-                    </Row>
-                    <Row>
-                        <Col sm={{ size: 6, offset: 3 }}>
-                            <ListGroup>
-                                <ListGroupItem>
-                                    <Container className={"justify-content-center"} >
-                                        <Row>
-                                            <Col sm={{ size: 9}}>
-                                                <h4>
-                                                    Email
-                                                </h4>
-
-                                            </Col>
-                                            <Col  sm={{ size: 2}}>
-                                                <Button color={'warning'}>
-                                                    Modify
-                                                </Button>
-                                            </Col>
-
-                                        </Row>
-                                        <Row>
-                                            <Col sm={{ size: 6}}>
-                                                {email}
-                                            </Col>
-                                        </Row>
-                                    </Container>
-                                </ListGroupItem>
-                            </ListGroup>
-                        </Col>
-                    </Row>
-                    <Row>
-                        <Col sm={{ size: 6, offset: 3 }}>
-                            <ListGroup>
-                                <ListGroupItem>
-                                    <Container className={"justify-content-center"} >
-                                        <Row>
-                                            <Col sm={{ size: 9}}>
-                                                <h4>
-                                                    Password
-                                                </h4>
-
-                                            </Col>
-                                            <Col  sm={{ size: 2}}>
-                                                <Button color={'warning'}>
-                                                    Modify
-                                                </Button>
-                                            </Col>
-
-                                        </Row>
-                                        <Row>
-                                            <Col sm={{ size: 6}}>
-                                                **********
-                                            </Col>
-                                        </Row>
-                                    </Container>
-                                </ListGroupItem>
-                            </ListGroup>
-                        </Col>
-                    </Row>
-                    <Row>
-                        <Col sm={{ size: 6, offset: 3 }}>
-                            <ListGroup>
-                                <ListGroupItem>
-                                    <Container className={"justify-content-center"} >
-                                        <Row>
-                                            <Col sm={{ size: 9}}>
-                                                <h4>
-                                                    Roles
-                                                </h4>
-
-                                            </Col>
-                                            <Col  sm={{ size: 2}}>
-                                                <Button color={'warning'}>
-                                                    Modify
-                                                </Button>
-                                            </Col>
-
-                                        </Row>
-                                        <Row>
-                                            <Col sm={{ size: 6}}>
-                                                {(role !== "0")?
-                                                    (role === "1")?
-                                                        <p> Emprendedor </p>
-                                                        :
-                                                        (role === "2")?
-                                                            <p> Financista </p>
+                                            </Row>
+                                            <Row>
+                                                <Col sm={{size: 6}}>
+                                                    {(role !== "0") ?
+                                                        (role === "1") ?
+                                                            <p> Emprendedor </p>
                                                             :
-                                                            <div>
-                                                                <p> Emprendedor  </p>
-                                                                <p> Financista  </p>
-                                                            </div>
-                                                    : <p> No tiene roles asignados </p>}
-                                            </Col>
-                                        </Row>
+                                                            (role === "2") ?
+                                                                <p> Financista </p>
+                                                                :
+                                                                <div>
+                                                                    <p> Emprendedor </p>
+                                                                    <p> Financista </p>
+                                                                </div>
+                                                        : <p> No tiene roles asignados </p>}
+                                                </Col>
+                                            </Row>
 
-                                    </Container>
-                                </ListGroupItem>
-                            </ListGroup>
-                        </Col>
-                    </Row>
-                    <Row>
-                        <Col sm={{ size: 6, offset: 3 }}>
-                            <ListGroup>
-                                <ListGroupItem>
-                                    <Container className={"justify-content-center"} >
-                                        <Row>
-                                            <Col sm={{ size: 9}}>
-                                                <h4>
-                                                    Teléfonos
-                                                </h4>
-                                            </Col>
-                                            <Col  sm={{ size: 2}}>
-                                                <Button color={'warning'}>
-                                                    Modify
-                                                </Button>
-                                            </Col>
+                                        </Container>
+                                    </ListGroupItem>
+                                </ListGroup>
+                            </Col>
+                        </Row>
+                        <Row>
+                            <Col sm={{size: 6, offset: 3}}>
+                                <ListGroup>
+                                    <ListGroupItem>
+                                        <Container className={"justify-content-center"}>
+                                            <Row>
+                                                <Col sm={{size: 9}}>
+                                                    <h4>
+                                                        Teléfonos
+                                                    </h4>
+                                                </Col>
+                                                <Col sm={{size: 2}}>
+                                                    <Button color={'warning'} onClick={() => route(`${path}/ind/phone`)}>
+                                                        Modify
+                                                    </Button>
+                                                </Col>
 
-                                        </Row>
-                                        <Row>
-                                            <Col sm={{ size: 6}}>
-                                                <div>
-                                                    {phoneList}
-                                                </div>
-                                            </Col>
-                                        </Row>
+                                            </Row>
+                                            <Row>
+                                                <Col sm={{size: 6}}>
+                                                    <div>
+                                                        {phoneList}
+                                                    </div>
+                                                </Col>
+                                            </Row>
 
-                                    </Container>
-                                </ListGroupItem>
-                            </ListGroup>
-                        </Col>
-                    </Row>
-                    <Row>
-                        <Col sm={{ size: 6, offset: 3 }}>
-                            <ListGroup>
-                                <ListGroupItem>
-                                    <Container className={"justify-content-center"} >
-                                        <Row>
-                                            <Col sm={{ size: 9}}>
-                                                <h4>
-                                                     Nacionalidad
-                                                </h4>
+                                        </Container>
+                                    </ListGroupItem>
+                                </ListGroup>
+                            </Col>
+                        </Row>
+                        <Row>
+                            <Col sm={{size: 6, offset: 3}}>
+                                <ListGroup>
+                                    <ListGroupItem>
+                                        <Container className={"justify-content-center"}>
+                                            <Row>
+                                                <Col sm={{size: 9}}>
+                                                    <h4>
+                                                        Nacionalidad
+                                                    </h4>
 
-                                            </Col>
-                                            <Col  sm={{ size: 2}}>
-                                                <Button color={'warning'}>
-                                                    Modify
-                                                </Button>
-                                            </Col>
+                                                </Col>
+                                                <Col sm={{size: 2}}>
+                                                    <Button color={'warning'} onClick={() => route(`${path}/ind/nationality`)}>
+                                                        Modify
+                                                    </Button>
+                                                </Col>
 
-                                        </Row>
-                                        <Row>
-                                            <Col sm={{ size: 6}}>
-                                                {nationality}
-                                            </Col>
-                                        </Row>
+                                            </Row>
+                                            <Row>
+                                                <Col sm={{size: 6}}>
+                                                    {nationality}
+                                                </Col>
+                                            </Row>
 
-                                    </Container>
-                                </ListGroupItem>
-                            </ListGroup>
-                        </Col>
-                    </Row>
-                    <Row>
-                        <Col sm={{ size: 6, offset: 3 }}>
-                            <ListGroup>
-                                <ListGroupItem>
-                                    <Container className={"justify-content-center"} >
-                                        <Row>
-                                            <Col sm={{ size: 9}}>
-                                                <h4>
-                                                    Fecha de nacimiento
-                                                </h4>
+                                        </Container>
+                                    </ListGroupItem>
+                                </ListGroup>
+                            </Col>
+                        </Row>
+                        <Row>
+                            <Col sm={{size: 6, offset: 3}}>
+                                <ListGroup>
+                                    <ListGroupItem>
+                                        <Container className={"justify-content-center"}>
+                                            <Row>
+                                                <Col sm={{size: 9}}>
+                                                    <h4>
+                                                        Fecha de nacimiento
+                                                    </h4>
 
-                                            </Col>
-                                            <Col  sm={{ size: 2}}>
-                                                <Button color={'warning'}>
-                                                    Modify
-                                                </Button>
-                                            </Col>
+                                                </Col>
+                                                <Col sm={{size: 2}}>
+                                                    <Button color={'warning'} onClick={() => route(`${path}/ind/birthDate`)}>
+                                                        Modify
+                                                    </Button>
+                                                </Col>
 
-                                        </Row>
-                                        <Row>
-                                            <Col sm={{ size: 6}}>
-                                                {birthdate}
-                                            </Col>
-                                        </Row>
+                                            </Row>
+                                            <Row>
+                                                <Col sm={{size: 6}}>
+                                                    {birthdate}
+                                                </Col>
+                                            </Row>
 
-                                    </Container>
-                                </ListGroupItem>
-                            </ListGroup>
-                        </Col>
-                    </Row>
-                    <Row>
-                        <Col sm={{ size: 6, offset: 3 }}>
-                            <ListGroup>
-                                <ListGroupItem>
-                                    <Container className={"justify-content-center"} >
-                                        <Row>
-                                            <Col sm={{ size: 9}}>
-                                                <h4>
-                                                    Biografía
-                                                </h4>
-                                            </Col>
-                                            <Col  sm={{ size: 2}}>
-                                                <Button color={'warning'}>
-                                                    Modify
-                                                </Button>
-                                            </Col>
+                                        </Container>
+                                    </ListGroupItem>
+                                </ListGroup>
+                            </Col>
+                        </Row>
+                        <Row>
+                            <Col sm={{size: 6, offset: 3}}>
+                                <ListGroup>
+                                    <ListGroupItem>
+                                        <Container className={"justify-content-center"}>
+                                            <Row>
+                                                <Col sm={{size: 9}}>
+                                                    <h4>
+                                                        Biografía
+                                                    </h4>
+                                                </Col>
+                                                <Col sm={{size: 2}}>
+                                                    <Button color={'warning'} onClick={() => route(`${path}/ind/bio`)}>
+                                                        Modify
+                                                    </Button>
+                                                </Col>
 
-                                        </Row>
-                                        <Row>
-                                            <Col sm={{ size: 6}}>
-                                                {biography}
-                                            </Col>
-                                        </Row>
+                                            </Row>
+                                            <Row>
+                                                <Col sm={{size: 6}}>
+                                                    {biography}
+                                                </Col>
+                                            </Row>
 
-                                    </Container>
-                                </ListGroupItem>
-                            </ListGroup>
-                        </Col>
-                    </Row>
-                    {
-                        (organization)?
-                            <Row>
-                                <Col sm={{ size: 6, offset: 3 }}>
-                                    <ListGroup>
-                                        <ListGroupItem>
-                                            <Container className={"justify-content-center"} >
-                                                <Row>
-                                                    <Col sm={{ size: 9}}>
-                                                        <h4>
-                                                            Organización afiliada
-                                                        </h4>
-                                                    </Col>
-                                                    <Col  sm={{ size: 2}}>
-                                                        <Button color={'warning'}>
-                                                            Modify
-                                                        </Button>
-                                                    </Col>
+                                        </Container>
+                                    </ListGroupItem>
+                                </ListGroup>
+                            </Col>
+                        </Row>
+                        {
+                            (organization) ?
+                                <Row>
+                                    <Col sm={{size: 6, offset: 3}}>
+                                        <ListGroup>
+                                            <ListGroupItem>
+                                                <Container className={"justify-content-center"}>
+                                                    <Row>
+                                                        <Col sm={{size: 9}}>
+                                                            <h4>
+                                                                Organización afiliada
+                                                            </h4>
+                                                        </Col>
+                                                        <Col sm={{size: 2}}>
+                                                            <Button color={'warning'} onClick={() => route(`${path}/ind/aff`)}>
+                                                                Modify
+                                                            </Button>
+                                                        </Col>
 
-                                                </Row>
-                                                <Row>
-                                                    <Col sm={{ size: 6}}>
-                                                        {organization}
-                                                    </Col>
-                                                </Row>
+                                                    </Row>
+                                                    <Row>
+                                                        <Col sm={{size: 6}}>
+                                                            {organization}
+                                                        </Col>
+                                                    </Row>
 
-                                            </Container>
-                                        </ListGroupItem>
-                                    </ListGroup>
-                                </Col>
-                            </Row>
-                            : null
-                    }
-                </Container>
-
-            </React.Fragment>
-        );
-    }
+                                                </Container>
+                                            </ListGroupItem>
+                                        </ListGroup>
+                                    </Col>
+                                </Row>
+                                : null
+                        }
+                    </Container>
+                </Route>
+            </Switch>
+        </React.Fragment>
+    );
 }
 
 export default OverviewInd;

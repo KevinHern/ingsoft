@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import OverViewInd  from './overviewInd'
 import OverViewOrg from './overviewOrg';
-import UpdateFieldCom from './updateField';
 import {withAuthorization} from '../Session'
 import {withAuthorization2} from '../Session';
 
@@ -180,7 +179,7 @@ class OverViewManager extends Component {
                         </ButtonToolbar>
                     </Col>
                 </Row>
-                {(fetched)? ((userType)? <OverViewInd {... this.state} />: <OverViewOrg {... this.state} /> ): null}
+                {(fetched)? ((userType)? <OverViewInd {... this.state} route = {this.route}/>: <OverViewOrg {... this.state} route = {this.route}/> ): null}
             </React.Fragment>
         );
     }
@@ -194,8 +193,7 @@ const condition = (role) => role === undefined | role === 0;
 // const TabConfig = withAuthorization2(condition)(TabConfigManager);
 const TabConfig = withAuthentication(TabConfigManager);
 const  OverView = withAuthentication(OverViewManager);
-const UpdateField = withAuthentication(UpdateFieldCom);
-export {TabConfig, OverView, UpdateField};
+export {TabConfig, OverView};
 
 
 

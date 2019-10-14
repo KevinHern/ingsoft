@@ -32,8 +32,9 @@ const App = () => {
                                 <Route path={ROUTES.HOME} component = {HomePage}/>
                                 <Route path={ROUTES.UCONFIG} component = {TabConfig}/>
                                 <Route path={ROUTES.CREATEIDEA} component = {CreateIdea}/>
-                                <Route exact path={ROUTES.OVERVIEW} component = {OverView}/>
-                                <Route path={ROUTES.OVERVIEW+'/update/:typeMode/:field/:value'} component = {UpdateField}/>
+                                {/*I Just replaced exact in this route*/}
+                                <Route path={ROUTES.OVERVIEW}  component = {OverView}/>
+                                {/*<Route path={ROUTES.OVERVIEW+'/update/:typeMode/:field/:value'} component = {UpdateField}/>*/}
                                 <Route path={ROUTES.LISTIDEA+'/:changedIdea?'} component = {ListIdea}/>
                                 <Route path={ROUTES.DESCIDEA} component = {Desc}/>
                                 <Route path={ROUTES.UPDATEIDEA} component = {CreateIdea}/>

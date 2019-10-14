@@ -2,9 +2,9 @@ import React, {Component} from 'react';
 import {Button, ButtonGroup, ButtonToolbar, Col, Row} from "reactstrap";
 import Input from "reactstrap/es/Input";
 import {Label} from 'reactstrap';
+import './caps.css';
 import axios from 'axios';
 import * as ROUTES from "../../Constants/routes";
-import {Individual, Organizacion} from "./UserForm";
 
 class UpdateFieldCom extends Component {
     constructor(props){
@@ -17,32 +17,34 @@ class UpdateFieldCom extends Component {
     }
 
     componentDidMount() {
-        const{field, value, typeMode} = this.props.match.params;
-        this.setState({field, value, typeMode});
+        const{typeMode} = this.props.match.params;
+        const {field} = this.props;
+        console.log(this.props);
+        console.log('field '+field);
+        this.setState({field});
+        this.setState({typeMode});
     }
 
    onSubmit = (e) => {
         e.preventDefault();
    };
 
+    route = (goTo) =>{
+        this.props.history.push(goTo);
+    };
+
 
 
     render() {
-        const{field, value, typeMode} = this.state;
+        const{field, typeMode, value} = this.state;
         console.log(typeMode);
+        console.log(field);
+
+
+
         return (
 
             <React.Fragment>
-                <Row>
-                    <Col md={"12"}>
-                        <ButtonToolbar className={"justify-content-end"}>
-                            <ButtonGroup>
-                                <Button color={"info"} onClick={()  => {this.route(ROUTES.HOME)}}>Principal</Button>
-                                <Button color={"info"} onClick={() => {this.route(ROUTES.LISTIDEA)}}>Listar Ideas</Button>
-                            </ButtonGroup>
-                        </ButtonToolbar>
-                    </Col>
-                </Row>
                 {
                     (typeMode === 'ind') ?
                         <Row className={'mt-3 justify-content-center'}>
@@ -59,7 +61,7 @@ class UpdateFieldCom extends Component {
                 }
                 <Row className={'mt-5 justify-content-center'}>
                     <Col sm={{ size: 1 }}>
-                        <Label >{field}</Label>
+                        <Label className={'capitalize'} >{field}</Label>
                     </Col>
                     <Col sm ={{ size: 3}}>
                         <Input  type={'text'}  value={value} readOnly/>
@@ -77,10 +79,9 @@ class UpdateFieldCom extends Component {
                     <Col sm={{ size: 1 }}>
                         <Button color={'primary'}>Modificar</Button>
                     </Col>
-                </Row>
-                <Row>
-                    <Col>
-                        <br/>
+                    <Col sm={{ size: 1 }}>
+                        <Button color={"danger"} onClick={() => this.route(ROUTES.OVERVIEW)}>Regresar</Button>
+
                     </Col>
                 </Row>
                 <Row>
