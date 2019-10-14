@@ -240,7 +240,6 @@ class IndForm extends Component {
             data:   {uid, phone: phoneList},
             headers: { 'Content-Type': 'application/json'},
         });
-
     };
     //Send data to server
     async handleSubmit(e) {
@@ -260,21 +259,26 @@ class IndForm extends Component {
         //When you are ready to send phones make sure you won't send empty strings or duplicate phone numbers
         try{
             const promisedToken =  await this.props.token();
-            const [axiosRequest, fireStoreRequest] = await Promise.all([this.props.serverData(formData, promisedToken),
+            const [axiosRequest, fireStoreRequest, axiosRequestPhones] = await Promise.all([this.props.serverData(formData, promisedToken),
                 this.props.setRole(data['role']), this.storePhoneList(promisedToken)]);
             // const axiosRequest = await this.props.serverData(formData, promisedToken);
-            const axiosRequestPhones = await this.storePhoneList();
             // this.props.setClaims(data['role']).then((result) => {
             //     console.log(result);
             // });
             const response = axiosRequest.data;
-            if(response['status'] === 1){
-                console.log('success');
-                this.props.history.push(ROUTES.HOME);
-            }else {
+            const phonesResponse = axiosRequestPhones.data;
+            if(response['status']){
+                if(phonesResponse['status']){
+                    console.log('success');
+                    this.props.history.push(ROUTES.HOME);
+                }else{
+                    console.log(phonesResponse);
+                    console.log('failure in phones');
+                }
+            }  else {
                 // this.setState({error:error.message});
                 this.setState({error:"Error en el servidor"});
-                console.log('failure');
+                console.log('failure in register');
                 console.log(response);
             }
         }catch(error){

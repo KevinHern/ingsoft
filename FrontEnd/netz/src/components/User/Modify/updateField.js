@@ -29,9 +29,9 @@ class UpdateFieldCom extends Component {
     render() {
         const {typeMode} = this.props.match.params;
         const{inputs} = this.props;
-        console.log(inputs);
+        // console.log(inputs);
         const modifyFields = inputs.map(input =>
-                <React.Fragment>
+                <React.Fragment key={input}>
                     <Row className={'mt-5 justify-content-center'}>
                     <Col sm={{ size: 1 }}>
                         <Label className={'capitalize'} >{input.field}</Label>
