@@ -10,6 +10,9 @@ const Signed = ({fireBase})  => (
             <NavLink href={ROUTES.HOME} className="text-md-center" >Home</NavLink>
         </NavItem>
         <NavItem>
+            <NavLink href={ROUTES.BANDEJA} className="text-md-center" >Bandeja</NavLink>
+        </NavItem>
+        <NavItem>
             <NavLink href={ROUTES.LANDING} className="text-md-center" onClick={fireBase.doSignOut}>SignOut</NavLink>
         </NavItem>
     </React.Fragment>

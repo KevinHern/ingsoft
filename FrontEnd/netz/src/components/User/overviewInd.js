@@ -5,15 +5,14 @@ import {Route, Switch, useRouteMatch} from 'react-router-dom';
 import Container from "reactstrap/es/Container";
 import ListGroup from "reactstrap/es/ListGroup";
 import ListGroupItem from "reactstrap/es/ListGroupItem";
-import UpdateFieldCom from './updateField';
-import {Password, PhoneList, Email, Role} from './Modify/';
+import {Password, PhoneList, Email, Role, UpdateFieldCom} from './Modify/';
 
 
 function OverviewInd(props) {
     const {firstname, lastname, nationality, birthdate, biography, organization, email, role, phones, route} = props;
     // const {field} = this.state;
     // const {authUser} = this.props;
-    let {path, url} = useRouteMatch();
+    let {path} = useRouteMatch();
     console.log(path);
     const phoneList = phones.map((phone) =>
         <div>{phone}</div>
@@ -21,14 +20,24 @@ function OverviewInd(props) {
     return (
         <React.Fragment>
             <Switch>
-                <Route path={`${path}/:typeMode/name`} render = {(props) => <UpdateFieldCom {...props} field ={'Nombre'}  nf={2} value={[firstname, lastname]}/>}/>
-                <Route path={`${path}/:typeMode/email`} render = {(props) => <Email  {...props} field ={'Email'}  nf={1} value={email} />}/>
-                <Route path={`${path}/:typeMode/password`} render = {(props) => <Password {...props} field ={'Clave'}  nf={1} value={''} />}/>
-                <Route path={`${path}/:typeMode/role`} render = {(props) => <Role {...props} field ={'Role'} nf={1} value={role} />}/>
-                <Route path={`${path}/:typeMode/phone`} render = {(props) => <PhoneList {...props} field ={'Telefono'}  nf={1} value={phones} />}/>
-                <Route path={`${path}/:typeMode/nat`} render = {(props) => <UpdateFieldCom {...props} field ={'Nacionalidad'} nf={1} value={nationality} />}/>
-                <Route path={`${path}/:typeMode/birth`} render = {(props) => <UpdateFieldCom {...props} field ={'Fecha de Nacimiento'} nf={1} value={birthdate} />}/>
-                <Route path={`${path}/:typeMode/bio`} render = {(props) => <UpdateFieldCom {...props} field ={'Biografía'} nf={1} value={biography}/>}/>
+                <Route path={`${path}/:typeMode/name`} render = {(props) =>
+                    <UpdateFieldCom {...props} inputs = {[{field: 'Nombre', type : 'text', value : firstname}, {field: 'Apellido', type : 'text', value : lastname}]} />}/>
+                <Route path={`${path}/:typeMode/email`} render = {(props) =>
+                    <Email  {...props} field ={'Email'}  value={email} />}/>
+                <Route path={`${path}/:typeMode/password`} render = {(props) =>
+                    <Password {...props} field ={'Clave'}/>}/>
+                <Route path={`${path}/:typeMode/role`} render = {(props) =>
+                    <Role {...props} field ={'Role'}  value={role} />}/>
+                <Route path={`${path}/:typeMode/phone`} render = {(props) =>
+                    <PhoneList {...props} field ={'Telefono'}  value={phones} />}/>
+                <Route path={`${path}/:typeMode/nat`} render = {(props) =>
+                    <UpdateFieldCom {...props} inputs = {[{field: 'Nacionalidad', type : 'text', value : nationality}]} />}/>
+                <Route path={`${path}/:typeMode/birth`} render = {(props) =>
+                    <UpdateFieldCom {...props}  inputs = {[{field: 'Fecha de nacimiento', type : 'date', value : birthdate}]} />}/>
+                <Route path={`${path}/:typeMode/bio`} render = {(props) =>
+                    <UpdateFieldCom {...props}  inputs = {[{field: 'Biografía', type : 'textarea', value : biography}]} />}/>
+                <Route path={`${path}/:typeMode/aff`} render = {(props) =>
+                    <UpdateFieldCom {...props}  inputs = {[{field: 'Organizacion Afiliada', type : 'text', value : organization}]} />}/>
                 <Route exact path={path}>
                     <Container>
                         <Row>
@@ -208,7 +217,7 @@ function OverviewInd(props) {
 
                                                 </Col>
                                                 <Col sm={{size: 2}}>
-                                                    <Button color={'warning'} onClick={() => route(`${path}/ind/nationality`)}>
+                                                    <Button color={'warning'} onClick={() => route(`${path}/ind/nat`)}>
                                                         Modify
                                                     </Button>
                                                 </Col>
@@ -238,7 +247,7 @@ function OverviewInd(props) {
 
                                                 </Col>
                                                 <Col sm={{size: 2}}>
-                                                    <Button color={'warning'} onClick={() => route(`${path}/ind/birthDate`)}>
+                                                    <Button color={'warning'} onClick={() => route(`${path}/ind/birth`)}>
                                                         Modify
                                                     </Button>
                                                 </Col>

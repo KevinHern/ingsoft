@@ -14,6 +14,7 @@ import React from 'react';
 import {withAuthentication} from "../Session";
 import {TabConfig, OverView, UpdateField} from "../User";
 import {CreateIdea, ListIdea, Desc} from '../Idea';
+import  Bandeja from '../Bandeja';
 import './App.css';
 import Container from "reactstrap/es/Container";
 import NoMatch from "../NoMatch/NoMatch";
@@ -38,6 +39,7 @@ const App = () => {
                                 <Route path={ROUTES.LISTIDEA+'/:changedIdea?'} component = {ListIdea}/>
                                 <Route path={ROUTES.DESCIDEA} component = {Desc}/>
                                 <Route path={ROUTES.UPDATEIDEA} component = {CreateIdea}/>
+                                <Route path={ROUTES.BANDEJA}  component = {Bandeja}/>
                                 <Route>
                                     <NoMatch/>
                                 </Route>
