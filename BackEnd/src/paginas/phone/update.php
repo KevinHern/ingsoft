@@ -1,7 +1,7 @@
 <?php
 	//Libraries
 	include '../connection.php';
-	include '../getSub';
+	include '../../getSub.php';
 	permission();
 
 
@@ -26,13 +26,12 @@
 
 	try
 	{
-		$query = "DELETE FROM telephone WHERE uid = 'uid$';";
+		$query = "DELETE FROM telephone WHERE uid = '$uid';";
 		$result = pg_query($link, $query);
 
 		foreach ($_POST["phone"] as $phone)
 		{
-			$number = $phone["number"];
-			$query = "INSERT INTO telephone VALUES('$uid', '$number');";
+			$query = "INSERT INTO telephone VALUES('$uid', $phone);";
 			$result = pg_query($link, $query);
 		}
 

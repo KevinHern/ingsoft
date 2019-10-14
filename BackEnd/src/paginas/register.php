@@ -58,8 +58,6 @@
 			$org = $_POST["organization"];
 			$birthdate = $_POST["birthdate"];
 			$role = $_POST["role"];
-//			$phones = $_POST["phones"];
-
 			$link = OpenConUser("u");
 
 			try
@@ -96,7 +94,7 @@
 //					$result = pg_query($link, $query);
 //				}
 //
-//				$json = array('status' => 1);
+				$json = array('status' => 1);
 
 			}
 			catch (Exception $e)
@@ -135,8 +133,8 @@
 			$location = $_POST["location"];
 			$role = $_POST["role"];
 			$phone = $_POST["phone"];
-
-			$link = OpenConUser("u");
+            $json = array();
+            $link = OpenConUser("u");
 
 			try
 			{
