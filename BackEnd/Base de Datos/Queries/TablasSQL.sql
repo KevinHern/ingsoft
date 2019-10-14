@@ -40,7 +40,7 @@ Create Table Telephone(
 	uid varchar(30),
 	number varchar(12),
 
-	Primary Key(number),
+	Primary Key(uid, number),
 	Foreign Key(uid) References Users(uid) ON DELETE CASCADE
 );
 
