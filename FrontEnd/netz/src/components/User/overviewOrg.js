@@ -9,7 +9,7 @@ import {Route, Switch, useRouteMatch} from 'react-router-dom';
 function OverviewOrg(props) {
     const {email, role, name, description, country, location, phone, route} = props;
     let {path} = useRouteMatch();
-    console.log(path);
+    // console.log(path);
     return (
         <React.Fragment>
             <Switch>

@@ -10,12 +10,13 @@ import {Password, PhoneList, Email, Role, UpdateFieldCom} from './Modify/';
 
 function OverviewInd(props) {
     const {firstname, lastname, nationality, birthdate, biography, organization, email, role, phones, route} = props;
+    // console.log(phones)
     // const {field} = this.state;
     // const {authUser} = this.props;
     let {path} = useRouteMatch();
-    console.log(path);
-    const phoneList = phones.map((phone) =>
-        <div>{phone}</div>
+    // console.log(path);
+    const phoneList = Object.values(phones).map((phone) =>
+        <div key={phone}>{phone}</div>
     );
     return (
         <React.Fragment>
@@ -29,7 +30,7 @@ function OverviewInd(props) {
                 <Route path={`${path}/:typeMode/role`} render = {(props) =>
                     <Role {...props} field ={'Role'}  value={role} />}/>
                 <Route path={`${path}/:typeMode/phone`} render = {(props) =>
-                    <PhoneList {...props} field ={'Telefono'}  value={phones} />}/>
+                    <PhoneList {...props} field ={'Telefono'}  value={Object.values(phones)} />}/>
                 <Route path={`${path}/:typeMode/nat`} render = {(props) =>
                     <UpdateFieldCom {...props} inputs = {[{field: 'Nacionalidad', type : 'text', value : nationality}]} />}/>
                 <Route path={`${path}/:typeMode/birth`} render = {(props) =>
