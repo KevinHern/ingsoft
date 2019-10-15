@@ -65,9 +65,19 @@
 			try
 			{
 				//----- Extract total number of rows -----//
-				$query = "SELECT COUNT(iid) as total FROM idea WHERE category = '$category'";
-				$result = pg_query($link, $query);
-				$line = pg_fetch_array($result, NULL, PGSQL_ASSOC);
+				$line;
+				if ($category != -1)
+				{
+					$query = "SELECT COUNT(iid) as total FROM idea WHERE category = '$category'";
+					$result = pg_query($link, $query);
+					$line = pg_fetch_array($result, NULL, PGSQL_ASSOC);
+				}
+				else
+				{
+					$query = "SELECT COUNT(iid) as total FROM idea";
+					$result = pg_query($link, $query);
+					$line = pg_fetch_array($result, NULL, PGSQL_ASSOC);
+				}
 
 				$total = $line["total"];
 
@@ -100,9 +110,16 @@
 				else
 				{
 					//----- Extract Ideas filtered by category -----//
-					$query = "SELECT I.iid, I.uid, I.title, I.description, SI.name, U.uid, U.type FROM idea I, users U, stateidea SI  WHERE I.category = $category AND I.uid = U.uid AND SI.id = I.state";
-
-					$result = pg_query($link, $query);
+					if ($category != -1)
+					{
+						$query = "SELECT I.iid, I.uid, I.title, I.description, SI.name, U.uid, U.type FROM idea I, users U, stateidea SI  WHERE I.category = $category AND I.uid = U.uid AND SI.id = I.state";
+						$result = pg_query($link, $query);
+					}
+					else
+					{
+						$query = "SELECT I.iid, I.uid, I.title, I.description, SI.name, U.uid, U.type FROM idea I, users U, stateidea SI WHERE I.uid = U.uid AND SI.id = I.state";
+						$result = pg_query($link, $query);
+					}
 
 					pg_result_seek($result, (($page-1) * $rows));
 
