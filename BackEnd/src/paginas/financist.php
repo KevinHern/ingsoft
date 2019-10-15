@@ -118,7 +118,7 @@
 						$line1 = pg_fetch_array($result1, NULL, PGSQL_ASSOC);
 
 						$isBookmarked = 0;
-						if ($line["exists"] != 0)
+						if ($line1["exists"] != 0)
 						{
 							$isBookmarked = 1;	
 						}
