@@ -131,7 +131,7 @@
 						//--- Idea's Basic Information ---//
 						$iid = $line["iid"];
 
-						$query1 = "SELECT COUNT(iid) as exists FROM bookmark WHERE iid = $iid AND uid = '$uid';"
+						$query1 = "SELECT COUNT(iid) as exists FROM finbook WHERE iid = $iid AND finid = '$uid';"
 						$result1 = pg_query($link, $query1);
 						$line1 = pg_fetch_array($result1, NULL, PGSQL_ASSOC);
 
