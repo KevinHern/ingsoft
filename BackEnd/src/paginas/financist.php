@@ -1,6 +1,8 @@
 <?php
 	//Libraries
 	include 'connection.php';
+	include '../Permission.php';
+	permission();
 
 	$json = file_get_contents('php://input');
 	//Converts it into a PHP object
@@ -50,7 +52,7 @@
 				5.2 Organization's Type of User
 				5.3 Organization's Name
 			*/
-
+			$uid = getUid($_POST["uid"]);
 			$category = $_POST["category"];
 			$rows = $_POST["rows"];
 			$page = $_POST["page"];
@@ -110,6 +112,17 @@
 						
 						//--- Idea's Basic Information ---//
 						$iid = $line["iid"];
+
+						$query1 = "SELECT COUNT(iid) as exists FROM bookmark WHERE iid = $iid AND uid = '$uid';"
+						$result1 = pg_query($link, $query1);
+						$line1 = pg_fetch_array($result1, NULL, PGSQL_ASSOC);
+
+						$isBookmarked = 0;
+						if ($line["exists"] != 0)
+						{
+							$isBookmarked = 1;	
+						}
+
 						$title = $line["title"];
 						$description = $line["description"];
 						$state = $line["name"];
@@ -118,7 +131,7 @@
 						$uid = $line["uid"];
 						$type = $line["type"];
 
-						$temp = array("iid" => ((int)$iid), "title" => $title, "description" => $description, "state" => ((int)$state), "uid" => $uid, "type" => ((int)$type));
+						$temp = array("isBookmarked" => $isBookmarked, "iid" => ((int)$iid), "title" => $title, "description" => $description, "state" => ((int)$state), "uid" => $uid, "type" => ((int)$type));
 
 						if ($type == 1)
 						{
