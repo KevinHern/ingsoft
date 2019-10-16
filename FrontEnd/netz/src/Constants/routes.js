@@ -11,6 +11,7 @@ export const UPDATEIDEA = '/updateIdea/:id';
 export const BANDEJA = '/bandeja';
 export const FINANCIST = '/financist';
 export const BOOKMARK = '/financist/bookmark';
+export const VIDEOCHAT = '/videochat';
 // export const ACCOUNT = '/account';
 // export const ADMIN = '/admin';
 // export const PASSWORD_FORGET = '/pw-forget';

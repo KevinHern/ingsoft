@@ -26,7 +26,7 @@
 	switch ($option)
 	{
 
-		//---- LIST IDEAS TO FINANCIST BY CATEGORY  ----//
+		//---- LIST IDEAS TO FINANCISTEND BY CATEGORY  ----//
 		case 'list':
 			/*
 			INPUTS:
@@ -131,7 +131,7 @@
 						//--- Idea's Basic Information ---//
 						$iid = $line["iid"];
 
-						$query1 = "SELECT COUNT(iid) as exists FROM finbook WHERE iid = $iid AND finid = '$uid';"
+						$query1 = "SELECT COUNT(iid) as exists FROM finbook WHERE iid = $iid AND finid = '$uid';";
 						$result1 = pg_query($link, $query1);
 						$line1 = pg_fetch_array($result1, NULL, PGSQL_ASSOC);
 

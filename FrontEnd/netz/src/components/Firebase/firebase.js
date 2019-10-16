@@ -21,6 +21,7 @@ class Firebase {
         this.googleProvider =  new firebase.auth.GoogleAuthProvider();
         this.db = firebase.firestore();
         this.functions = firebase.functions();
+        this.rdb = firebase.database().ref(); //Real time database
     }
 
     getRedirectResult(history, API_PATH = false) {
@@ -122,7 +123,11 @@ class Firebase {
 
 
     token = () =>  {
-      return this.appAuth.currentUser.getIdToken();
+      if(this.appAuth.currentUser) {
+          return this.appAuth.currentUser.getIdToken();
+      }else{
+          return false;
+      }
     };
 
 

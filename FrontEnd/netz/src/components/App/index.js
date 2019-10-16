@@ -19,6 +19,8 @@ import './App.css';
 import Container from "reactstrap/es/Container";
 import NoMatch from "../NoMatch/NoMatch";
 import {SearchIdeas} from '../Financist';
+import {VIDEOCHAT} from "../../Constants/routes";
+import VideoChat from '../VideoChat';
 // import SignOutButton from '../LoginPages/SignOut';
 
 
@@ -43,6 +45,8 @@ const App = () => {
                                 <Route path={ROUTES.UPDATEIDEA} component = {CreateIdea}/>
                                 <Route path={ROUTES.BANDEJA}  component = {Bandeja}/>
                                 <Route path={ROUTES.FINANCIST}  component = {SearchIdeas}/>
+                                <Route path={ROUTES.FINANCIST}  component = {SearchIdeas}/>
+                                <Route path={ROUTES.VIDEOCHAT}  component = {VideoChat}/>
                                 <Route>
                                     <NoMatch/>
                                 </Route>
