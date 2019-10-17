@@ -29,7 +29,7 @@ class VideoChat extends Component {
        const {pc} = this.state;
       const msg = JSON.parse(data.val().message);
       const sender = data.val().sender;
-      console.log(data, uid);
+      console.log(sender, uid);
       if(sender !== uid){
         if(msg.ice !== undefined){
             pc.addIceCandidate(new RTCIceCandidate(msg.ice));
@@ -76,12 +76,16 @@ class VideoChat extends Component {
                     // this.friendsVideoTag.current.srcObject = stream;
                     pc.addStream(stream);//Not sure if this should go here
                 });
-            pc.createOffer()
-                .then(offer => pc.setLocalDescription(offer) )
-                .then(() => this.sendMessage(uid, JSON.stringify({'sdp': pc.localDescription})) );
-            this.setState({streaming:true});
         }
+        this.showOtherVideo();
+    };
 
+    showOtherVideo = () => {
+        const {pc, uid} = this.state;
+        pc.createOffer()
+            .then(offer => pc.setLocalDescription(offer) )
+            .then(() => this.sendMessage(uid, JSON.stringify({'sdp': pc.localDescription})) );
+        this.setState({streaming:true});
     };
 
 
@@ -115,10 +119,6 @@ class VideoChat extends Component {
 
 
     render() {
-        const {fireBase} = this.props;
-        const{friendsSrc} = this.state;
-        // console.log(fireBase);
-        // console.log(process.env.REACT_APP_SERVERS);
         return (
             <React.Fragment>
                 <Container>
@@ -135,7 +135,6 @@ class VideoChat extends Component {
                                    height={'240px'}
                                    autoPlay
                                    title={'prueba'}/>
-
                         </Col>
                         <Col sm = "4">
                             <h3>Your Friend</h3>
@@ -161,3 +160,8 @@ class VideoChat extends Component {
 }
 
 export default withAuthentication(VideoChat);
+
+
+// {/*<Col sm={"2"}>*/}
+// {/*    /!*<Button color={'primary'} onClick={this.showOtherVideo}>Start VideoChat</Button>*!/*/}
+// {/*</Col>*/}

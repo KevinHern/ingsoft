@@ -141,7 +141,7 @@ class OverViewManager extends Component {
         const {fetched} = this.state;
         if(!fetched){
             fireBase.token().then((response) => {
-                console.log(response);
+                // console.log(response);
                 axios({
                     method: 'POST',
                     url: GETUSER,

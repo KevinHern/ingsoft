@@ -1,17 +1,19 @@
 import React, {Component} from 'react';
 import PhoneItem from "../PhoneItem";
 import TitleModify from "./TitleModify";
-import {Button, Col, Row} from "reactstrap";
+import {Button, Col, Label, Row} from "reactstrap";
 import Input from "reactstrap/es/Input";
 import Container from "reactstrap/es/Container";
 import * as ROUTES from "../../../Constants/routes";
+import axios from 'axios';
 
 class PhoneList extends Component {
 
     constructor(props){
         super(props);
         this.state = {
-            phoneList:[]
+            phoneList:[],
+            phoneOrg: ''
         };
     }
 
@@ -40,9 +42,33 @@ class PhoneList extends Component {
         this.props.history.push(goTo);
     };
 
+    onChangeOrg = (e) => {
+        this.setState({phoneOrg: e.target.value})
+    };
+
+    onChange = (e) => {
+
+    };
+
+    update = () => {
+        let {typeMode} = this.props.match.params;
+        axios({
+            
+
+        }).then((response) => {
+                if(response.data['status']){
+                    this.route(`${ROUTES.OVERVIEW}/${typeMode}/modify/success`);
+                }else{
+
+                }
+        })
+    };
+
     render() {
         let {phoneList} = this.state;
+        let orgPhone = phoneList[0];
         let {typeMode} = this.props.match.params;
+        const {allowExtra, field} = this.props;
         console.log(typeMode);
 
         phoneList = phoneList.map((phone, index) => {
@@ -63,16 +89,38 @@ class PhoneList extends Component {
         return (
             <div>
                 <TitleModify typeMode = {typeMode}/>
-                <Row className={'mt-5 justify-content-center'} >
-                    <Col sm={4}>
-                        <Container>
-                            {phoneList}
-                        </Container>
-                    </Col>
-                </Row>
+                {(allowExtra)?
+                    <Row className={'mt-5 justify-content-center'} >
+                        <Col sm={4}>
+                            <Container>
+                                <div>{phoneList}</div>
+                            </Container>
+                        </Col>
+                    </Row>
+                    :
+                    <React.Fragment>
+                        <Row className={'mt-5 justify-content-center'}>
+                            <Col sm={{ size: 1 }}>
+                                <Label className={'capitalize'} >{field}</Label>
+                            </Col>
+                            <Col sm ={{ size: 3}}>
+                                <Input  type={'text'}  value={orgPhone} readOnly/>
+                            </Col>
+                        </Row>
+                        <Row className={'mt-5 justify-content-center'}>
+                            <Col sm={{ size: 1 }}>
+                                <Label >Nuevo Valor</Label>
+                            </Col>
+                            <Col sm ={{ size: 3}}>
+                                <Input type={'text'}  onChange ={this.onChangeOrg}/>
+                            </Col>
+                        </Row>
+                    </React.Fragment>
+                }
+
                 <Row className={'mt-5 justify-content-center'} >
                     <Col sm={{ size: 1 }}>
-                        <Button color={'primary'}>Modificar</Button>
+                        <Button color={'primary'} onClick={this.update}>Modificar</Button>
                     </Col>
                     <Col sm={{ size: 1 }}>
                         <Button color={"danger"} onClick={() => this.route(ROUTES.OVERVIEW)}>Regresar</Button>
@@ -85,3 +133,5 @@ class PhoneList extends Component {
 
 
 export  default PhoneList;
+
+

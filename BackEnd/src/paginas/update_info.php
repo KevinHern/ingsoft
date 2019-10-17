@@ -47,7 +47,7 @@
 			1. Status: 1 if success, 0 otherwise
 			*/
 
-			$attr = $_POST["attr"];		//Parameter that decides which table attribute must be updated
+			$attr = $_POST["field"];		//Parameter that decides which table attribute must be updated
 			/*
 			-- Values that $attr can take: --
 			UPDATE EMAIL: 		e
@@ -98,7 +98,7 @@
 			1. Status: 1 if success, 0 otherwise
 			*/
 
-			$attr = $_POST["attr"];		//Parameter that decides which table attribute must be updated
+			$attr = $_POST["field"];		//Parameter that decides which table attribute must be updated
 			/*
 			-- Values that $attr can take: --
 			UPDATE FIRSTNAME: 		f
@@ -154,7 +154,7 @@
 			1. Status: 1 if success, 0 otherwise
 			*/
 
-			$attr = $_POST["attr"];		//Parameter that decides which table attribute must be updated
+			$attr = $_POST["field"];		//Parameter that decides which table attribute must be updated
 			/*
 			-- Values that $attr can take: --
 			UPDATE NAME: 			n
