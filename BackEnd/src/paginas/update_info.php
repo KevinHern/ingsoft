@@ -132,7 +132,7 @@
 					
 				}
 				$modify = substr($modify, 0, -2);
-				$query = "UPDATE individual SET $modify WHERE uid = '$uid';";
+				$query = "UPDATE individual SET $modify WHERE inid = '$uid';";
 				$result = pg_query($link, $query);
 				$json = array('status' => 1);
 				
@@ -204,7 +204,7 @@
 					
 				}
 				$modify = substr($modify, 0, -2);
-				$query = "UPDATE organization SET $modify WHERE uid = '$uid';";
+				$query = "UPDATE organization SET $modify WHERE oid = '$uid';";
 				$result = pg_query($link, $query);
 				$json = array('status' => 1);
 				
