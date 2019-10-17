@@ -3,7 +3,7 @@ import Container from "reactstrap/es/Container";
 import {Button, Col, Row} from "reactstrap";
 import ListGroup from "reactstrap/es/ListGroup";
 import ListGroupItem from "reactstrap/es/ListGroupItem";
-import {Email, Password, PhoneList, Role, UpdateFieldCom} from "./Modify";
+import {Email, Password, PhoneList, Role, StatusModify, UpdateFieldCom} from "./Modify";
 import {Route, Switch, useRouteMatch} from 'react-router-dom';
 
 function OverviewOrg(props) {
@@ -14,7 +14,7 @@ function OverviewOrg(props) {
         <React.Fragment>
             <Switch>
             <Route path={`${path}/:typeMode/name`} render = {(props) =>
-                <UpdateFieldCom {...props} inputs = {[{field: 'Nombre', type : 'text', value : name}]} />}/>
+                <UpdateFieldCom {...props} inputs = {[{fieldName: 'Nombre', type : 'text', value : name, field: 'name'}]} />}/>
             <Route path={`${path}/:typeMode/email`} render = {(props) =>
                 <Email  {...props} field ={'Email'}  value={email} />}/>
             <Route path={`${path}/:typeMode/password`} render = {(props) =>
@@ -22,12 +22,15 @@ function OverviewOrg(props) {
             <Route path={`${path}/:typeMode/role`} render = {(props) =>
                 <Role {...props} field ={'Role'}  value={role} />}/>
             <Route path={`${path}/:typeMode/phone`} render = {(props) =>
-                <UpdateFieldCom {...props} inputs = {[{field: 'Teléfono', type : 'text', value : phone}]} />}/>
+                <PhoneList {...props} field ={'Telefono'}  value={[phone]} allowExtra = {false}/>}/>
             <Route path={`${path}/:typeMode/desc`} render = {(props) =>
-                <UpdateFieldCom {...props} inputs = {[{field: 'Descripción', type : 'textarea', value : description }]} />}/>
+                <UpdateFieldCom {...props} inputs = {[{fieldName: 'Descripción', type : 'textarea', value : description, field : 'description' }]} />}/>
             <Route path={`${path}/:typeMode/location`} render = {(props) =>
-                <UpdateFieldCom {...props}  inputs = {[{field: 'País', type : 'text', value : country},
-                    {field: 'Dirección', type : 'text', value : location}]} />}/>
+                <UpdateFieldCom {...props}  inputs = {[{fieldName: 'País', type : 'text', value : country, field: 'country'},
+                    {fieldName: 'Dirección', type : 'text', value : location, field: 'location'}]} />}/>
+            <Route path={`${path}/:typeMode/modify/:status`} render ={(props) =>
+                    <StatusModify  {... props}/>
+                }/>
             <Route exact path={path}>
                         <Container>
                             <Row>

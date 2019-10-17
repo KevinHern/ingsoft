@@ -5,7 +5,7 @@ import {Route, Switch, useRouteMatch} from 'react-router-dom';
 import Container from "reactstrap/es/Container";
 import ListGroup from "reactstrap/es/ListGroup";
 import ListGroupItem from "reactstrap/es/ListGroupItem";
-import {Password, PhoneList, Email, Role, UpdateFieldCom} from './Modify/';
+import {Password, PhoneList, Email, Role, UpdateFieldCom, StatusModify} from './Modify/';
 
 
 function OverviewInd(props) {
@@ -22,7 +22,7 @@ function OverviewInd(props) {
         <React.Fragment>
             <Switch>
                 <Route path={`${path}/:typeMode/name`} render = {(props) =>
-                    <UpdateFieldCom {...props} inputs = {[{field: 'Nombre', type : 'text', value : firstname}, {field: 'Apellido', type : 'text', value : lastname}]} />}/>
+                    <UpdateFieldCom {...props} inputs = {[{fieldName: 'Nombre', type : 'text', value : firstname, field: 'firstname'}, {fieldName: 'Apellido', type : 'text', value : lastname, field: "lastname",}]} />}/>
                 <Route path={`${path}/:typeMode/email`} render = {(props) =>
                     <Email  {...props} field ={'Email'}  value={email} />}/>
                 <Route path={`${path}/:typeMode/password`} render = {(props) =>
@@ -30,15 +30,18 @@ function OverviewInd(props) {
                 <Route path={`${path}/:typeMode/role`} render = {(props) =>
                     <Role {...props} field ={'Role'}  value={role} />}/>
                 <Route path={`${path}/:typeMode/phone`} render = {(props) =>
-                    <PhoneList {...props} field ={'Telefono'}  value={Object.values(phones)} />}/>
+                    <PhoneList {...props} field ={'Telefono'}  value={Object.values(phones)} allowExtra = {true}/>}/>
                 <Route path={`${path}/:typeMode/nat`} render = {(props) =>
-                    <UpdateFieldCom {...props} inputs = {[{field: 'Nacionalidad', type : 'text', value : nationality}]} />}/>
+                    <UpdateFieldCom {...props} inputs = {[{fieldName: 'Nacionalidad', type : 'text', value : nationality,  field: "nationality",}]} />}/>
                 <Route path={`${path}/:typeMode/birth`} render = {(props) =>
-                    <UpdateFieldCom {...props}  inputs = {[{field: 'Fecha de nacimiento', type : 'date', value : birthdate}]} />}/>
+                    <UpdateFieldCom {...props}  inputs = {[{fieldName: 'Fecha de nacimiento', type : 'date', value : birthdate, field: "birthdate",}]} />}/>
                 <Route path={`${path}/:typeMode/bio`} render = {(props) =>
-                    <UpdateFieldCom {...props}  inputs = {[{field: 'Biografía', type : 'textarea', value : biography}]} />}/>
+                    <UpdateFieldCom {...props}  inputs = {[{fieldName: 'Biografía', type : 'textarea', value : biography,  field: "biography", }]} />}/>
                 <Route path={`${path}/:typeMode/aff`} render = {(props) =>
-                    <UpdateFieldCom {...props}  inputs = {[{field: 'Organizacion Afiliada', type : 'text', value : organization}]} />}/>
+                    <UpdateFieldCom {...props}  inputs = {[{fieldName: 'Organizacion Afiliada', type : 'text', value : organization,  field: "org",}]} />}/>
+                <Route path={`${path}/:typeMode/modify/:status`} render ={(props) =>
+                     <StatusModify  {... props}/>
+                }/>
                 <Route exact path={path}>
                     <Container>
                         <Row>

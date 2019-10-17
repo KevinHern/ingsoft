@@ -26,7 +26,7 @@
 	switch ($option)
 	{
 
-		//---- LIST IDEAS TO FINANCIST BY CATEGORY  ----//
+		//---- LIST IDEAS TO FINANCISTEND BY CATEGORY  ----//
 		case 'list':
 			/*
 			INPUTS:
