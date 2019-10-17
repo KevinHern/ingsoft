@@ -206,26 +206,16 @@
 			1. Status: 1 if success, 0 otherwise
 			*/
 
-			$attr = $_POST["attr"];		//Parameter that decides which table attribute must be updated
-			/*
-			-- Values that $attr can take: --
-			UPDATE TITLE: 			t
-			UPDATE DESCRIPTION: 	d
-			UPDATE CATEGORY:		c
-			UPDATE STATE:			s
-
-			*/
-		
-			$val = $_POST["val"];		//New value of the attribute
-
 			$link = OpenConUser("e");
 
 			//Extracts Idea ID
 			$iid = $_POST["iid"];
+			$title = $_POST["title"];
+			$description = $_POST["description"];
+			$category = $_POST["category"];
+			$state = $_POST["state"];
 
-			$field = MapIdea($attr, $val);
-
-			$query = "UPDATE idea SET $field WHERE iid = $iid;";
+			$query = "UPDATE idea SET title = '$title', description = '$description', category = $category, state = $state WHERE iid = $iid;";
 			$json;
 			try
 			{
