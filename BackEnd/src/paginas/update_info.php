@@ -95,17 +95,12 @@
 			$json;
 			try
 			{
-				$str1 = "field";
-				$str2 = "val";
 				$length = count($fields);
 				$modify = "";
 				for ($i=0; $i < $length ; $i++)
 				{ 
-					$temp1 = $str1 . $i;
-					$field = $fields[$temp];
-
-					$temp2 = $str2 . $i;
-					$val = $vals[$temp];
+					$field = $fields[$i];
+					$val = $vals[$i];
 
 					if ($field == "firstname")
 					{
@@ -180,17 +175,12 @@
 			$json;
 			try
 			{
-				$str1 = "field";
-				$str2 = "val";
 				$length = count($fields);
 				$modify = "";
 				for ($i=0; $i < $length ; $i++)
 				{ 
-					$temp1 = $str1 . $i;
-					$field = $fields[$temp];
-
-					$temp2 = $str2 . $i;
-					$val = $vals[$temp];
+					$field = $fields[$i];
+					$val = $vals[$i];
 
 					if ($field == "name")
 					{
