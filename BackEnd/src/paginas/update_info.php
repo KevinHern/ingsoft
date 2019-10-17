@@ -46,27 +46,60 @@
 			OUTPUTS:
 			1. Status: 1 if success, 0 otherwise
 			*/
-
-			$attr = $_POST["field"];		//Parameter that decides which table attribute must be updated
-			/*
-			-- Values that $attr can take: --
-			UPDATE EMAIL: 		e
-			UPDATE PASSWORD: 	p
-			UPDATE ROLE:		r
-			*/
 		
-			$val = $_POST["val"];		//New value of the attribute
 
 			$link = OpenConUser("u");
 
 			//Extracts User ID
 			$uid = getUid($_POST["uid"]);
-
+			$fields = $_POST["fields"];
+			$vals = $_POST["vals"];
 			$json;
 			try
 			{
-				$field = MapUser($attr, $val);
-				$query = "UPDATE users SET $field WHERE uid = '$uid';";
+				$str1 = "field";
+				$str2 = "val";
+				$length = count($fields);
+				$modify = "";
+				for ($i=0; $i < $length ; $i++)
+				{ 
+					$temp1 = $str1 . $i;
+					$field = $fields[$temp];
+
+					$temp2 = $str2 . $i;
+					$val = $vals[$temp];
+
+					if ($field == "firstname")
+					{
+						$modify .= "firstname";
+					}
+					elseif ($field == "lastname")
+					{
+						$modify .= "lastname";
+					}
+					elseif ($field == "nationality")
+					{
+						$modify .= "nationality";
+					}
+					elseif ($field == "biography")
+					{
+						$modify .= "biography";
+					}
+					elseif ($field == "org")
+					{
+						$modify .= "org";
+					}
+					else
+					{
+						$modify .= "birthdate";
+					}
+
+
+					$modify .= " = '$val', ";
+					
+				}
+				$modify = substr($modify, 0, -2);
+				$query = "UPDATE users SET $modify WHERE uid = '$uid';";
 				$result = pg_query($link, $query);
 				$json = array('status' => 1);
 				
@@ -221,7 +254,6 @@
 			{
 				$result = pg_query($link, $query);
 				$json = array('status' => 1);
-				
 			}
 			catch (Exception $e)
 			{
