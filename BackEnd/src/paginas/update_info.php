@@ -47,6 +47,44 @@
 			1. Status: 1 if success, 0 otherwise
 			*/
 		
+			$attr = $_POST["field"];
+			$link = OpenConUser("u");
+
+			//Extracts User ID
+			$val = $_POST["val"];		//New value of the attribute
+			$json;
+			try
+			{
+				$field = MapUser($attr, $val);
+				$query = "UPDATE users SET $field WHERE uid = '$uid';";
+				
+			}
+			catch (Exception $e)
+			{
+				$json = array('status' => 0, 'message' => "Ocurrió un error al actualizar los datos.");
+			}
+			finally
+			{
+				CloseCon($link);
+				echo json_encode($json);
+			}
+			break;
+
+		//---------------------------------------//
+		//---- UPDATE INDIVIDUAL INFORMATION ----//
+		//---------------------------------------//
+		case 'ind':
+			/*
+			INPUTS:
+			1. User's ID
+			2. Field to modify
+			3. New field's Value
+
+			------------
+
+			OUTPUTS:
+			1. Status: 1 if success, 0 otherwise
+			*/
 
 			$link = OpenConUser("u");
 
@@ -99,62 +137,7 @@
 					
 				}
 				$modify = substr($modify, 0, -2);
-				$query = "UPDATE users SET $modify WHERE uid = '$uid';";
-				$result = pg_query($link, $query);
-				$json = array('status' => 1);
-				
-			}
-			catch (Exception $e)
-			{
-				$json = array('status' => 0, 'message' => "Ocurrió un error al actualizar los datos.");
-			}
-			finally
-			{
-				CloseCon($link);
-				echo json_encode($json);
-			}
-			break;
-
-		//---------------------------------------//
-		//---- UPDATE INDIVIDUAL INFORMATION ----//
-		//---------------------------------------//
-		case 'ind':
-			/*
-			INPUTS:
-			1. User's ID
-			2. Field to modify
-			3. New field's Value
-
-			------------
-
-			OUTPUTS:
-			1. Status: 1 if success, 0 otherwise
-			*/
-
-			$attr = $_POST["field"];		//Parameter that decides which table attribute must be updated
-			/*
-			-- Values that $attr can take: --
-			UPDATE FIRSTNAME: 		f
-			UPDATE LASTNAME: 		l
-			UPDATE NATIONALITY:		n
-			UPDATE BIOGRAPHY:		b
-			UPDATE ORGANIZATION:	o
-			UPDATE BIRTHDATE:		db
-
-			*/
-		
-			$val = $_POST["val"];		//New value of the attribute
-
-			$link = OpenConUser("u");
-
-			//Extracts User ID
-			$uid = getUid($_POST["uid"]);
-
-			$query = "UPDATE individual SET $attr = '$val' WHERE inid = '$uid';";
-			$json;
-			try
-			{
-				
+				$query = "UPDATE individual SET $modify WHERE uid = '$uid';";
 				$result = pg_query($link, $query);
 				$json = array('status' => 1);
 				
@@ -186,28 +169,52 @@
 			OUTPUTS:
 			1. Status: 1 if success, 0 otherwise
 			*/
-
-			$attr = $_POST["field"];		//Parameter that decides which table attribute must be updated
-			/*
-			-- Values that $attr can take: --
-			UPDATE NAME: 			n
-			UPDATE DESCRIPTION: 	d
-			UPDATE COUNTRY:			c
-			UPDATE LOCATION:		l
-
-			*/
-		
-			$val = $_POST["val"];		//New value of the attribute
-
+	
+			$json;
 			$link = OpenConUser("u");
 
 			//Extracts User ID
 			$uid = getUid($_POST["uid"]);
-
-			$query = "UPDATE organization SET $attr = '$val' WHERE oid = '$uid';";
+			$fields = $_POST["fields"];
+			$vals = $_POST["vals"];
 			$json;
 			try
 			{
+				$str1 = "field";
+				$str2 = "val";
+				$length = count($fields);
+				$modify = "";
+				for ($i=0; $i < $length ; $i++)
+				{ 
+					$temp1 = $str1 . $i;
+					$field = $fields[$temp];
+
+					$temp2 = $str2 . $i;
+					$val = $vals[$temp];
+
+					if ($field == "name")
+					{
+						$modify .= "name";
+					}
+					elseif ($field == "description")
+					{
+						$modify .= "description";
+					}
+					elseif ($field == "country")
+					{
+						$modify .= "country";
+					}
+					else
+					{
+						$modify .= "location";
+					}
+
+
+					$modify .= " = '$val', ";
+					
+				}
+				$modify = substr($modify, 0, -2);
+				$query = "UPDATE organization SET $modify WHERE uid = '$uid';";
 				$result = pg_query($link, $query);
 				$json = array('status' => 1);
 				
