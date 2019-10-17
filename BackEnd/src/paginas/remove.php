@@ -134,17 +134,21 @@
 
 		//---- DELETE BOOKMARK ----//
 		case 'book':
-			$iid = $_POST["iid"];
+			
 			$finid = $_POST["finid"];
+			$ideas = $_POST["ideas"];
 
 			$link = OpenConUser("f");
 
 			try
 			{
-				$query = "DELETE FROM finBook WHERE iid = $iid AND finid = '$finid';";
-
-				$result = pg_query($link, $query);
-				$json = array('status' => 1);
+				foreach ($ideas as $idea)
+				{
+					$iid = $idea["iid"];
+					$query = "DELETE FROM finbook WHERE iid = $iid AND finid = '$finid';";
+					$result = pg_query($link, $query);
+					$json = array('status' => 1);
+				}	
 			}
 			catch (Exception $e)
 			{
