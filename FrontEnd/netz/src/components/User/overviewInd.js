@@ -1,11 +1,19 @@
 import React from 'react';
 
-import {Button, Col, Row} from "reactstrap";
+import {Button, Col, Row, Media} from "reactstrap";
 import {Route, Switch, useRouteMatch} from 'react-router-dom';
 import Container from "reactstrap/es/Container";
 import ListGroup from "reactstrap/es/ListGroup";
 import ListGroupItem from "reactstrap/es/ListGroupItem";
-import {Password, PhoneList, Email, Role, UpdateFieldCom, StatusModify} from './Modify/';
+import {Password, PhoneList, Email, Role, UpdateFieldCom, StatusModify, Photo} from './Modify/';
+import NoMatch from "../NoMatch/NoMatch";
+import logo from "../../resource/logo.jpg";
+import {PHOTOEND, PROFILE} from "../../Constants/Endpoint";
+
+const route = (goTo) =>{
+    this.props.history.push(goTo);
+};
+
 
 
 function OverviewInd(props) {
@@ -14,7 +22,9 @@ function OverviewInd(props) {
     // const {field} = this.state;
     // const {authUser} = this.props;
     let {path} = useRouteMatch();
+    const dir = 23;
     // console.log(path);
+    // console.log('Role' + role);
     const phoneList = Object.values(phones).map((phone) =>
         <div key={phone}>{phone}</div>
     );
@@ -42,6 +52,8 @@ function OverviewInd(props) {
                 <Route path={`${path}/:typeMode/modify/:status`} render ={(props) =>
                      <StatusModify  {... props}/>
                 }/>
+                <Route path={`${path}/:typeMode/photo`} render = {(props) =>
+                    <Photo {...props}  value={dir} route={route}/>}/>
                 <Route exact path={path}>
                     <Container>
                         <Row>
@@ -330,7 +342,33 @@ function OverviewInd(props) {
                                 </Row>
                                 : null
                         }
+                        <Row>
+                            <Col sm={{size: 6, offset: 3}}>
+                                <ListGroup>
+                                    <ListGroupItem>
+                                        <Container className={"justify-content-center"}>
+                                            <Row>
+                                                <Col sm={{size: 9}}>
+                                                    <h4>
+                                                        Foto
+                                                    </h4>
+                                                </Col>
+                                                <Col sm={{size: 2}}>
+                                                    <Button color={'warning'} onClick={() => route(`${path}/ind/photo`)}>
+                                                        Modify
+                                                    </Button>
+                                                </Col>
+                                            </Row>
+                                            <Media  className="ml-3 w-25" object src = {`${PHOTOEND}${dir}/${PROFILE}`} alt = "logo"/>
+                                        </Container>
+                                    </ListGroupItem>
+                                </ListGroup>
+                            </Col>
+                        </Row>
                     </Container>
+                </Route>
+                <Route>
+                    <NoMatch/>
                 </Route>
             </Switch>
         </React.Fragment>

@@ -5,5 +5,6 @@ import Role from './Role';
 import TitleModify from './TitleModify';
 import UpdateFieldCom from  './updateField'
 import StatusModify from './StatusModify';
+import Photo from './Photo';
 
-export {Email, Password, PhoneList, Role, TitleModify, UpdateFieldCom, StatusModify};
+export {Email, Password, PhoneList, Role, TitleModify, UpdateFieldCom, StatusModify, Photo};

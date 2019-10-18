@@ -129,63 +129,74 @@ class CreateIdeaCom extends Component {
     }
 
 
-    updateField = (field, val) => {
-        const{iid} = this.state;
-       return axios({
-                  url: UPDATE,
-                  method: 'post',
-                  data: {
-                      option: "idea",
-                      iid,
-                      attr: field,
-                      val
-                  },
-                  headers: { 'Content-Type': 'application/json'},
-              });
-    };
+    // updateField = (field, val) => {
+    //     const{iid} = this.state;
+    //    return axios({
+    //               url: UPDATE,
+    //               method: 'post',
+    //               data: {
+    //                   option: "idea",
+    //                   iid,
+    //                   attr: field,
+    //                   val
+    //               },
+    //               headers: { 'Content-Type': 'application/json'},
+    //           });
+    // };
 
 
 
-    modify  = async (e) => {
-        e.preventDefault();
-        const {cat, state, title, description} = this.state;
-        try{
-            const[titleStatus, descStatus, catStatus, stateStatus] = await Promise.all([
-                this.updateField('title', title),
-                this.updateField('description', description ),
-                this.updateField('category', cat),
-                this.updateField('state',  state)]
-            );
-            this.props.history.push('/listidea/modify');
-        }catch(error){
-            console.log(error)
-        }
-
-        // console.log(titleStatus);
-        // console.log(stateStatus);
-        // console.log(catStatus);
-        // console.log(stateStatus);
-    };
-
-
-    //  modify = async () => {
-    //      try {
-    //          const {cat, state, title, description} = this.state;
-    //          const[titleStatus] = await this.updateField('title', title);
-    //          const[descStatus] =  await  this.updateField('description', description);
-    //          const[catStatus] = await  this.updateField('category', cat);
-    //          const[stateStatus] =  await this.updateField('state',  7);
-    //      }catch(error){
-    //          console.log(error);
+    // modify  = async (e) => {
+    //     //If one fails we will not be able to notice
+    //     e.preventDefault();
+    //     const {cat, state, title, description} = this.state;
+    //     try{
+    //         const[titleStatus, descStatus, catStatus, stateStatus] = await Promise.all([
+    //             this.updateField('title', title),
+    //             this.updateField('description', description ),
+    //             this.updateField('category', cat),
+    //             this.updateField('state',  state)]
+    //         );
+    //         this.props.history.push('/listidea/modify');
+    //     }catch(error){
+    //         console.log(error)
     //     }
     // };
+
+
+    modify  = (e) => {
+        //If one fails we will not be able to notice
+        e.preventDefault();
+        const {cat, state, title, description, iid} = this.state;
+        axios(
+            {
+                url: UPDATE,
+                method: 'post',
+                data: {
+                        option: "idea",
+                        iid,
+                        title,
+                        description,
+                        category: cat,
+                        state
+                    },
+                headers: { 'Content-Type': 'application/json'},
+            }
+        ).then((response) => {
+            if(response.data['status']){
+                this.props.history.push('/listidea/modify');
+            }else{
+                console.log(response.data.message);
+                console.log("Update failed");
+            }
+        });
+    };
+
 
     onSubmit(e){
         const {iid} = this.state;
         if(iid) {
-            this.modify(e).then(() => {
-
-            });
+            this.modify(e);
         }else{
             this.create(e);
         }

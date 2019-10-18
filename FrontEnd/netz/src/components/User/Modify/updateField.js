@@ -40,28 +40,28 @@ class UpdateFieldCom extends Component {
         const {field_value} = this.state;
         const promise = fireBase.token();
         promise.then((uid) => {
-                for (const field in field_value) {
+
+                    // console.table(Object.keys(field_value));
                         axios({
-                            method: 'POST',
-                            url: UPDATE,
-                            data: {
-                                option: typeMode,
-                                uid,
-                                field: field,
-                                val: field_value[field] ,
-                            },
-                            headers: {'Content-Type': 'application/json'}
-                        }).then( (response) => {
-                                if(response.data['status']){
-                                   console.log(`${field} was stored successfully`);
-                                    this.route(`${ROUTES.OVERVIEW}/${typeMode}/modify/success`);
-                                }else{
-                                    console.log(response);
-                                    console.log(`${field} Could not be saved`);
-                                }
+                        method: 'POST',
+                        url: UPDATE,
+                        data: {
+                            option: typeMode,
+                            uid,
+                            fields: [... Object.keys(field_value)],
+                            vals: [... Object.values(field_value)]
+                        },
+                        headers: {'Content-Type': 'application/json'}
+                    }).then( (response) => {
+                            if(response.data['status']){
+                                console.log(`${field_value} was stored successfully`);
+                                this.route(`${ROUTES.OVERVIEW}/${typeMode}/modify/success`);
+                            }else{
+                                console.log(response);
+                                console.log(`${field_value} Could not be saved`);
                             }
+                        }
                         );
-                }
             });
     };
 
@@ -107,7 +107,7 @@ class UpdateFieldCom extends Component {
                         <Button color={'primary'} onClick={this.update}>Modificar</Button>
                     </Col>
                     <Col sm={{ size: 1 }}>
-                        <Button color={"danger"} onClick={() => this.route(ROUTES.OVERVIEW)}>Regresar</Button>
+                        <Button color={"danger"} onClick={() => this.route(ROUTES.OVERVIEW)}>Cancelar</Button>
                     </Col>
                 </Row>
                 <Row>

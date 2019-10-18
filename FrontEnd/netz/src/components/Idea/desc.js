@@ -212,7 +212,7 @@ class Desc extends Component {
                     </Row>
                     <Row >
                         <Col sm="4" md={{size: 4, offset: 2}}>
-                            <Button color={"danger"} onClick={() => this.route(ROUTES.LISTIDEA)}>Regresar</Button>
+                            <Button color={"danger"} onClick={() => this.route(ROUTES.LISTIDEA)}>Cancelar</Button>
                         </Col>
                         <Col sm="4" md={{size: 4, offset: 2}}>
                         <Paginator page={3}/>

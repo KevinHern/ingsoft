@@ -53,7 +53,7 @@ class Email extends Component {
                     <Button color={'primary'}>Modificar</Button>
                 </Col>
                 <Col sm={{ size: 1 }}>
-                    <Button color={"danger"} onClick={() => this.route(ROUTES.OVERVIEW)}>Regresar</Button>
+                    <Button color={"danger"} onClick={() => this.route(ROUTES.OVERVIEW)}>Cancelar</Button>
 
                 </Col>
             </Row>

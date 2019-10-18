@@ -10,6 +10,7 @@ import Container from "reactstrap/es/Container";
 import PhoneItem from "./PhoneItem";
 import axios from 'axios';
 import {UPDATE_PHONE} from "../../Constants/Endpoint";
+import ShowPhoto from "./ShowPhoto";
 
 //Missing phone field
 class OrganForm extends Component {
@@ -425,16 +426,8 @@ class IndForm extends Component {
                         </FormGroup>
                     </Row>
                     <Row form className={"mt-5 ml-3"}>
-                        <Label sm={2} for="imagen">Imagen de Perfil</Label>
-                        <Col sm={5}>
-                            <CustomInput type="file" key={'perfil'} onChange={this._handleImageChange}
-                                         label="Imagen de Perfil" id="perfil" name="perfil" accept={"image/*"} required/>
-                            <Media>
-                                <Media right>
-                                    <Media id={"perfilImg"} className="ml-3 w-25" object src={imagePreviewUrl}/>
-                                </Media>
-                            </Media>
-                        </Col>
+                        <ShowPhoto _handleImageChange = {this._handleImageChange} imagePreviewUrl = {imagePreviewUrl}
+                        labelSize ={2} inputSize={5} photoSize={"w-25"}/>
                     </Row>
                     <Row form className={"mt-5 ml-3"}>
                         <FormGroup tag="fieldset">

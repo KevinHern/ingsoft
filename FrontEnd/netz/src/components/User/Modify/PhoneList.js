@@ -5,7 +5,9 @@ import {Button, Col, Label, Row} from "reactstrap";
 import Input from "reactstrap/es/Input";
 import Container from "reactstrap/es/Container";
 import * as ROUTES from "../../../Constants/routes";
+import {UPDATE_PHONE} from '../../../Constants/Endpoint';
 import axios from 'axios';
+import {withAuthentication} from '../../Session';
 
 class PhoneList extends Component {
 
@@ -47,21 +49,48 @@ class PhoneList extends Component {
     };
 
     onChange = (e) => {
-
+        let {phoneList} = this.state;
+        let index = e.target.dataset['phone'];
+        console.log(phoneList);
+        phoneList[index]= e.target.value;
+        this.setState({phoneList});
     };
 
     update = () => {
-        let {typeMode} = this.props.match.params;
-        axios({
-            
-
-        }).then((response) => {
-                if(response.data['status']){
-                    this.route(`${ROUTES.OVERVIEW}/${typeMode}/modify/success`);
-                }else{
-
-                }
-        })
+        const {typeMode} = this.props.match.params;
+        const {fireBase} = this.props;
+        const {phoneOrg, phoneList} = this.state;
+        const promise = fireBase.token();
+        let phone = {};
+        if(phoneOrg !== '') {
+            phone =  {"phone1" : phoneOrg};
+        }else{
+             phone = phoneList.map((phone, index) => {
+                return {["phone"+index] : {number:phone}};
+            });
+        }
+        console.log(phone);
+        if(promise){
+            promise.then((uid) => {
+                console.log(phone);
+                axios({
+                    url: UPDATE_PHONE,
+                    method: 'post',
+                    data: {
+                       uid,
+                       phone
+                    },
+                    headers: { 'Content-Type': 'application/json'},
+                }).then((response) => {
+                    if(response.data['status']){
+                        this.route(`${ROUTES.OVERVIEW}/${typeMode}/modify/success`);
+                    }else{
+                        // console.log(response);
+                        // console.log(response.config);
+                    }
+                })
+            })
+        }
     };
 
     render() {
@@ -123,7 +152,7 @@ class PhoneList extends Component {
                         <Button color={'primary'} onClick={this.update}>Modificar</Button>
                     </Col>
                     <Col sm={{ size: 1 }}>
-                        <Button color={"danger"} onClick={() => this.route(ROUTES.OVERVIEW)}>Regresar</Button>
+                        <Button color={"danger"} onClick={() => this.route(ROUTES.OVERVIEW)}>Cancelar</Button>
                     </Col>
                 </Row>
             </div>
@@ -132,6 +161,6 @@ class PhoneList extends Component {
 }
 
 
-export  default PhoneList;
+export  default withAuthentication(PhoneList);
 
 
