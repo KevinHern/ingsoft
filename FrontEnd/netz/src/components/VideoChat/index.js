@@ -27,9 +27,14 @@ class VideoChat extends Component {
 
     readMessage = (data, uid) => {
        const {pc} = this.state;
+       console.log('uid');
+       console.table(data);
       const msg = JSON.parse(data.val().message);
       const sender = data.val().sender;
-      console.log(sender, uid);
+      console.log(`sender ${sender}`);
+      console.log(` uid ${uid}` );
+      console.log('message');
+      console.table(msg);
       if(sender !== uid){
         if(msg.ice !== undefined){
             pc.addIceCandidate(new RTCIceCandidate(msg.ice));
@@ -77,15 +82,15 @@ class VideoChat extends Component {
                     pc.addStream(stream);//Not sure if this should go here
                 });
         }
-        this.showOtherVideo();
+        this.setState({streaming:true});
     };
 
     showOtherVideo = () => {
         const {pc, uid} = this.state;
         pc.createOffer()
             .then(offer => pc.setLocalDescription(offer) )
-            .then(() => this.sendMessage(uid, JSON.stringify({'sdp': pc.localDescription})) );
-        this.setState({streaming:true});
+            .then(() =>
+                this.sendMessage(uid, JSON.stringify({'sdp': pc.localDescription})) );
     };
 
 
@@ -94,7 +99,7 @@ class VideoChat extends Component {
             'iceServers': [{'urls': 'stun:stun.services.mozilla.com'}, {'urls': 'stun:stun.l.google.com:19302'},
                 {'urls': 'turn:numb.viagenie.ca', 'credential': 'netz123', 'username': 'netziscool@gmail.com'}]
         };
-        const pc = new RTCPeerConnection(config);
+        const pc = new window.RTCPeerConnection(config);
         this.setState({pc});
         // console.log(process.env.REACT_APP_STORAGE_BUCKET);
     }
@@ -107,8 +112,20 @@ class VideoChat extends Component {
             const promise = fireBase.token();
             if(promise){
                 promise.then((uid) => {
-                        pc.onicecandidate = (event => event.candidate? this.sendMessage(uid, JSON.stringify({'ice': event.candidate})):console.log("Sent All Ice") );
-                        pc.onaddstream = (event => this.friendsVideoTag.current.srcObject  = event.stream);
+                        pc.onicecandidate = (event => {
+                            if(event.candidate) {
+                                this.sendMessage(uid, JSON.stringify({'ice': event.candidate}));
+                                console.log(event.candidate);
+                            }else{
+                                console.log(event);
+                                console.log("Sent All Ice")
+                            }
+                        } );
+                        pc.onaddstream = (event =>{
+                            console.log("friends stream");
+                            console.log(event.stream);
+                            this.friendsVideoTag.current.srcObject  = event.stream;
+                        } );
                         fireBase.rdb.on('child_added', (data) => this.readMessage(data, uid));
                        this.setState({uid});
                 });
@@ -150,6 +167,9 @@ class VideoChat extends Component {
                             <Button color={'primary'} onClick={this.showVideo}>VideoChat</Button>
                         </Col>
                         <Col sm={"2"}>
+                             <Button color={'primary'} onClick={this.showOtherVideo}>Start VideoChat</Button>
+                         </Col>
+                        <Col sm={"2"}>
                             <Button color={'primary'} onClick={this.stopVideo}>Stop VideoChat</Button>
                         </Col>
                     </Row>
@@ -162,6 +182,3 @@ class VideoChat extends Component {
 export default withAuthentication(VideoChat);
 
 
-// {/*<Col sm={"2"}>*/}
-// {/*    /!*<Button color={'primary'} onClick={this.showOtherVideo}>Start VideoChat</Button>*!/*/}
-// {/*</Col>*/}

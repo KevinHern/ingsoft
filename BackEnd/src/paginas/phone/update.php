@@ -28,13 +28,15 @@
 	{
 		$query = "DELETE FROM telephone WHERE uid = '$uid';";
 		$result = pg_query($link, $query);
-
+        $i = 0;
 		foreach ($_POST["phone"] as $phone)
 		{
-			$query = "INSERT INTO telephone VALUES('$uid', $phone);";
+//            print_r($phone);
+            $number = $phone["phone$i"]['number'];
+			$query = "INSERT INTO telephone VALUES('$uid', $number);";
 			$result = pg_query($link, $query);
+			$i++;
 		}
-
 		$json = array('status' => 1);
 	}
 	catch (Exception $e)
