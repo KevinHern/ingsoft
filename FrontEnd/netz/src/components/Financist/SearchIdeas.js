@@ -23,12 +23,13 @@ class SearchIdeas extends Component {
             cats: [
             ],
             ideas: [],
-            page: 1,
+            currentPage: 1,
             rows: 3,
             error: null,
             newBook: [],
-            removeBook: []
-
+            removeBook: [],
+            max: 1,
+            initPage: 1,
         };
     }
 
@@ -51,6 +52,7 @@ class SearchIdeas extends Component {
     }
 
     componentWillUnmount() {
+        console.log("I was called");
         const{uid, removeBook, newBook} = this.state;
         // const prueba = [1,2,3, 7, 8];
         const ideasBook = newBook.map((idea, index) => {
@@ -61,7 +63,7 @@ class SearchIdeas extends Component {
             return {["idea"+index] : idea};
         });
         const register = {
-            option: 'book',
+            option: 'addBook',
             uid,
             ideas : ideasBook
 
@@ -73,14 +75,16 @@ class SearchIdeas extends Component {
         };
 
 
-        // axios(
-        //     {
-        //         url: REGISTER,
-        //         method: 'post',
-        //         data: register,
-        //         headers: {'Content-Type': 'application/json'}
-        //     });
-        //
+        axios(
+            {
+                url: FINANCISTEND,
+                method: 'post',
+                data: register,
+                headers: {'Content-Type': 'application/json'}
+            }).then((response) => {
+              console.log(response)
+        });
+
         // axios(
         //     {
         //         url: REMOVE,
@@ -113,12 +117,51 @@ class SearchIdeas extends Component {
       history.push(route);
     };
 
+    onArrowMove  = (newPage) => {
+        const {currentPage} = this.state;
+        if(currentPage !== newPage) {
+            this.fetchIdeas(newPage);
+           // this.setState({currentPage:newPage});
+        }
+    };
 
-
-    fetchIdeas = (e) => {
-        const{category, rows, page} = this.state;
-        const{fireBase} = this.props;
+    onPageMove = (e, move) => {
         e.preventDefault();
+        console.log(move);
+        const{max, perTag} = this.state;
+        let {initPage, currentPage} = this.state;
+        //If we are at the first page don't try to go to the first group
+        if(move === 'first'  && (initPage-1)) {
+            initPage = initPage-perTag;
+            currentPage = initPage;
+            // Go to Last Group Still needs some checking
+        }else if (move === 'last' && ((initPage+perTag) <= max)) {
+            initPage = initPage+perTag;
+            currentPage = initPage;
+            //If currentPage == 1 don't do previous
+        }else if(move === 'previous' && (currentPage-1)){
+            currentPage--;
+            //    If current Page >= max don't do next
+        }else if(move === 'next' && (currentPage < max)){
+            currentPage++;
+        }
+        if((initPage+perTag) === currentPage) {
+            initPage = initPage+perTag;
+        } else if (currentPage < initPage) {
+            initPage = initPage-perTag;
+        }
+
+        this.onPageMove(currentPage);
+        // console.log(`Current page:  ${currentPage}  init page:  ${initPage}`);
+        this.setState({currentPage, initPage});
+    };
+
+
+
+    fetchIdeas = (e, currentPage=1) => {
+        e.preventDefault();
+        const{category, rows} = this.state;
+        const{fireBase} = this.props;
         fireBase.token().then((uid) => {
             axios({
                 url: FINANCISTEND,
@@ -126,7 +169,7 @@ class SearchIdeas extends Component {
                     option: 'list',
                     uid,
                     rows: rows,
-                    page: page,
+                    page: currentPage,
                     category: category,
                 },
                 headers: {'Content-Type': 'application/json'},
@@ -136,6 +179,7 @@ class SearchIdeas extends Component {
                 console.log(response.data);
                 if (response.data['status']) {
                     const ideas = [];
+                    console.table(response.data);
                     Object.values(response.data.ideas).map(idea => ideas.push(idea));
                     this.setState({ideas, error: null});
                 } else {
@@ -152,7 +196,7 @@ class SearchIdeas extends Component {
 
 
     render() {
-        const{cats, error, ideas, newBook, removeBook} = this.state;
+        const{cats, error, ideas, newBook, removeBook, initPage, perTag, currentPage, max} = this.state;
         const catsOp = cats.map((cat) => {
             return <option key = {cat.name} value = {cat.id} >{cat.name}</option>
         });
@@ -226,7 +270,7 @@ class SearchIdeas extends Component {
                         </Col>
                     </Row>
                     <Row className={"justify-content-md-center mt-5"}>
-                        <Paginator initPage={1} perTag = {3} currentPage = {1} max ={5} onArrowMove={this.onArrowMove}
+                        <Paginator initPage={initPage} perTag = {perTag} currentPage = {currentPage} max ={max} onArrowMove={this.onArrowMove}
                                    onPageMove = {this.onPageMove}/>
                     </Row>
                 </React.Fragment>
