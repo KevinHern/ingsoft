@@ -348,5 +348,45 @@
 				echo json_encode($ideas);
 			}
 			break;
+        case 'addBook':
+            /*
+            INPUTS:
+            1. Financist Id
+            2. List of Ideas
+                2.1 Idea's ID
+
+            ------------
+
+            OUTPUTS:
+            1. Status: 1 if success, 0 otherwise
+
+            */
+            $uid = getUid($_POST["uid"]);
+            $ideas = $_POST["ideas"];
+
+            $link = OpenConUser("f");
+//            print_r($ideas);
+            try
+            {
+                foreach ($ideas as $idea)
+                {
+                    $iid = $idea["iid"];
+                    print_r('ideas');
+                    $query = "INSERT INTO finbook VALUES($iid, '$uid');";
+                    $result = pg_query($link, $query);
+                    $json = array('status' => 1);
+                }
+
+            }
+            catch (Exception $e)
+            {
+                $json = array('status' => 0, 'message' => "Ocurrió un error al añadir la idea al bookmark.");
+            }
+            finally
+            {
+                CloseCon($link);
+                echo json_encode($json);
+            }
+            break;
 	}
 ?>

@@ -314,20 +314,14 @@
 
 			*/
 			$uid = getUid($_POST["uid"]);
-			$ideas = $_POST["ideas"];
-
+			$iid= $_POST["iid"];
 			$link = OpenConUser("f");
 
 			try
 			{
-				foreach ($ideas as $idea)
-				{
-					$iid = $idea["iid"];
 					$query = "INSERT INTO finbook VALUES($iid, '$uid');";
 					$result = pg_query($link, $query);
 					$json = array('status' => 1);
-				}
-				
 			}
 			catch (Exception $e)
 			{

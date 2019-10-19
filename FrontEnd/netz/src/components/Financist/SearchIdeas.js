@@ -28,8 +28,10 @@ class SearchIdeas extends Component {
             error: null,
             newBook: [],
             removeBook: [],
-            max: 1,
+            perTag: 3,
+            maxpage: 0,
             initPage: 1,
+            showPaginator: false
         };
     }
 
@@ -55,12 +57,12 @@ class SearchIdeas extends Component {
         console.log("I was called");
         const{uid, removeBook, newBook} = this.state;
         // const prueba = [1,2,3, 7, 8];
-        const ideasBook = newBook.map((idea, index) => {
-          return {["idea"+index] : idea};
+        const ideasBook = newBook.map((idea) => {
+          return {iid: idea};
         });
 
-        const ideasRemove = removeBook.map((idea, index) => {
-            return {["idea"+index] : idea};
+        const ideasRemove = removeBook.map((idea) => {
+            return {iid: idea};
         });
         const register = {
             option: 'addBook',
@@ -70,11 +72,9 @@ class SearchIdeas extends Component {
         };
         const remove = {
             option: 'book',
-            uid,
+            finid: uid,
             ideas: ideasRemove
         };
-
-
         axios(
             {
                 url: FINANCISTEND,
@@ -82,16 +82,17 @@ class SearchIdeas extends Component {
                 data: register,
                 headers: {'Content-Type': 'application/json'}
             }).then((response) => {
-              console.log(response)
+              console.log(response.data)
         });
-
-        // axios(
-        //     {
-        //         url: REMOVE,
-        //         method: 'post',
-        //         data: remove,
-        //         headers: {'Content-Type': 'application/json'}
-        //     });
+        axios(
+            {
+                url: REMOVE,
+                method: 'post',
+                data: remove,
+                headers: {'Content-Type': 'application/json'}
+            }).then((response) => {
+                console.log(response.data)
+            });
     };
 
     toggleHeart = (iid, add_remove) => {
@@ -117,32 +118,25 @@ class SearchIdeas extends Component {
       history.push(route);
     };
 
-    onArrowMove  = (newPage) => {
-        const {currentPage} = this.state;
-        if(currentPage !== newPage) {
-            this.fetchIdeas(newPage);
-           // this.setState({currentPage:newPage});
-        }
-    };
-
-    onPageMove = (e, move) => {
+    onArrowMove  = (e, move) => {
         e.preventDefault();
         console.log(move);
-        const{max, perTag} = this.state;
+        const{maxpage, perTag} = this.state;
         let {initPage, currentPage} = this.state;
+        // console.log(`Init Page ${initPage} Current Page ${currentPage}, Max Page ${maxpage}`);
         //If we are at the first page don't try to go to the first group
         if(move === 'first'  && (initPage-1)) {
             initPage = initPage-perTag;
             currentPage = initPage;
             // Go to Last Group Still needs some checking
-        }else if (move === 'last' && ((initPage+perTag) <= max)) {
+        }else if (move === 'last' && ((initPage+perTag) <= maxpage)) {
             initPage = initPage+perTag;
             currentPage = initPage;
             //If currentPage == 1 don't do previous
         }else if(move === 'previous' && (currentPage-1)){
             currentPage--;
             //    If current Page >= max don't do next
-        }else if(move === 'next' && (currentPage < max)){
+        }else if(move === 'next' && (currentPage < maxpage)){
             currentPage++;
         }
         if((initPage+perTag) === currentPage) {
@@ -154,12 +148,21 @@ class SearchIdeas extends Component {
         this.onPageMove(currentPage);
         // console.log(`Current page:  ${currentPage}  init page:  ${initPage}`);
         this.setState({currentPage, initPage});
+
+    };
+
+    onPageMove = (newPage) => {
+        const {currentPage} = this.state;
+        console.log(`Current Page ${currentPage} New Page ${newPage}`);
+        if(currentPage !== newPage) {
+            this.fetchIdeas(newPage);
+            this.setState({currentPage:newPage});
+        }
     };
 
 
 
-    fetchIdeas = (e, currentPage=1) => {
-        e.preventDefault();
+    fetchIdeas = (currentPage, search=false) => {
         const{category, rows} = this.state;
         const{fireBase} = this.props;
         fireBase.token().then((uid) => {
@@ -181,9 +184,12 @@ class SearchIdeas extends Component {
                     const ideas = [];
                     console.table(response.data);
                     Object.values(response.data.ideas).map(idea => ideas.push(idea));
-                    this.setState({ideas, error: null});
+                    this.setState({ideas, error: null, maxpage:response.data.maxpage, showPaginator: true});
+                    if(search){
+                        this.setState({initPage:1, currentPage:1})
+                    }
                 } else {
-                    this.setState({error: response.data['message']});
+                    this.setState({error: response.data['message'], showPaginator: false});
                 }
             });
             this.setState({uid});
@@ -196,7 +202,8 @@ class SearchIdeas extends Component {
 
 
     render() {
-        const{cats, error, ideas, newBook, removeBook, initPage, perTag, currentPage, max} = this.state;
+        const{cats, error, ideas, newBook, removeBook, initPage, rows, currentPage, maxpage, perTag, showPaginator} = this.state;
+        console.log(maxpage);
         const catsOp = cats.map((cat) => {
             return <option key = {cat.name} value = {cat.id} >{cat.name}</option>
         });
@@ -265,14 +272,18 @@ class SearchIdeas extends Component {
                     <Row className={"mt-4 justify-content-center"}>
                         <Col sm={{ size: 1}} >
                             <div className={"justify-content-center "}>
-                                <Button  color={'primary'} onClick={this.fetchIdeas}>Buscar</Button>
+                                <Button  color={'primary'} onClick={(e) => {
+                                    e.preventDefault();
+                                    this.fetchIdeas(1, true)}}>Buscar</Button>
                             </div>
                         </Col>
                     </Row>
-                    <Row className={"justify-content-md-center mt-5"}>
-                        <Paginator initPage={initPage} perTag = {perTag} currentPage = {currentPage} max ={max} onArrowMove={this.onArrowMove}
-                                   onPageMove = {this.onPageMove}/>
-                    </Row>
+                        {(showPaginator)?
+                            <Row className={"justify-content-md-center mt-5"}>
+                                <Paginator initPage={initPage} perTag = {perTag} currentPage = {currentPage} max ={maxpage} onArrowMove={this.onArrowMove}
+                                           onPageMove = {this.onPageMove}/>
+                            </Row>:null
+                        }
                 </React.Fragment>
                 </Route>
             </Switch>

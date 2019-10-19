@@ -58,7 +58,7 @@ class ListIdea extends Component {
         }
     }
 
-    fetchPage = (currentPage) => {
+    fetchPage = (currentPage, search = false) => {
         const {fireBase} = this.props;
         const {perPage, filter} = this.state;
         fireBase.token().then((response) => {
@@ -81,9 +81,10 @@ class ListIdea extends Component {
                 if(status){
                     const ideaList = [];
                     Object.values(ideas).map(item => ideaList.push(item));
-                    this.setState({max: maxpage, ideas: ideaList});
-                    // this.setState()
-                    this.setState({error: 0});
+                    this.setState({max: maxpage, ideas: ideaList, error: 0});
+                    if(search){
+                        this.setState({initPage:1, currentPage:1})
+                    }
                 }else{
                     this.setState({error: "No Fue Posible recuperar las ideas"});
                 }
@@ -197,7 +198,7 @@ class ListIdea extends Component {
                                 <Form inline className={"justify-content-md-end"} onSubmit = {this.onSubmit}>
                                     <FormGroup>
                                         <Input type="text" name="filter" id="filter" placeholder="Buscar" onChange = {this.filter}/>
-                                        <Button type={"submit"} onClick={() => {this.fetchPage(1)}}>
+                                        <Button type={"submit"} onClick={() => {this.fetchPage(1, true)}}>
                                             <FaSearch/>
                                         </Button>
                                     </FormGroup>

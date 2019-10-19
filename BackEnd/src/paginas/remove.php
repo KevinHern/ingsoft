@@ -135,7 +135,7 @@
 		//---- DELETE BOOKMARK ----//
 		case 'book':
 			
-			$finid = $_POST["finid"];
+			$finid = getUid($_POST["finid"]);
 			$ideas = $_POST["ideas"];
 
 			$link = OpenConUser("f");

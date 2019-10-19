@@ -46,7 +46,7 @@ function Paginator(props) {
             <PaginationItem disabled={currentPage === max} onClick={ (e) => {props.onArrowMove(e, 'next')}}>
                 <PaginationLink next  />
             </PaginationItem>
-            <PaginationItem   disabled={currentPage*perTag >= max || currentPage === max} onClick={ (e) => {props.onArrowMove(e, 'last')}}>
+            <PaginationItem   disabled={initPage+perTag > max || currentPage === max} onClick={ (e) => {props.onArrowMove(e, 'last')}}>
                 <PaginationLink last/>
             </PaginationItem>
         </Pagination>
