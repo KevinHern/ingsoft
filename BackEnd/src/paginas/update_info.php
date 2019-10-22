@@ -49,7 +49,7 @@
 		
 			$attr = $_POST["field"];
 			$link = OpenConUser("u");
-
+            $uid = getUid($_POST["uid"]);
 			//Extracts User ID
 			$val = $_POST["val"];		//New value of the attribute
 			$json;
@@ -57,7 +57,7 @@
 			{
 				$field = MapUser($attr, $val);
 				$query = "UPDATE users SET $field WHERE uid = '$uid';";
-				
+                $json = array('status' => 1);
 			}
 			catch (Exception $e)
 			{

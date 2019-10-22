@@ -114,12 +114,19 @@ class Firebase {
         });
     };
 
-    // doPasswordReset(email) {
-    //     return this.appAuth.sendPasswordResetEmail(email)
-    // };
-    //
-    // doPasswordUpdate (pass) {
-    //     return this.appAuth.currentUser.updatePassword(pass)} ;
+    doEmailUpdate = (newEmail, pass) =>   {
+        return this.doSignInWithEmailAndPassword(this.appAuth.currentUser.email, pass)
+            .then(() =>{
+                return this.appAuth.currentUser.updateEmail(newEmail)
+            }).catch(() => console.log("It failed"));
+    };
+
+    doPasswordUpdate = (newPass, oldPass) =>  {
+        return this.doSignInWithEmailAndPassword(this.appAuth.currentUser.email, oldPass)
+            .then(() =>{
+                return this.appAuth.currentUser.updatePassword(newPass)
+            }).catch(() => console.log("It failed"));
+    };
 
 
     token = () =>  {
@@ -157,6 +164,11 @@ class Firebase {
     callFunction = (name) => this.functions.httpsCallable(name);
     user = uid => this.db.collection('users').doc(uid);
     users = uid => this.db.collection('users')
+
+    // doPasswordReset(email) {
+    //     return this.appAuth.sendPasswordResetEmail(email)
+    // };
+    //
 
 }
 

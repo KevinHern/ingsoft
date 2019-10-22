@@ -223,7 +223,7 @@ class CreateIdeaCom extends Component {
                             <ButtonToolbar className={"justify-content-end"}>
                                 <ButtonGroup>
                                     <Button color={"info"} onClick={() => {this.route(ROUTES.LISTIDEA)}}>Listar Ideas</Button>
-                                    <Button color={"info"}  onClick={() => {this.route(ROUTES.OVERVIEW)}}>Cuenta</Button>
+                                    {/*<Button color={"info"}  onClick={() => {this.route(ROUTES.OVERVIEW)}}>Cuenta</Button>*/}
                                 </ButtonGroup>
                             </ButtonToolbar>
                         </Col>

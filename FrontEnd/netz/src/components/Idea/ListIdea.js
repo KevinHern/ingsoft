@@ -159,7 +159,7 @@ class ListIdea extends Component {
                             <ButtonGroup>
                                 <Button color={"info"} onClick={() => {this.route(ROUTES.CREATEIDEA)}}>Crear Idea</Button>
                                 {/*<Button color={"info"}  onClick={() => {this.route(ROUTES.HOME)}}>Principal</Button>*/}
-                                <Button color={"info"}  onClick={() => {this.route(ROUTES.OVERVIEW)}}>Cuenta</Button>
+                                {/*<Button color={"info"}  onClick={() => {this.route(ROUTES.OVERVIEW)}}>Cuenta</Button>*/}
                             </ButtonGroup>
                         </ButtonToolbar>
                     </Col>

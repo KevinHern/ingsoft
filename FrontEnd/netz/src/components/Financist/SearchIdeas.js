@@ -214,12 +214,10 @@ class SearchIdeas extends Component {
           newBook = {newBook} removeBook = {removeBook}/>);
         return (
             <Switch>
+                {/*    <Route path={`${path}/:typeMode/name`} render = {(props) =>*/}
+                {/*        /!*<UpdateFieldCom {...props} inputs = {[{field: 'Nombre', type : 'text', value : firstname}, {field: 'Apellido', type : 'text', value : lastname}]} />}/>*!/*/}
                 <Route exact path = {FINANCIST}>
                     <React.Fragment>
-                        {/*<Switch>*/}
-                        {/*    <Route path={`${path}/:typeMode/name`} render = {(props) =>*/}
-                        {/*        /!*<UpdateFieldCom {...props} inputs = {[{field: 'Nombre', type : 'text', value : firstname}, {field: 'Apellido', type : 'text', value : lastname}]} />}/>*!/*/}
-                        {/*</Switch>*/}
                     <Row className={"mt-5 justify-content-end"}>
                         <Col sm={{size: 5}} className={""}>
                             <h1 >Buscar Ideas por Categoria</h1>
@@ -227,8 +225,6 @@ class SearchIdeas extends Component {
                         <Col   sm={{size: 3}}>
                             <ButtonToolbar className={"justify-content-end"}>
                                 <ButtonGroup>
-                                    <Button color={"info"} onClick={() => this.route(HOME)}>Principal</Button>
-                                    <Button color={"info"} onClick={() => this.route(OVERVIEW)}>Cuenta</Button>
                                     <Button color={"info"} onClick={() => this.route(BOOKMARK)}>BookMark</Button>
                                 </ButtonGroup>
                             </ButtonToolbar>
@@ -327,3 +323,6 @@ export default withAuthentication(SearchIdeas)
     // </Col>
     // <Col sm={{size: 4, offset:3}}>
     // </Col>
+
+// <Button color={"info"} onClick={() => this.route(HOME)}>Principal</Button>
+// <Button color={"info"} onClick={() => this.route(OVERVIEW)}>Cuenta</Button>
