@@ -19,7 +19,7 @@
 	try
 	{
 		//----- Basic User information -----//
-		$query = "SELECT email, password, role, type FROM users WHERE uid = '$uid'";
+		$query = "SELECT email, password, role, type, folderid FROM users WHERE uid = '$uid'";
 		$result = pg_query($link, $query);
 		$line = pg_fetch_array($result, NULL, PGSQL_ASSOC);
 
@@ -27,8 +27,9 @@
 		$password = $line["password"];
 		$role = $line["role"];
 		$type = $line["type"];
+		$folderid = $line["folderid"];
 
-		$user = array("email" => $email, "password" => $password, "role" =>  $role, "userType" => ((int)$type));
+		$user = array("email" => $email, "password" => $password, "role" =>  $role, "userType" => ((int)$type), "folderid" => ((int)$folderid));
 
 		if ($type == 1)
 		{
@@ -58,6 +59,7 @@
 			$biography = $line["biography"];
 			$org = $line["org"];
 			$birthdate = $line["birthdate"];
+			
 			//$photo = $line["photo"];
 
 			//Individual Information
