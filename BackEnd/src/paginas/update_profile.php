@@ -41,7 +41,7 @@
 	}
 	catch (Exception $e)
 	{
-		$json = array('status' => 0, 'error' => $e);
+		$json = array('status' => 0, 'error' => "Actualizacion fallo");
 	}
 	finally
 	{
