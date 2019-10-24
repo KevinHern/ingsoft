@@ -253,9 +253,10 @@
 							$result1 = pg_query($link, $query);
 
 							$line1 = pg_fetch_array($result1, NULL, PGSQL_ASSOC);
+							//print_r($line1);
 
-							$firstName = $line1["firstName"];
-							$lastName = $line1["lastName"];
+							$firstName = $line1["firstname"];
+							$lastName = $line1["lastname"];
 
 							$t = array("firstname" => $firstName, "lastname" => $lastName);
 							$temp = array_merge($temp, $t);
@@ -278,6 +279,7 @@
 						$i = $i + 1;
 					}
 					$financists = array("financists" => $financists);
+					$maxpage = array("maxpage" => $maxpage);
 					$details = array_merge($details, $maxpage, $financists);
 					$details["status"] = 1;
 				}

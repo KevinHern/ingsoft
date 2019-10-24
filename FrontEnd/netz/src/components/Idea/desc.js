@@ -21,6 +21,10 @@ class Desc extends Component {
             financists: [],
             fetched: false,
             deleteIdea: false,
+            initPage: 1,
+            perTag: 3,
+            currentPage:1,
+            maxpage: 1,
         }
     }
 
@@ -60,16 +64,16 @@ class Desc extends Component {
             // console.log(response.config);
             const {status} = response.data;
             console.log(response.data);
-            console.log(response.config);
+          //  console.log(response.config);
             if(status){
-                const {interested, title, description, category, state, financist} = response.data;
+                const {interested, title, description, category, state, financists} = response.data;
                 if(interested){
                     const financistList = [];
-                    Object.values(financist).map(item => financistList.push(item));
+                    Object.values(financists).map(item => financistList.push(item));
                     if(this._isMounted){
-                        this.setState({ideas: financistList});
+                        this.setState({financists: financistList});
                     }
-                }
+               }
                 if(this._isMounted){
                     this.setState({interested, title, description, category, state});
                 }
@@ -127,14 +131,15 @@ class Desc extends Component {
 
     render() {
         //Still not managing if idea does not exist, although that shouldn't happen
-        const {title, description, category, state, interested, financists, deleteIdea} = this.state;
+        const {title, description, category, state, interested, financists, deleteIdea, initPage, perTag, currentPage, maxpage} = this.state;
         let users = financists.map((i) => {
             return <tr>
-                <td>{i.name}</td>
+                <td>{i.firstname} {i.lastname}</td>
                 <td><Button color={'link'}>Detalles</Button></td>
             </tr>;
         });
 
+        console.log(users);
         return (
             <React.Fragment>
                     <Row className={"justify-content-end"}>
@@ -205,7 +210,7 @@ class Desc extends Component {
                         <Col sm="8" md={{size: 8, offset: 2}}>
                         <Table hover>
                             <tbody>
-                                {(users.length)?  users: <tr><td>No hay interesados</td></tr>  }
+                            {(users.length)?  <React.Fragment>{users}</React.Fragment>: <tr><td>No hay interesados</td></tr>  }
                             </tbody>
                         </Table>
                         </Col>
@@ -215,7 +220,8 @@ class Desc extends Component {
                             <Button color={"danger"} onClick={() => this.route(ROUTES.LISTIDEA)}>Cancelar</Button>
                         </Col>
                         <Col sm="4" md={{size: 4, offset: 2}}>
-                        <Paginator page={3}/>
+                            <Paginator initPage={initPage} perTag = {perTag} currentPage = {currentPage} max ={maxpage} onArrowMove={this.onArrowMove}
+                                       onPageMove = {this.onPageMove}/>
                         </Col>
                     </Row>
             </React.Fragment>
