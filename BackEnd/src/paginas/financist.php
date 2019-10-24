@@ -245,7 +245,15 @@
 			{
 				
 				//----- Extract total number of rows -----//
-				$query = "SELECT COUNT(FB.iid) as total FROM idea I, finbook FB WHERE I.category = '$category' AND I.iid = FB.iid AND FB.finid = '$uid'";
+				if ($category != -1)
+				{
+					$query = "SELECT COUNT(FB.iid) as total FROM idea I, finbook FB WHERE I.category = '$category' AND I.iid = FB.iid AND FB.finid = '$uid'";
+				}
+				else
+				{
+					$query = "SELECT COUNT(FB.iid) as total FROM idea I, finbook FB WHERE I.iid = FB.iid AND FB.finid = '$uid'";
+				}
+
 				$result = pg_query($link, $query);
 				$line = pg_fetch_array($result, NULL, PGSQL_ASSOC);
 
@@ -280,7 +288,14 @@
 				else
 				{
 					//----- Extract Ideas from bookmark filtered by category -----//
-					$query = "SELECT I.iid, I.title, I.description, SI.name, U.uid, U.type FROM idea I, finbook FB, users U, stateidea SI WHERE I.category = '$category' AND I.iid = FB.iid AND FB.finid = '$uid' AND I.uid = U.uid AND SI.id = I.state";
+					if ($category != -1) 
+					{
+						$query = "SELECT I.iid, I.title, I.description, SI.name, U.uid, U.type FROM idea I, finbook FB, users U, stateidea SI WHERE I.category = '$category' AND I.iid = FB.iid AND FB.finid = '$uid' AND I.uid = U.uid AND SI.id = I.state";
+					}
+					else
+					{
+						$query = "SELECT I.iid, I.title, I.description, SI.name, U.uid, U.type FROM idea I, finbook FB, users U, stateidea SI WHERE I.iid = FB.iid AND FB.finid = '$uid' AND I.uid = U.uid AND SI.id = I.state";
+					}
 
 					$result = pg_query($link, $query);
 
