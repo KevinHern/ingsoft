@@ -259,7 +259,6 @@
 							$lastName = $line1["lastname"];
 
 							$t = array("firstname" => $firstName, "lastname" => $lastName);
-							$t = array("financist$i" => $t);
 							$temp = array_merge($temp, $t);
 						}
 						else
@@ -273,9 +272,9 @@
 							$name = $line1["name"];
 
 							$t = array("name" => $name);
-							$t = array("financist$i" => $t);
 							$temp = array_merge($temp, $t);
 						}
+						$temp = array("financist$i" => $temp);
 
 						$financists = array_merge($financists, $temp);
 						$i = $i + 1;
