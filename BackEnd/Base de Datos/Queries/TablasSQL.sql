@@ -125,14 +125,6 @@ Create Table ResBook(
 	Foreign Key(rid) References ResGive(rid)
 );
 
-
-/*
-Chafa users
-
-create role client LOGIN password 'client';
-Grant connect on database "Prueba" to client;
-GRANT SELECT, INSERT, UPDATE, DELETE ON users  TO client;
-*/
 /* ROLES */
 
 --- Administrator ---
@@ -163,3 +155,37 @@ CREATE ROLE resource LOGIN password 'netzresource';
 GRANT CONNECT ON DATABASE "NetZ" to resource;
 GRANT SELECT, INSERT, UPDATE, DELETE ON users, individual, organization, telephone, resgive, resget TO resource;
 GRANT SELECT ON categoryres TO resource;
+
+/* TRIGGERS */
+
+-- Functions --
+CREATE OR REPLACE FUNCTION increment_likes()
+  RETURNS trigger AS $Idea$
+  BEGIN
+   UPDATE Idea SET cantInt = cantInt + 1 WHERE iid = NEW.iid;
+   RETURN NEW;
+  END;
+  $Idea$
+LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION decrement_likes()
+  RETURNS trigger AS $Idea$
+  BEGIN
+   UPDATE Idea SET cantInt = cantInt - 1 WHERE iid = OLD.iid;
+   RETURN NEW;
+  END;
+  $Idea$
+LANGUAGE plpgsql;
+
+-- Actual Triggers --
+CREATE TRIGGER likes
+  AFTER INSERT
+  ON FinBook
+  FOR EACH ROW
+  EXECUTE PROCEDURE increment_likes();
+
+CREATE TRIGGER dislikes
+  AFTER DELETE
+  ON FinBook
+  FOR EACH ROW
+  EXECUTE PROCEDURE decrement_likes();
