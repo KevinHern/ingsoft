@@ -235,10 +235,13 @@ class IndForm extends Component {
 
     storePhoneList = (uid) => {
         const{phoneList} = this.state;
+        const phone = phoneList.map((phone, index) => {
+            return {["phone"+index] : {number:phone}};
+        });
         return axios({
             method: 'POST',
             url: UPDATE_PHONE,
-            data:   {uid, phone: phoneList},
+            data:   {uid, phone},
             headers: { 'Content-Type': 'application/json'},
         });
     };
@@ -263,9 +266,9 @@ class IndForm extends Component {
             const [axiosRequest, fireStoreRequest, axiosRequestPhones] = await Promise.all([this.props.serverData(formData, promisedToken),
                 this.props.setRole(data['role']), this.storePhoneList(promisedToken)]);
             // const axiosRequest = await this.props.serverData(formData, promisedToken);
-            // this.props.setClaims(data['role']).then((result) => {
-            //     console.log(result);
-            // });
+            this.props.setClaims(data['role']).then((result) => {
+                console.log(result);
+            });
             const response = axiosRequest.data;
             const phonesResponse = axiosRequestPhones.data;
             if(response['status']){
@@ -450,7 +453,7 @@ class IndForm extends Component {
                         (this.props.org) ? <Row form className={"ml-3"}>
                             <Label sm={2} for="affOrg">Organizacion Afiliada</Label>
                             <Col sm={5}>
-                                <Input name="org" type={"text"} id="org" onChange = {this.onChange} required/>
+                                <Input name="organization" type={"text"} id="org" onChange = {this.onChange} required/>
                             </Col>
                         </Row> : ""
                     }

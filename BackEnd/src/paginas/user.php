@@ -99,7 +99,7 @@
 			9. Logo
 			*/
 
-			$user = array("email" => $email, "password" => $password, "role" =>  $role, "userType" => ((int)$type));
+			//$user = array("email" => $email, "password" => $password, "role" =>  $role, "userType" => ((int)$type));
 
 			$query = "SELECT * FROM organization WHERE oid = '$uid'";
 			$result = pg_query($link, $query);

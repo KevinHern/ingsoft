@@ -1,11 +1,12 @@
 import React, {Component} from 'react';
-import {Button, Col, CustomInput, Label, Row} from "reactstrap";
+import {Button, Col, CustomInput, Label, Row, Form} from "reactstrap";
 import Input from "reactstrap/es/Input";
 import * as ROUTES from "../../../Constants/routes";
 import TitleModify from "./TitleModify";
 import axios from 'axios';
 import {withAuthentication} from '../../Session';
 import {UPDATE} from "../../../Constants/Endpoint";
+import Container from "reactstrap/es/Container";
 
 class Role extends Component {
 
@@ -22,13 +23,16 @@ class Role extends Component {
     };
 
     componentDidMount() {
-        const{value} = this.props;
+        let{value} = this.props;
         //This might change later
-        const edefault =  (value%2)===1;
-        const fdefault =  (value%2)===0;
-        const e = edefault;
-        const f = fdefault;
-        this.setState({e, f, fdefault, edefault})
+        console.log(value);
+        value = parseInt(value);
+        if(value){
+            const e =  (value%2)===1;
+            const f =  (value%2)===0;
+            console.log(`e: ${e} f: ${f}`);
+            this.setState({e, f});
+        }
     }
 
     update = () => {
@@ -38,27 +42,28 @@ class Role extends Component {
         if(f) val+=2;
         const{fireBase} = this.props;
         const promise =  fireBase.token();
+        console.log(`val: ${val}`);
         if(promise) {
-            //console.log("vALUE = " +val);
-            // promise.then((uid) => {
-            //         axios({
-            //             data: {
-            //                 method: 'POST',
-            //                 url: UPDATE,
-            //                 option: "user",
-            //                 uid,
-            //                 field: "role",
-            //                 val
-            //             },
-            //             headers: {'Content-Type': 'application/json'}
-            //         }).then(response => {
-            //             if(response.data['status']){
-            //
-            //             }else{
-            //                 console.log("failed")
-            //             }
-            //         });
-            // });
+            promise.then((uid) => {
+                    axios({
+                        method: 'POST',
+                        url: UPDATE,
+                        data: {
+                            option: "user",
+                            uid,
+                            field: "role",
+                            val
+                        },
+                        headers: {'Content-Type': 'application/json'}
+                    }).then(response => {
+                        console.log(response);
+                        if(response.data['status']){
+
+                        }else{
+                            console.log("failed")
+                        }
+                    });
+            });
         }
      };
 
@@ -72,30 +77,33 @@ class Role extends Component {
 
     render() {
         const {typeMode} = this.props.match.params;
-        const{eDefault, fdefault} = this.state;
+        const{e, f} = this.state;
         return (
             <React.Fragment>
                 <TitleModify typeMode = {typeMode}/>
                 <Row className={'mt-5 justify-content-center'}>
-                    <Col sm={{ size: 1, offset: 2}}>
-                        <h3 className={'capitalize'} >Roles</h3>
-                    </Col>
-                    <Col sm={5}>
-                        <CustomInput type="checkbox" id="e" name="e" label="Emprendedor" key={"e"} value={1} onChange = {(e) => {this.onChange(e)}} defaultChecked={eDefault}/>
-                        <CustomInput type="checkbox" id="f" name="f" label="Financista" key={"f"}  value={2} onChange = {(e) => {this.onChange(e)}} defaultChecked={fdefault}/>
-                    </Col>
-                </Row>
-                <Row className={'mt-5 justify-content-center'}>
-                    <Col sm={{ size: 1 }}>
-                        <Button color={'primary'} onClick={this.update}>Modificar</Button>
-                    </Col>
-                    <Col sm={{ size: 1 }}>
-                        <Button color={"danger"} onClick={() => this.route(ROUTES.OVERVIEW)}>Cancelar</Button>
-                    </Col>
-                </Row>
-                <Row>
-                    <Col>
-                        <br/>
+                    <Col sm = {12}>
+                        <Form>
+                            <Container fluid>
+                                    <Row className={'mt-5 justify-content-center'}>
+                                        <Col sm={{ size: 1, offset: 2}}>
+                                            <h3 className={'capitalize'} >Roles</h3>
+                                        </Col>
+                                        <Col sm={5}>
+                                            <CustomInput type="checkbox" id="e" name="e" label="Emprendedor" key={"e"} value={1} onChange = {(e) => {this.onChange(e)}} checked={e}/>
+                                            <CustomInput type="checkbox" id="f" name="f" label="Financista" key={"f"}  value={2} onChange = {(e) => {this.onChange(e)}} checked={f}/>
+                                        </Col>
+                                    </Row>
+                                    <Row className={'mt-5 justify-content-center'}>
+                                            <Col sm={{ size: 1 }}>
+                                                <Button color={'primary'} onClick={this.update}>Modificar</Button>
+                                            </Col>
+                                            <Col sm={{ size: 1 }}>
+                                                <Button color={"danger"} onClick={() => this.route(ROUTES.OVERVIEW)}>Cancelar</Button>
+                                            </Col>
+                                    </Row>
+                            </Container>
+                        </Form>
                     </Col>
                 </Row>
                 <Row>

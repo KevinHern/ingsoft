@@ -234,7 +234,7 @@
 				5.3 Organization's Name
 			*/
 				
-			$uid = $_POST["uid"];
+			$uid = getUid($_POST["uid"]);
 			$category = $_POST["category"];
 			$rows = $_POST["rows"];
 			$page = $_POST["page"];
@@ -266,7 +266,8 @@
 				if ($total == 0)
 				{
 					$ideas["status"] = 0;
-					$msg = array('message' => "No existen ideas para esta categoria." );
+					$msg = array('message' => "No existen ideas para esta categoria" );
+//                    $msg = array('query' => $query);
 					$ideas = array_merge($ideas, $msg);
 
 				}

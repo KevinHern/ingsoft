@@ -27,27 +27,27 @@ class Email extends Component {
         try{
             if(newEmail !== ''){
                 const {update} = await fireBase.doEmailUpdate(newEmail, pass);
-                console.log("Successful Change");
-                    fireBase.token().then((uid) => {
-                        axios({
-                            method: 'POST',
-                            url: UPDATE,
-                            data: {
-                                option: 'user',
-                                uid,
-                                field:'email',
-                                val: newEmail
-                            },
-                            headers: {'Content-Type': 'application/json'}
-                        }).then((response) => {
-                            if(response.data.status){
-                                console.log("Backend updated")
-                            }else{
-                                console.log(response);
-                                console.log("Failed backend update");
-                            }
-                        });
-                    })
+                // console.log("Successful Change");
+                //     fireBase.token().then((uid) => {
+                //         axios({
+                //             method: 'POST',
+                //             url: UPDATE,
+                //             data: {
+                //                 option: 'user',
+                //                 uid,
+                //                 field:'email',
+                //                 val: newEmail
+                //             },
+                //             headers: {'Content-Type': 'application/json'}
+                //         }).then((response) => {
+                //             if(response.data.status){
+                //                 console.log("Backend updated")
+                //             }else{
+                //                 console.log(response);
+                //                 console.log("Failed backend update");
+                //             }
+                //         });
+                //     })
             }else{
                 console.log("Email esta vacio");
             }

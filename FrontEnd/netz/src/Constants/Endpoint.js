@@ -9,5 +9,5 @@ export const UPDATE = `http://${IP}/ingsoft/src/paginas/update_info.php`;
 export const UPDATE_PHONE = `http://${IP}/ingsoft/src/paginas/phone/update.php`;
 export const SIGNUP = `http://${IP}/ingsoft/src/SignUp.php`;
 export const FINANCISTEND = `http://${IP}/ingsoft/src/paginas/financist.php`;
-export const PHOTOEND = `http://${IP}/ingsoft/src/img/`;
+export const PHOTOEND = `http://${IP}/ingsoft/src/paginas/img/`;
 export const PROFILE = 'profile.jpg';

@@ -12,6 +12,9 @@ import {UpdateFieldCom} from "../User/Modify";
 import axios  from 'axios';
 import {Switch, Route} from 'react-router-dom';
 import {BOOKMARK, HOME, OVERVIEW, FINANCIST} from "../../Constants/routes";
+import BookIdeas from './BookIdeas';
+import NoMatch from "../NoMatch/NoMatch";
+import IdeaList from './IdeaList';
 
 class SearchIdeas extends Component {
 
@@ -53,12 +56,12 @@ class SearchIdeas extends Component {
         });
     }
 
-    componentWillUnmount() {
+    saveChanges = () => {
         console.log("I was called");
         const{uid, removeBook, newBook} = this.state;
         // const prueba = [1,2,3, 7, 8];
         const ideasBook = newBook.map((idea) => {
-          return {iid: idea};
+            return {iid: idea};
         });
 
         const ideasRemove = removeBook.map((idea) => {
@@ -75,24 +78,33 @@ class SearchIdeas extends Component {
             finid: uid,
             ideas: ideasRemove
         };
-        axios(
-            {
-                url: FINANCISTEND,
-                method: 'post',
-                data: register,
-                headers: {'Content-Type': 'application/json'}
-            }).then((response) => {
-              console.log(response.data)
-        });
-        axios(
-            {
-                url: REMOVE,
-                method: 'post',
-                data: remove,
-                headers: {'Content-Type': 'application/json'}
-            }).then((response) => {
+        if(removeBook.length){
+            axios(
+                {
+                    url: REMOVE,
+                    method: 'post',
+                    data: remove,
+                    headers: {'Content-Type': 'application/json'}
+                }).then((response) => {
                 console.log(response.data)
             });
+        }
+
+        if(newBook.length) {
+            axios(
+                {
+                    url: FINANCISTEND,
+                    method: 'post',
+                    data: register,
+                    headers: {'Content-Type': 'application/json'}
+                }).then((response) => {
+                console.log(response.data)
+            });
+        }
+    };
+
+    componentWillUnmount() {
+        this.saveChanges();
     };
 
     toggleHeart = (iid, add_remove) => {
@@ -116,6 +128,7 @@ class SearchIdeas extends Component {
     route = (route) => {
       const{history} = this.props;
       history.push(route);
+      this.saveChanges();
     };
 
     onArrowMove  = (e, move) => {
@@ -210,77 +223,38 @@ class SearchIdeas extends Component {
 
 
         catsOp.unshift(<option key = {'Todas'} value = {-1} >Todas</option>);
-        const ideasDesc = ideas.map(idea => <Idea idea={idea} bookMarked = {false} key={idea.title+idea.uid} toggleHeart= {this.toggleHeart}
+        const ideasDesc = ideas.map(idea => <Idea idea={idea} bookMarked = {false}  key={idea.title+idea.uid} toggleHeart= {this.toggleHeart}
           newBook = {newBook} removeBook = {removeBook}/>);
         return (
             <Switch>
-                {/*    <Route path={`${path}/:typeMode/name`} render = {(props) =>*/}
-                {/*        /!*<UpdateFieldCom {...props} inputs = {[{field: 'Nombre', type : 'text', value : firstname}, {field: 'Apellido', type : 'text', value : lastname}]} />}/>*!/*/}
+                    <Route path={`${BOOKMARK}`} render = {(props) =>
+                        <BookIdeas {...props} catsOp={catsOp} route = {this.route}/>}/>
                 <Route exact path = {FINANCIST}>
                     <React.Fragment>
-                    <Row className={"mt-5 justify-content-end"}>
-                        <Col sm={{size: 5}} className={""}>
-                            <h1 >Buscar Ideas por Categoria</h1>
-                        </Col>
-                        <Col   sm={{size: 3}}>
-                            <ButtonToolbar className={"justify-content-end"}>
-                                <ButtonGroup>
-                                    <Button color={"info"} onClick={() => this.route(BOOKMARK)}>BookMark</Button>
-                                </ButtonGroup>
-                            </ButtonToolbar>
-                        </Col>
-                    </Row>
-                    <Row className={"mt-5  justify-content-center"}>
-                        <Col sm={{size: 6, offset:3}}>
-                            <Form>
-                                <FormGroup row>
-                                    <Label for="cat" sm={3} >Categorias</Label>
-                                    <Col sm={{ size: 3}}>
-                                        <Input  type={'select'} id="category"  name = "category" onChange={this.onChange} defaultValue={0}>
-                                            {catsOp}
-                                        </Input>
-                                    </Col>
-                                </FormGroup>
-                                <FormGroup row>
-                                    <Label for="cat"   sm={3}>Ideas por Pagina</Label>
-                                    <Col sm={{ size: 3}}>
-                                        <Input  type={'select'} id="rows"  name = "rows"  onChange={this.onChange} defaultValue={3}>
-                                            <option value={1} >1</option>
-                                            <option value={2}>2</option>
-                                            <option value={3}>3</option>
-                                            <option value={4}>4</option>
-                                            <option value={5}>5</option>
-                                        </Input>
-                                    </Col>
-                                </FormGroup>
-                            </Form>
-                        </Col>
-                    </Row>
-                    {
-                        (error)? <Row className={"mt-4 justify-content-center"}>
-                                    <Col sm={{ size: 2}} >
-                                        {error}
-                                    </Col>
-                                </Row>     :
-                            <div>{ideasDesc}</div>
-
-                    }
-                    <Row className={"mt-4 justify-content-center"}>
-                        <Col sm={{ size: 1}} >
-                            <div className={"justify-content-center "}>
-                                <Button  color={'primary'} onClick={(e) => {
-                                    e.preventDefault();
-                                    this.fetchIdeas(1, true)}}>Buscar</Button>
-                            </div>
-                        </Col>
-                    </Row>
-                        {(showPaginator)?
+                        <Row className={"mt-5 justify-content-end"}>
+                            <Col sm={{size: 5}} className={""}>
+                                <h1 >Buscar Ideas por Categoria</h1>
+                            </Col>
+                            <Col   sm={{size: 3}}>
+                                <ButtonToolbar className={"justify-content-end"}>
+                                    <ButtonGroup>
+                                        <Button color={"info"} onClick={() => this.route(BOOKMARK)}>BookMark</Button>
+                                    </ButtonGroup>
+                                </ButtonToolbar>
+                            </Col>
+                        </Row>
+                   <IdeaList catsOp = {catsOp}   route = {this.route} onChange={this.onChange} ideasDesc = {ideasDesc} error = {error}
+                   fetchIdeas = {this.fetchIdeas}/>
+                   {(showPaginator)?
                             <Row className={"justify-content-md-center mt-5"}>
                                 <Paginator initPage={initPage} perTag = {perTag} currentPage = {currentPage} max ={maxpage} onArrowMove={this.onArrowMove}
                                            onPageMove = {this.onPageMove}/>
                             </Row>:null
                         }
                 </React.Fragment>
+                </Route>
+                <Route>
+                    <NoMatch/>
                 </Route>
             </Switch>
         );
@@ -291,38 +265,3 @@ class SearchIdeas extends Component {
 
 export default withAuthentication(SearchIdeas)
 
-
-        // <Form>
-        //     <FormGroup row>
-        //         <Label sm={{ size: 2}}>>Ideas por pagina</Label>
-        //         <Col sm={{ size: 10}}>
-        //             <Input className={"mt-4"} type={'select'} onChange={this.onChange}>
-        //                 <option value={1}>aaa</option>
-        //                 <option value={2}>bbb</option>
-        //                 <option value={3}>ccc</option>
-        //                 <option value={4}>ddd</option>
-        //                 <option value={5}>eee</option>
-        //             </Input>
-        //         </Col>
-        //     </FormGroup>
-        //     <FormGroup row>
-        //         <Col sm={{ size: 3}} >
-        //             <Input className={"mt-4"} type={'select'} onChange={this.onChange}>
-        //                 <option value={1}>1</option>
-        //                 <option value={2}>2</option>
-        //                 <option value={3}>3</option>
-        //                 <option value={4}>4</option>
-        //                 <option value={5}>5</option>
-        //             </Input>
-        //         </Col>
-        //         <Col sm={{ size: 2}}>
-        //             <Button  className={"mt-4"} color={'primary'} onClick={this.fetchIdeas}>Buscar</Button>
-        //         </Col>
-        //     </FormGroup>
-        // </Form>
-    // </Col>
-    // <Col sm={{size: 4, offset:3}}>
-    // </Col>
-
-// <Button color={"info"} onClick={() => this.route(HOME)}>Principal</Button>
-// <Button color={"info"} onClick={() => this.route(OVERVIEW)}>Cuenta</Button>

@@ -124,8 +124,12 @@ class Firebase {
     doPasswordUpdate = (newPass, oldPass) =>  {
         return this.doSignInWithEmailAndPassword(this.appAuth.currentUser.email, oldPass)
             .then(() =>{
-                return this.appAuth.currentUser.updatePassword(newPass)
-            }).catch(() => console.log("It failed"));
+              //  console.log("Changing password");
+                return this.appAuth.currentUser.updatePassword(newPass);
+            }).catch((error) => {
+                console.log("It failed")
+                console.log(error);
+            });
     };
 
 

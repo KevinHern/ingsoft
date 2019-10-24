@@ -57,6 +57,7 @@
 			{
 				$field = MapUser($attr, $val);
 				$query = "UPDATE users SET $field WHERE uid = '$uid';";
+                $result = pg_query($link, $query);
                 $json = array('status' => 1);
 			}
 			catch (Exception $e)

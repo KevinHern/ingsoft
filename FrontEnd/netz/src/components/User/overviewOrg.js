@@ -8,9 +8,8 @@ import {Route, Switch, useRouteMatch} from 'react-router-dom';
 import {PHOTOEND, PROFILE} from "../../Constants/Endpoint";
 
 function OverviewOrg(props) {
-    const {email, role, name, description, country, location, phone, route} = props;
+    const {email, role, name, description, country, location, phone, route, folderid} = props;
     let {path} = useRouteMatch();
-    const dir = 23;
     // console.log(path);
     return (
         <React.Fragment>
@@ -34,7 +33,7 @@ function OverviewOrg(props) {
                     <StatusModify  {... props}/>
                 }/>
              <Route path={`${path}/:typeMode/photo`} render = {(props) =>
-                    <Photo {...props}  value={dir} route={route}/>}/>
+                    <Photo {...props} value={folderid} route={route}/>}/>
             <Route exact path={path}>
                         <Container>
                             <Row>
@@ -284,7 +283,7 @@ function OverviewOrg(props) {
                                                         </Button>
                                                     </Col>
                                                 </Row>
-                                                <Media  className="ml-3 w-25" object src = {`${PHOTOEND}${dir}/${PROFILE}`} alt = "logo"/>
+                                                <Media className="ml-3 w-25" object src = {`${PHOTOEND}${folderid}/${PROFILE}`} alt = "logo"/>
                                             </Container>
                                         </ListGroupItem>
                                     </ListGroup>

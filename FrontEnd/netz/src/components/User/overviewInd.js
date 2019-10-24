@@ -17,12 +17,11 @@ const route = (goTo) =>{
 
 
 function OverviewInd(props) {
-    const {firstname, lastname, nationality, birthdate, biography, organization, email, role, phones, route} = props;
+    const {firstname, lastname, nationality, birthdate, biography, organization, email, role, phones, route, folderid} = props;
     // console.log(phones)
     // const {field} = this.state;
     // const {authUser} = this.props;
     let {path} = useRouteMatch();
-    const dir = 23;
     // console.log(path);
     // console.log('Role' + role);
     const phoneList = Object.values(phones).map((phone) =>
@@ -53,7 +52,7 @@ function OverviewInd(props) {
                      <StatusModify  {... props}/>
                 }/>
                 <Route path={`${path}/:typeMode/photo`} render = {(props) =>
-                    <Photo {...props}  value={dir} route={route}/>}/>
+                    <Photo {...props} value={folderid} route={route}/>}/>
                 <Route exact path={path}>
                     <Container>
                         <Row>
@@ -359,7 +358,7 @@ function OverviewInd(props) {
                                                     </Button>
                                                 </Col>
                                             </Row>
-                                            <Media  className="ml-3 w-25" object src = {`${PHOTOEND}${dir}/${PROFILE}`} alt = "logo"/>
+                                            <Media className="ml-3 w-25" object src = {`${PHOTOEND}${folderid}/${PROFILE}`} alt = "profile"/>
                                         </Container>
                                     </ListGroupItem>
                                 </ListGroup>

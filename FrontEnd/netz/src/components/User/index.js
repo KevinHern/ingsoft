@@ -140,6 +140,7 @@ class OverViewManager extends Component {
         const {fireBase} = this.props;
         const {fetched} = this.state;
         if(!fetched){
+            console.log(fireBase.appAuth.currentUser);
             fireBase.token().then((response) => {
                 // console.log(response);
                 axios({

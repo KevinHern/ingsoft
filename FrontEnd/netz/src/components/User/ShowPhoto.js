@@ -12,7 +12,7 @@ function ShowPhoto(props) {
                              label="Imagen de Perfil" id="perfil" name="perfil" accept={"image/*"} required/>
                 <Media>
                     <Media right>
-                        <Media id={"perfilImg"} className={`ml-3 ${photoSize}`} object src={imagePreviewUrl}/>
+                        <Media id={"perfilImg"} className={`ml-3 img-fluid`} object src={imagePreviewUrl}/>
                     </Media>
                 </Media>
             </Col>

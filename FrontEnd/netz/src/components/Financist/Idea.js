@@ -5,8 +5,9 @@ import ListGroupItemText from "reactstrap/es/ListGroupItemText";
 import {FaHeart} from "react-icons/fa";
 function Idea(props) {
     const{isBookmarked, title, description, firstname, lastname, iid} = props.idea;
+    const{bookMarked} = props;
     const{newBook, removeBook} = props;
-    const condition = (isBookmarked | newBook.includes(iid)) & !(removeBook.includes(iid));
+    const condition = (isBookmarked | newBook.includes(iid) | bookMarked) & !(removeBook.includes(iid));
     return (
         <Row className={"mt-5"}>
             <Col sm={{size: 4, offset:4}}>
