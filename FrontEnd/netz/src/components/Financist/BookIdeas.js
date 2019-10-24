@@ -1,12 +1,10 @@
 import React, {Component} from 'react';
-import {BOOKMARK, FINANCIST} from "../../Constants/routes";
+import {FINANCIST} from "../../Constants/routes";
 import {Button, ButtonGroup, ButtonToolbar, Col, Form, Label, Row} from "reactstrap";
 import Idea from "./Idea";
 import {withAuthentication} from '../Session';
 import axios from 'axios';
 import {FINANCISTEND, REMOVE} from "../../Constants/Endpoint";
-import FormGroup from "reactstrap/es/FormGroup";
-import Input from "reactstrap/es/Input";
 import Paginator from "../Paginator";
 import IdeaList from "./IdeaList";
 

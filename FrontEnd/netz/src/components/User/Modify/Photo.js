@@ -1,9 +1,11 @@
 import React, {Component} from 'react';
 import {Media, Row, Col, Container, Button} from "reactstrap";
-import {PHOTOEND, PROFILE} from "../../../Constants/Endpoint";
+import {PHOTOEND, PROFILE, REGISTER, UPDATE_PROFILE} from "../../../Constants/Endpoint";
 import ShowPhoto from '../ShowPhoto';
 import Form from "reactstrap/es/Form";
 import * as ROUTES from "../../../Constants/routes";
+import axios from "axios";
+import {withAuthentication} from '../../Session';
 
 class Photo extends Component {
 
@@ -16,6 +18,34 @@ class Photo extends Component {
     };
 
 
+
+    onSubmit = async (e) => {
+        const {fireBase, route}  = this.props;
+        const {typeMode} = this.props.match.params;
+        try{
+            const uid = await fireBase.token();
+            const{photo} = this.state;
+            const formData = new FormData;
+            formData.append('uid', uid);
+            formData.append('photo', photo);
+            const response = await axios({
+                method: 'POST',
+                url:  UPDATE_PROFILE,
+                data: formData,
+                headers: { 'Content-Type': 'multipart/form-data'},
+            });
+            if(response.data['status']){
+                console.log(`Phto was stored successfully`);
+                this.route(`${ROUTES.OVERVIEW}/${typeMode}/modify/success`);
+            }else{
+                console.log(response.data.message);
+                console.log(`Photo Could not be saved`);
+            }
+            console.log(response);
+        } catch(e) {
+          console.log(e);
+        }
+    };
 
     _handleImageChange(e) {
         e.preventDefault();
@@ -63,7 +93,7 @@ class Photo extends Component {
                 </Row>
                 <Row  className={"mt-5 justify-content-center"} >
                     <Col sm={2}>
-                        <Button color={"primary"}>Modificar</Button>
+                        <Button color={"primary"} type={'submit'} onClick={this.onSubmit}>Modificar</Button>
                     </Col>
                     <Col sm={2}>
                         <Button color={"danger"} onClick={() => route(ROUTES.OVERVIEW)}>Cancelar</Button>
@@ -74,4 +104,4 @@ class Photo extends Component {
     }
 }
 
-export default Photo;
+export default withAuthentication(Photo);

@@ -7,6 +7,7 @@ export const REMOVE = `http://${IP}/ingsoft/src/paginas/remove.php`;
 export const STATE = `http://${IP}/ingsoft/src/paginas/state.php`;
 export const UPDATE = `http://${IP}/ingsoft/src/paginas/update_info.php`;
 export const UPDATE_PHONE = `http://${IP}/ingsoft/src/paginas/phone/update.php`;
+export const UPDATE_PROFILE = `http://${IP}/ingsoft/src/paginas/update_profile.php`;
 export const SIGNUP = `http://${IP}/ingsoft/src/SignUp.php`;
 export const FINANCISTEND = `http://${IP}/ingsoft/src/paginas/financist.php`;
 export const PHOTOEND = `http://${IP}/ingsoft/src/paginas/img/`;
