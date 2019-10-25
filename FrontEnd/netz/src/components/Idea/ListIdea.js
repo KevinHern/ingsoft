@@ -54,43 +54,45 @@ class ListIdea extends Component {
         const {prevFetched} = prevState;
         if(!fetched){
             this.fetchPage(1);
-            this.setState({fetched:true});
         }
     }
 
     fetchPage = (currentPage, search = false) => {
         const {fireBase} = this.props;
         const {perPage, filter} = this.state;
-        fireBase.token().then((response) => {
-            axios({
-                method: 'POST',
-                url: ENTREPRENEUR ,
-                data: {
-                    uid: response,
-                    option: 'gi',
-                    rows: perPage,
-                    page: currentPage,
-                    filter: filter,
-                },
-                headers: {'Content-Type': 'application/json'}
-            }).then((response) => {
-                // console.log(response.config);
-                let{status, maxpage, ideas} = response.data;
-                // console.log(response.data);
-                // console.log(response.config);
-                if(status){
-                    const ideaList = [];
-                    Object.values(ideas).map(item => ideaList.push(item));
-                    this.setState({max: maxpage, ideas: ideaList, error: 0});
-                    if(search){
-                        this.setState({initPage:1, currentPage:1})
+        const promise = fireBase.token();
+        if(promise){
+            promise.then((response) => {
+                axios({
+                    method: 'POST',
+                    url: ENTREPRENEUR ,
+                    data: {
+                        uid: response,
+                        option: 'gi',
+                        rows: perPage,
+                        page: currentPage,
+                        filter: filter,
+                    },
+                    headers: {'Content-Type': 'application/json'}
+                }).then((response) => {
+                    console.log(response.config);
+                    let{status, maxpage, ideas} = response.data;
+                    console.log(response.data);
+                    // console.log(response.config);
+                    if(status){
+                        const ideaList = [];
+                        Object.values(ideas).map(item => ideaList.push(item));
+                        this.setState({max: maxpage, ideas: ideaList, error: 0});
+                        if(search){
+                            this.setState({initPage:1, currentPage:1})
+                        }
+                    }else{
+                        this.setState({error: "No Fue Posible recuperar las ideas"});
                     }
-                }else{
-                    this.setState({error: "No Fue Posible recuperar las ideas"});
-                }
-            })
-        });
-
+                })
+            });
+            this.setState({fetched:true});
+        }
     };
 
 

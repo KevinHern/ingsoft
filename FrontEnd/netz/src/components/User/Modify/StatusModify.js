@@ -7,7 +7,7 @@ function StatusModify(props) {
     const{typeMode, status} =  useParams();
     console.log(status);
     return (
-        <div>
+        <React.Fragment>
         {
             (status === 'success')?
             <Container>
@@ -35,7 +35,8 @@ function StatusModify(props) {
                     </Row>
                 </Container>
         }
-        </div>
+        {/*<Button onClick={}></Button>*/}
+        </React.Fragment>
     );
 }
 

@@ -59,6 +59,8 @@ class SearchIdeas extends Component {
     saveChanges = () => {
         console.log("I was called");
         const{uid, removeBook, newBook} = this.state;
+        console.table(removeBook);
+        console.table(newBook);
         // const prueba = [1,2,3, 7, 8];
         const ideasBook = newBook.map((idea) => {
             return {iid: idea};
@@ -104,7 +106,7 @@ class SearchIdeas extends Component {
     };
 
     componentWillUnmount() {
-        this.saveChanges();
+       this.saveChanges();
     };
 
     toggleHeart = (iid, add_remove) => {
@@ -215,8 +217,8 @@ class SearchIdeas extends Component {
 
 
     render() {
-        const{cats, error, ideas, newBook, removeBook, initPage, rows, currentPage, maxpage, perTag, showPaginator} = this.state;
-        console.log(maxpage);
+        const{cats, error, ideas, newBook, removeBook, initPage, currentPage, maxpage, perTag, showPaginator} = this.state;
+      //  console.log(maxpage);
         const catsOp = cats.map((cat) => {
             return <option key = {cat.name} value = {cat.id} >{cat.name}</option>
         });
@@ -238,7 +240,11 @@ class SearchIdeas extends Component {
                             <Col   sm={{size: 3}}>
                                 <ButtonToolbar className={"justify-content-end"}>
                                     <ButtonGroup>
-                                        <Button color={"info"} onClick={() => this.route(BOOKMARK)}>BookMark</Button>
+                                        <Button color={"info"} onClick={() =>{
+                                               // this.saveChanges();
+                                                this.route(BOOKMARK);
+                                            }
+                                        }>BookMark</Button>
                                     </ButtonGroup>
                                 </ButtonToolbar>
                             </Col>

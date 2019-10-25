@@ -27,7 +27,7 @@ import VideoChat from '../VideoChat';
 const App = () => {
     return (
         <Container fluid className="min-vw-100 min-vh-100">
-            <Router>
+            <Router forceRefresh={true}>
                         <Header/>
                             <Switch>
                                 <Route exact path={ROUTES.LANDING} component={Landing} />
@@ -37,7 +37,7 @@ const App = () => {
                                 <Route path={ROUTES.UCONFIG} component = {TabConfig}/>
                                 <Route path={ROUTES.CREATEIDEA} component = {CreateIdea}/>
                                 {/*I Just replaced exact in this route*/}
-                                <Route path={ROUTES.OVERVIEW}  component = {OverView}/>
+                                <Route path={ROUTES.OVERVIEW}  component ={OverView}/>
                                 {/*<Route path={ROUTES.OVERVIEW+'/update/:typeMode/:field/:value'} component = {UpdateField}/>*/}
                                 <Route path={ROUTES.LISTIDEA+'/:changedIdea?'} component = {ListIdea}/>
                                 <Route path={ROUTES.LISTIDEA+'/:changedIdea?'} component = {ListIdea}/>

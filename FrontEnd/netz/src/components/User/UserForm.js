@@ -66,8 +66,9 @@ class OrganForm extends Component {
        }
         try{
             const promisedToken =  await this.props.token(); //Wait for this promise to resolve
-            const [axiosRequest, fireStoreRequest] = await Promise.all([this.props.serverData(formData, promisedToken),
-            this.props.setRole(data['role'])]) ; // This two in parallel, save to databases
+            const[axiosRequest] = await Promise.all([this.props.serverData(formData, promisedToken)]);
+            // const [axiosRequest, fireStoreRequest] = await Promise.all([this.props.serverData(formData, promisedToken),
+            // this.props.setRole(data['role'])]) ; // This two in parallel, save to databases
             const response = axiosRequest.data; //Check response from axios for server status.
             // this.props.setClaims(data['role']).then((result) => {
             //     console.log(result);
@@ -263,12 +264,14 @@ class IndForm extends Component {
         //When you are ready to send phones make sure you won't send empty strings or duplicate phone numbers
         try{
             const promisedToken =  await this.props.token();
-            const [axiosRequest, fireStoreRequest, axiosRequestPhones] = await Promise.all([this.props.serverData(formData, promisedToken),
-                this.props.setRole(data['role']), this.storePhoneList(promisedToken)]);
-            // const axiosRequest = await this.props.serverData(formData, promisedToken);
-            this.props.setClaims(data['role']).then((result) => {
-                console.log(result);
-            });
+            const [axiosRequest, axiosRequestPhones] = await Promise.all(
+                [this.props.serverData(formData, promisedToken),this.storePhoneList(promisedToken)]);
+            // const [axiosRequest, fireStoreRequest, axiosRequestPhones] = await Promise.all([this.props.serverData(formData, promisedToken),
+            //     this.props.setRole(data['role']), this.storePhoneList(promisedToken)]);
+            // // const axiosRequest = await this.props.serverData(formData, promisedToken);
+            // this.props.setClaims(data['role']).then((result) => {
+            //     console.log(result);
+            // });
             const response = axiosRequest.data;
             const phonesResponse = axiosRequestPhones.data;
             if(response['status']){
@@ -279,8 +282,7 @@ class IndForm extends Component {
                     console.log(phonesResponse);
                     console.log('failure in phones');
                 }
-            }  else {
-                // this.setState({error:error.message});
+            } else {
                 this.setState({error:"Error en el servidor"});
                 console.log('failure in register');
                 console.log(response);

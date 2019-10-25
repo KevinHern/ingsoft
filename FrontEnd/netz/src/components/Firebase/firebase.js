@@ -141,30 +141,6 @@ class Firebase {
       }
     };
 
-
-
-    getIdToken = (API_PATH, state) => {
-        return this.appAuth.currentUser.getIdToken(/* forceRefresh */ true).then(function(idToken) {
-            axios({
-                            method: 'post',
-                            url: `${API_PATH}`,
-                            headers: { 'content-type': 'application/json' },
-                            data: {idToken, name:state.username ,
-                                email:state.email, pass:state.passwordOne, role: 0}
-                        })
-                            .then(result => {
-                                let thing = result.data;
-                                console.table(thing);
-                            })
-                            .catch(error =>
-                                console.log(error)
-                            );
-        }).catch(function(error) {
-            console.log(error);
-        });
-    };
-
-
     callFunction = (name) => this.functions.httpsCallable(name);
     user = uid => this.db.collection('users').doc(uid);
     users = uid => this.db.collection('users')

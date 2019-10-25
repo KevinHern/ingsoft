@@ -26,7 +26,7 @@ if ($_POST)
 
 
     header("Content-type: application/json");
-
+    $result = array();
 
     try {
     //Check for Token validity
@@ -44,25 +44,23 @@ if ($_POST)
         $db->disconnect();
         // set response code - 200 OK
         http_response_code(200);
-        $status = "ok";
+        $result['uid']  = $uid;
+        $result['status'] = 1;
     } catch (InvalidToken $e) {
-        $status = $e->getMessage();
+        $result['status'] = 0;
+        $result['message'] = $e->getMessage();
     }
     catch (Exception $e) {
-        http_response_code(400);
-        $status = $e ->getMessage();
+//        http_response_code(400);
+        $result['status'] = 0;
+        $result['message'] = $e->getMessage();
     }
-
-    echo json_encode(array(
-    "idToken" => $_POST,
-    "uid" => $uid,
-    "status" => $status
-));
+    echo json_encode($result);
 }
 else
 {
     // tell the user about error
 
-    echo json_encode(["sent" => false, "message" => "Something went wrong"]);
+    echo json_encode(["status" => 0, "message" => "Something went wrong"]);
 }
 

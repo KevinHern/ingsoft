@@ -6,6 +6,8 @@ import GoogleSign from "./GoogleSignUpButton";
 import {Form, FormGroup, Label, Button, Input, Col, FormText, Alert} from "reactstrap";
 import ButtonGroup from "reactstrap/es/ButtonGroup";
 import {SIGNUP} from "../../Constants/Endpoint";
+import axios from "axios";
+import {HOME} from "../../Constants/routes";
 
 
 const SignUpPage = () => (
@@ -35,43 +37,79 @@ class SignUpFormBase extends Component {
 
 
     //Using FireStore
+//     onSubmit = event => {
+//         event.preventDefault();
+//         const { username, email, passwordOne } = this.state;
+// //     User process has not finished
+//         const role = 0;
+//         const {fireBase} = this.props;
+//         return fireBase.withEmailAndPassword(email, passwordOne)
+//             .then(authUser => {
+//                 console.log(authUser);
+//                 //Setting a user in Firestore, but now without a name
+//                 fireBase.user(authUser.user.uid).set({
+//                            email,
+//                            role
+//                        }).then(() =>  {
+//                             console.log("Just before axios");
+//                             fireBase.getIdToken(SIGNUP, this.state)
+//                                 .then(() => {
+//                                     //Always to UCONFIG
+//                                     this.props.history.push(ROUTES.UCONFIG);
+//                                 }).catch(error => {
+//                                 this.setState({ error });
+//                                 console.log(error);
+//                             });
+//                             this.setState({ ...INITIAL_STATE });
+//                }).catch((error) => {
+//                     this.setState({ error });
+//                     console.log("FireStore user");
+//                     console.log(error);
+//                });
+//             })
+//             .catch(error => {
+//                 this.setState({ error });
+//                 console.log("With email and password");
+//                 console.log(error);
+//             });
+//     };
+
     onSubmit = event => {
         event.preventDefault();
-        const { username, email, passwordOne } = this.state;
+        const {email, passwordOne } = this.state;
 //     User process has not finished
         const role = 0;
         const {fireBase} = this.props;
-        return fireBase.withEmailAndPassword(email, passwordOne)
-            .then(authUser => {
-                console.log(authUser);
-                //Setting a user in Firestore, but now without a name
-                fireBase.user(authUser.user.uid).set({
-                           email,
-                           role
-                       }).then(() =>  {
-                            console.log("Just before axios");
-                            fireBase.getIdToken(SIGNUP, this.state)
-                                .then(() => {
-                                    //Always to UCONFIG
-                                    this.props.history.push(ROUTES.UCONFIG);
-                                }).catch(error => {
-                                this.setState({ error });
-                                console.log(error);
-                            });
-                            this.setState({ ...INITIAL_STATE });
-               }).catch((error) => {
-                    this.setState({ error });
-                    console.log("FireStore user");
-                    console.log(error);
-               });
-            })
-            .catch(error => {
+        fireBase.withEmailAndPassword(email, passwordOne)
+            .then(credential => {
+                this.setState({ ...INITIAL_STATE });
+                credential.user.getIdToken().then((idToken) => {
+                    axios({
+                        method: 'post',
+                        url: SIGNUP,
+                        headers: { 'content-type': 'application/json' },
+                        data: {idToken, email, pass:passwordOne, role: 0}
+                    }).then(result => {
+                        let status = result.data.status;
+                        if(status) {
+                            this.props.history.push(HOME);
+                            console.table(result.data);
+                        }else{
+                            this.setState({error:result.data.message})
+                        }
+                    })
+                        .catch(error =>
+                            this.setState({ error })
+                        );
+
+                }).catch(() => console.log("Get id Token"));
+            }) .catch(error => {
                 this.setState({ error });
                 console.log("With email and password");
                 console.log(error);
             });
-    };
 
+    };
 
     onChange = event => {
         this.setState({ [event.target.name]: event.target.value });
@@ -131,4 +169,4 @@ class SignUpFormBase extends Component {
 
 const SignUpForm = withRouter(withFirebase(SignUpFormBase));
 export default SignUpPage;
-export { SignUpForm, GoogleSign};
+export { SignUpForm};
