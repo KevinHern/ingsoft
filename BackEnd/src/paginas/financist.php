@@ -146,14 +146,14 @@
 						$state = $line["name"];
 
 						//--- Entrepreneur's Basic Information ---//
-						$uid = $line["uid"];
+						$uid1 = $line["uid"];
 						$type = $line["type"];
 
-						$temp = array("isBookmarked" => $isBookmarked, "iid" => ((int)$iid), "title" => $title, "description" => $description, "state" => ((int)$state), "uid" => $uid, "type" => ((int)$type));
+						$temp = array("isBookmarked" => $isBookmarked, "iid" => ((int)$iid), "title" => $title, "description" => $description, "state" => ((int)$state), "uid" => $uid1, "type" => ((int)$type));
 
 						if ($type == 1)
 						{
-							$query = "SELECT firstname, lastname FROM individual WHERE inid = '$uid'";
+							$query = "SELECT firstname, lastname FROM individual WHERE inid = '$uid1'";
 							$result1 = pg_query($link, $query);
 							$line1 = pg_fetch_array($result1, NULL, PGSQL_ASSOC);
 
@@ -166,7 +166,7 @@
 						}
 						else
 						{
-							$query = "SELECT name FROM organization WHERE oid = '$uid'";
+							$query = "SELECT name FROM organization WHERE oid = '$uid1'";
 							$result1 = pg_query($link, $query);
 							$line1 = pg_fetch_array($result1, NULL, PGSQL_ASSOC);
 
@@ -313,14 +313,14 @@
 						$state = $line["name"];
 
 						//--- Entrepreneur's Basic Information ---//
-						$uid = $line["uid"];
+						$uid1 = $line["uid"];
 						$type = $line["type"];
 
-						$temp = array("iid" => ((int)$iid), "title" => $title, "description" => $description, "state" => ((int)$state), "uid" => $uid, "type" => ((int)$type));
+						$temp = array("iid" => ((int)$iid), "title" => $title, "description" => $description, "state" => ((int)$state), "uid" => $uid1, "type" => ((int)$type));
 
 						if ($type == 1)
 						{
-							$query = "SELECT firstname, lastname FROM individual WHERE inid = '$uid'";
+							$query = "SELECT firstname, lastname FROM individual WHERE inid = '$uid1'";
 							$result1 = pg_query($link, $query);
 							$line1 = pg_fetch_array($result1, NULL, PGSQL_ASSOC);
 
@@ -333,7 +333,7 @@
 						}
 						else
 						{
-							$query = "SELECT name FROM organization WHERE oid = '$uid'";
+							$query = "SELECT name FROM organization WHERE oid = '$uid1'";
 							$result1 = pg_query($link, $query);
 							$line1 = pg_fetch_array($result1, NULL, PGSQL_ASSOC);
 
