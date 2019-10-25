@@ -16,7 +16,7 @@ class BookIdeas extends Component {
         this.state = {
             rows : 3,
             currentPage: 1,
-            category: 1,
+            category: -1,
             fetched: false,
             error: undefined,
             removeBook: [],

@@ -302,6 +302,11 @@ class IndForm extends Component {
            let {phoneList} = this.state;
             let index = event.target.dataset['phone'];
             console.log(phoneList);
+            // if(this.checkPhone(event.target.value)){
+            //
+            // }else{
+            //
+            // }
             phoneList[index]= event.target.value;
             this.setState({phoneList});
         }else{
@@ -342,6 +347,11 @@ class IndForm extends Component {
         console.log(reader);
     }
 
+    checkPhone = (number) => {
+        const regex = /^\d{8}$/
+        return number.match(regex);
+    };
+
     render() {
         const {imagePreviewUrl} = this.state;
         const {error} = this.state;
@@ -350,7 +360,8 @@ class IndForm extends Component {
                 if(index === 0) {
                     return <div  key = {index}></div>;
                 }else{
-                    return <PhoneItem key = {index} phone = {phone} idPhone = {index} changePhone = {this.onChange} removePhone = {this.removeExtra}/>
+                    return <PhoneItem key = {index} phone = {phone} idPhone = {index} changePhone = {this.onChange} removePhone = {this.removeExtra}
+                    />
                 }
             }
         );

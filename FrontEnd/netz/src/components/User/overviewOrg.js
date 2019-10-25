@@ -10,7 +10,6 @@ import {PHOTOEND, PROFILE} from "../../Constants/Endpoint";
 function OverviewOrg(props) {
     const {email, role, name, description, country, location, phone, route, folderid} = props;
     let {path} = useRouteMatch();
-    // console.log(path);
     return (
         <React.Fragment>
             <Switch>

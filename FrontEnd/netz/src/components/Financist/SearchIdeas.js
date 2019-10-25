@@ -56,73 +56,107 @@ class SearchIdeas extends Component {
         });
     }
 
-    saveChanges = () => {
-        console.log("I was called");
-        const{uid, removeBook, newBook} = this.state;
-        console.table(removeBook);
-        console.table(newBook);
-        // const prueba = [1,2,3, 7, 8];
-        const ideasBook = newBook.map((idea) => {
-            return {iid: idea};
-        });
+    // saveChanges = () => {
+    //     console.log("I was called");
+    //     const{uid, removeBook, newBook} = this.state;
+    //     console.table(removeBook);
+    //     console.table(newBook);
+    //     // const prueba = [1,2,3, 7, 8];
+    //     const ideasBook = newBook.map((idea) => {
+    //         return {iid: idea};
+    //     });
+    //
+    //     const ideasRemove = removeBook.map((idea) => {
+    //         return {iid: idea};
+    //     });
+    //     const register = {
+    //         option: 'addBook',
+    //         uid,
+    //         ideas : ideasBook
+    //
+    //     };
+    //     const remove = {
+    //         option: 'book',
+    //         finid: uid,
+    //         ideas: ideasRemove
+    //     };
+    //     if(removeBook.length){
+    //         axios(
+    //             {
+    //                 url: REMOVE,
+    //                 method: 'post',
+    //                 data: remove,
+    //                 headers: {'Content-Type': 'application/json'}
+    //             }).then((response) => {
+    //             console.log(response.data)
+    //         });
+    //     }
+    //
+    //     if(newBook.length) {
+    //         axios(
+    //             {
+    //                 url: FINANCISTEND,
+    //                 method: 'post',
+    //                 data: register,
+    //                 headers: {'Content-Type': 'application/json'}
+    //             }).then((response) => {
+    //             console.log(response.data)
+    //         });
+    //     }
+    // };
 
-        const ideasRemove = removeBook.map((idea) => {
-            return {iid: idea};
-        });
-        const register = {
-            option: 'addBook',
-            uid,
-            ideas : ideasBook
 
-        };
-        const remove = {
-            option: 'book',
-            finid: uid,
-            ideas: ideasRemove
-        };
-        if(removeBook.length){
-            axios(
-                {
-                    url: REMOVE,
-                    method: 'post',
-                    data: remove,
-                    headers: {'Content-Type': 'application/json'}
-                }).then((response) => {
-                console.log(response.data)
-            });
-        }
+    // componentWillUnmount() {
+    //    this.saveChanges();
+    // };
 
-        if(newBook.length) {
-            axios(
-                {
-                    url: FINANCISTEND,
-                    method: 'post',
-                    data: register,
-                    headers: {'Content-Type': 'application/json'}
-                }).then((response) => {
-                console.log(response.data)
-            });
-        }
-    };
 
-    componentWillUnmount() {
-       this.saveChanges();
-    };
+    addBook(register) {
+        axios(
+                    {
+                        url: FINANCISTEND,
+                        method: 'post',
+                        data: register,
+                        headers: {'Content-Type': 'application/json'}
+                    }).then((response) => {
+                       console.log(response.data)
+                });
+    }
+
+    deleteBook(remove) {
+        axios(
+                    {
+                        url: REMOVE,
+                        method: 'post',
+                        data: remove,
+                        headers: {'Content-Type': 'application/json'}
+                    }).then((response) => {
+                       console.log(response.data)
+                });
+    }
 
     toggleHeart = (iid, add_remove) => {
-        let{newBook, removeBook} = this.state;
+        let{newBook, removeBook, uid} = this.state;
         if(add_remove) {
             if(removeBook.includes(iid)){
                removeBook = removeBook.filter((i) => i !== iid );
             }else{
                 newBook.push(iid);
             }
+            //Do you want to use a list? comment this out
+            this.addBook({ option: 'addBook',
+                        uid,
+                        ideas : [{iid}]})
         }else{
             if(newBook.includes(iid)){
                 newBook = newBook.filter((i) => i !== iid );
             }else{
                 removeBook.push(iid);
             }
+            //Do you want to use a list? comment this out
+            this.deleteBook({ option: 'book',
+                finid: uid,
+                ideas : [{iid}]})
         }
         this.setState({newBook, removeBook});
     };

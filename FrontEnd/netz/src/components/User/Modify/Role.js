@@ -35,6 +35,22 @@ class Role extends Component {
         }
     }
 
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        const{value} = prevProps;
+        if(!value){
+            let{value} = this.props;
+            //This might change later
+            console.log(value);
+            value = parseInt(value);
+            if(value){
+                const e =  (value%2)===1;
+                const f =  (value%2)===0;
+                console.log(`e: ${e} f: ${f}`);
+                this.setState({e, f});
+            }
+        }
+    }
+
     update = () => {
         const{e, f}  = this.state;
         let val = 0;

@@ -21,8 +21,10 @@ class PhoneList extends Component {
 
     componentDidMount() {
         const{value} = this.props;
+        // console.log(value);
         this.setState({phoneList:value});
     }
+
 
 
     addExtra = () => {
@@ -49,11 +51,11 @@ class PhoneList extends Component {
     };
 
     onChange = (e) => {
-        let {phoneList} = this.state;
-        let index = e.target.dataset['phone'];
-        console.log(phoneList);
-        phoneList[index]= e.target.value;
-        this.setState({phoneList});
+            let {phoneList} = this.state;
+            let index = e.target.dataset['phone'];
+            console.log(phoneList);
+            phoneList[index]= e.target.value;
+            this.setState({phoneList});
     };
 
     update = () => {
@@ -63,7 +65,7 @@ class PhoneList extends Component {
         const promise = fireBase.token();
         let phone = {};
         if(phoneOrg !== '') {
-            phone =  {"phone1" : phoneOrg};
+            phone =  [{"phone0" : {number: phoneOrg}}];
         }else{
              phone = phoneList.map((phone, index) => {
                 return {["phone"+index] : {number:phone}};
@@ -85,8 +87,8 @@ class PhoneList extends Component {
                     if(response.data['status']){
                         this.route(`${ROUTES.OVERVIEW}/${typeMode}/modify/success`);
                     }else{
-                        // console.log(response);
-                        // console.log(response.config);
+                        console.log(response);
+                        this.route(`${ROUTES.OVERVIEW}/${typeMode}/modify/failure`);
                     }
                 })
             })
@@ -95,10 +97,9 @@ class PhoneList extends Component {
 
     render() {
         let {phoneList} = this.state;
-        let orgPhone = phoneList[0];
+        const{value} = this.props;
         let {typeMode} = this.props.match.params;
         const {allowExtra, field} = this.props;
-        console.log(typeMode);
 
         phoneList = phoneList.map((phone, index) => {
                 if(index === 0) {
@@ -133,7 +134,7 @@ class PhoneList extends Component {
                                 <Label className={'capitalize'} >{field}</Label>
                             </Col>
                             <Col sm ={{ size: 3}}>
-                                <Input  type={'text'}  value={orgPhone} readOnly/>
+                                <Input  type={'text'}  defaultValue={value[0]} readOnly/>
                             </Col>
                         </Row>
                         <Row className={'mt-5 justify-content-center'}>
@@ -141,7 +142,7 @@ class PhoneList extends Component {
                                 <Label >Nuevo Valor</Label>
                             </Col>
                             <Col sm ={{ size: 3}}>
-                                <Input type={'text'}  onChange ={this.onChangeOrg}/>
+                                <Input type={'text'} name={'phoneOrg'} onChange ={this.onChangeOrg}/>
                             </Col>
                         </Row>
                     </React.Fragment>

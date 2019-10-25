@@ -13,49 +13,59 @@ class Password extends Component {
         this.state = {
             value: '',
             newPass1: "",
-            newPass2: ""
+            newPass2: "",
+            error: false
         };
     }
 
     onSubmit = async () => {
-        const {fireBase} = this.props;
+        const {fireBase, typeMode} = this.props;
         const {newPass1, pass, newPass2} = this.state;
         console.log(`${newPass1}  ${newPass2}`);
         if(newPass1 === newPass2) {
             try{
                 if(newPass1 !== ''){
-                    await fireBase.doPasswordUpdate(newPass1, pass);
+                    const update = await fireBase.doPasswordUpdate(newPass1, pass);
                     console.log("Successful Change");
                     // console.log(update)
-                    fireBase.token().then((uid) => {
-                        axios({
-                            method: 'POST',
-                            url: UPDATE,
-                            data: {
-                                option: 'user',
-                                uid,
-                                field:'password',
-                                val: newPass1
-                            },
-                            headers: {'Content-Type': 'application/json'}
-                        }).then((response) => {
-                            if(response.data.status){
-                                console.log("Backend updated")
-                            }else{
-                                console.log(response);
-                                console.log("Failed backend update");
-                            }
-                        });
-                    })
+                    if(update){
+                        this.setState({error: update.message});
+                    }else{
+                        fireBase.token().then((uid) => {
+                            axios({
+                                method: 'POST',
+                                url: UPDATE,
+                                data: {
+                                    option: 'user',
+                                    uid,
+                                    field:'password',
+                                    val: newPass1
+                                },
+                                headers: {'Content-Type': 'application/json'}
+                            }).then((response) => {
+                                if(response.data.status){
+                                    console.log("Backend updated");
+                                    this.route(`${ROUTES.OVERVIEW}/${typeMode}/modify/success`);
+                                }else{
+                                    console.log(response);
+                                    console.log("Failed backend update");
+                                    this.setState({error: "Error al cambiar en backend"});
+                                }
+                            });
+                        })
+                    }
                 }else{
-                    console.log("Email esta vacio");
+                    console.log("Password esta vacio");
+                    this.setState({error: "Passwords esta vacio"});
                 }
 
             }catch(error){
                 console.log(error);
+                this.setState({error: error.message});
             }
         }else{
             //Use a tooltip
+            this.setState({error: "Passwords son diferentes"});
             console.log("Passwords are different");
         }
     };
@@ -73,9 +83,17 @@ class Password extends Component {
 
     render() {
         const {typeMode} = this.props.match.params;
+        const{error} = this.state;
         return (
             <React.Fragment>
                 <TitleModify typeMode = {typeMode}/>
+                {
+                    (error)?
+                        <Row className={'mt-5 justify-content-center'}>
+                            {error}
+                        </Row>
+                        : null
+                }
                 <Row className={'mt-5 justify-content-center'}>
                     <Col sm={{ size: 1 }}>
                         <Label className={'capitalize'} >Password Actual</Label>
@@ -107,7 +125,6 @@ class Password extends Component {
                     </Col>
                     <Col sm={{ size: 1 }}>
                         <Button color={"danger"} onClick={() => this.route(ROUTES.OVERVIEW)}>Cancelar</Button>
-
                     </Col>
                 </Row>
                 <Row>

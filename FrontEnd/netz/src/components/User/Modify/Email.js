@@ -15,7 +15,8 @@ class Email extends Component {
         this.state = {
             value: '',
             newEmail: "",
-            pass: ""
+            pass: "",
+            error: false
         };
     }
 
@@ -26,28 +27,33 @@ class Email extends Component {
         const {newEmail, pass} = this.state;
         try{
             if(newEmail !== ''){
-                const {update} = await fireBase.doEmailUpdate(newEmail, pass);
-                // console.log("Successful Change");
-                //     fireBase.token().then((uid) => {
-                //         axios({
-                //             method: 'POST',
-                //             url: UPDATE,
-                //             data: {
-                //                 option: 'user',
-                //                 uid,
-                //                 field:'email',
-                //                 val: newEmail
-                //             },
-                //             headers: {'Content-Type': 'application/json'}
-                //         }).then((response) => {
-                //             if(response.data.status){
-                //                 console.log("Backend updated")
-                //             }else{
-                //                 console.log(response);
-                //                 console.log("Failed backend update");
-                //             }
-                //         });
-                //     })
+                const update = await fireBase.doEmailUpdate(newEmail, pass);
+                if(update){
+                    console.log(update);
+                    this.setState({error: update.message});
+                }else{
+                    console.log("Successful Change");
+                        fireBase.token().then((uid) => {
+                            axios({
+                                method: 'POST',
+                                url: UPDATE,
+                                data: {
+                                    option: 'user',
+                                    uid,
+                                    field:'email',
+                                    val: newEmail
+                                },
+                                headers: {'Content-Type': 'application/json'}
+                            }).then((response) => {
+                                if(response.data.status){
+                                    console.log("Backend updated")
+                                }else{
+                                    console.log(response);
+                                    console.log("Failed backend update");
+                                }
+                            });
+                        })
+                }
             }else{
                 console.log("Email esta vacio");
             }
@@ -73,15 +79,23 @@ class Email extends Component {
     render() {
         const {typeMode} = this.props.match.params;
         const{value} = this.props;
+        const{error} = this.state;
         return( <React.Fragment>
 
             <TitleModify typeMode = {typeMode}/>
+            {
+                (error)?
+                <Row className={'mt-5 justify-content-center'}>
+                    {error}
+                </Row>
+                : null
+            }
             <Row className={'mt-5 justify-content-center'}>
                 <Col sm={{ size: 1 }}>
                     <Label className={'capitalize'} >Email</Label>
                 </Col>
                 <Col sm ={{ size: 3}}>
-                    <Input  type={'email'}  value={value} readOnly/>
+                    <Input  type={'email'}  defaultValue={value} readOnly/>
                 </Col>
             </Row>
             <Row className={'mt-5 justify-content-center'}>
