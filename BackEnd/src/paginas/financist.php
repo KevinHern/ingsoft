@@ -268,7 +268,7 @@
 				{
 					$maxpage = intdiv($total, $rows) + 1;
 				}
-				$maxpage = array('maxpage' => $maxpage);
+				$maxpage = array('maxpage' => $maxpage, 'cantIdeas' => ((int)$total));
 
 				$tempres = ($page-1) * $rows;
 				if ($total == 0)
