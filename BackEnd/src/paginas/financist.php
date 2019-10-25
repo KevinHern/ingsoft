@@ -112,12 +112,12 @@
 					//----- Extract Ideas filtered by category -----//
 					if ($category != -1)
 					{
-						$query = "SELECT I.iid, I.uid, I.title, I.description, SI.name, U.uid, U.type FROM idea I, users U, stateidea SI  WHERE I.category = $category AND I.uid = U.uid AND SI.id = I.state";
+						$query = "SELECT I.iid, I.uid, I.title, I.description, SI.name, U.uid, U.type FROM idea I, users U, stateidea SI  WHERE I.category = $category AND I.uid = U.uid AND SI.id = I.state ORDER BY I.iid";
 						$result = pg_query($link, $query);
 					}
 					else
 					{
-						$query = "SELECT I.iid, I.uid, I.title, I.description, SI.name, U.uid, U.type FROM idea I, users U, stateidea SI WHERE I.uid = U.uid AND SI.id = I.state";
+						$query = "SELECT I.iid, I.uid, I.title, I.description, SI.name, U.uid, U.type FROM idea I, users U, stateidea SI WHERE I.uid = U.uid AND SI.id = I.state ORDER BY I.iid";
 						$result = pg_query($link, $query);
 					}
 

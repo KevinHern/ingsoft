@@ -62,7 +62,7 @@ class Desc extends Component {
             headers: {'Content-Type': 'application/json'}
         }).then((response) => {
             // console.log(response.config);
-            const {status} = response.data;
+            const {status, maxpage} = response.data;
             console.log(response.data);
           //  console.log(response.config);
             if(status){
@@ -71,7 +71,7 @@ class Desc extends Component {
                     const financistList = [];
                     Object.values(financists).map(item => financistList.push(item));
                     if(this._isMounted){
-                        this.setState({financists: financistList});
+                        this.setState({financists: financistList, max: maxpage});
                     }
                }
                 if(this._isMounted){
@@ -84,6 +84,85 @@ class Desc extends Component {
             }
         });
     }
+
+
+    fetchPage = (page) => {
+        const{id} = this.props.match.params;
+        axios({
+            method: 'POST',
+            url: ENTREPRENEUR,
+            data: {
+                iid: id,
+                option: 'id',
+                rows: 3,
+                page: page,
+            },
+            headers: {'Content-Type': 'application/json'}
+        }).then((response) => {
+            // console.log(response.config);
+            const {status, maxpage} = response.data;
+            console.log(response.data);
+            //  console.log(response.config);
+            if(status){
+                const {interested, title, description, category, state, financists} = response.data;
+                if(interested){
+                    const financistList = [];
+                    Object.values(financists).map(item => financistList.push(item));
+                    if(this._isMounted){
+                        this.setState({financists: financistList, max: maxpage});
+                    }
+                }
+                if(this._isMounted){
+                    this.setState({interested, title, description, category, state});
+                }
+            }else{
+                if(this._isMounted){
+                    this.setState({error: "No Fue Posible recuperar las ideas"});
+                }
+            }
+        });
+    };
+
+    onArrowMove = (e, move) => {
+        e.preventDefault();
+        console.log(move);
+        const{max, perTag} = this.state;
+        let {initPage, currentPage} = this.state;
+        //If we are at the first page don't try to go to the first group
+        if(move === 'first'  && (initPage-1)) {
+            initPage = initPage-perTag;
+            currentPage = initPage;
+            // Go to Last Group Still needs some checking
+        }else if (move === 'last' && ((initPage+perTag) <= max)) {
+            initPage = initPage+perTag;
+            currentPage = initPage;
+            //If currentPage == 1 don't do previous
+        }else if(move === 'previous' && (currentPage-1)){
+            currentPage--;
+            //    If current Page >= max don't do next
+        }else if(move === 'next' && (currentPage < max)){
+            currentPage++;
+        }
+        if((initPage+perTag) === currentPage) {
+            initPage = initPage+perTag;
+        } else if (currentPage < initPage) {
+            initPage = initPage-perTag;
+        }
+
+        this.onPageMove(currentPage);
+        console.log(`Current page:  ${currentPage}  init page:  ${initPage}`);
+        this.setState({currentPage, initPage});
+    };
+
+
+
+    onPageMove = (newPage) => {
+        const {currentPage} = this.state;
+        if(currentPage !== newPage) {
+            this.fetchPage(newPage);
+            this.setState({currentPage:newPage});
+        }
+    };
 
     componentWillUnmount() {
         this._isMounted = false;
@@ -131,9 +210,9 @@ class Desc extends Component {
 
     render() {
         //Still not managing if idea does not exist, although that shouldn't happen
-        const {title, description, category, state, interested, financists, deleteIdea, initPage, perTag, currentPage, maxpage} = this.state;
+        const {title, description, category, state, interested, financists, deleteIdea, initPage, perTag, currentPage, max} = this.state;
         let users = financists.map((i) => {
-            return <tr>
+            return <tr key={i.uid}>
                 <td>{i.firstname} {i.lastname}</td>
                 <td><Button color={'link'}>Detalles</Button></td>
             </tr>;
@@ -220,8 +299,13 @@ class Desc extends Component {
                             <Button color={"danger"} onClick={() => this.route(ROUTES.LISTIDEA)}>Cancelar</Button>
                         </Col>
                         <Col sm="4" md={{size: 4, offset: 2}}>
-                            <Paginator initPage={initPage} perTag = {perTag} currentPage = {currentPage} max ={maxpage} onArrowMove={this.onArrowMove}
-                                       onPageMove = {this.onPageMove}/>
+
+                            {(interested)?
+                                <Paginator initPage={initPage} perTag = {perTag} currentPage = {currentPage} max ={max} onArrowMove={this.onArrowMove}
+                                           onPageMove = {this.onPageMove}/>
+                                           :
+                                null
+                            }
                         </Col>
                     </Row>
             </React.Fragment>
