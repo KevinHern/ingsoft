@@ -1,0 +1,65 @@
+0. Agenda:
+	1. Quienes Somos
+		1.1 Nombre del equipo y a qué nos dedicamos
+		1.2 Integrantes de la empresa
+	2. Problema
+		2.1 ¿Qué queremos erradicar?
+		2.2 ¿Cómo lo lograremos?
+			2.2.1 Producto: NetZ
+	3. Competencia
+		3.1 Estudio de factibilidad
+			3.1.1 Encuestas
+			3.1.2 Factibilidad técnica/económica/funcional
+		3.2 Competidores
+			3.2.1 ¿Por qué son nuestra competencia?
+	4. ¿Qué tenemos de diferente?
+	5. Producto
+		5.1 Funcionalidad
+		5.2 Diagramas
+			5.2.1 Caso de Uso
+			5.2.2 De Secuencia
+			5.2.3 De Arquitectura
+	6. Implementación
+		6.1 Diagrama Entidad Relación
+		6.2 Scripts SQL, Backend y Frontend
+	7. Demo
+	8. Conclusiones
+
+
+1. Problema:
+En Guatemala y en muchos otros países se dan problemas y situaciones donde las personas poseen recursos o bienes, pero no son capaces de sacarles provecho cuando hay personas u organizaciones que necesitan dichos recursos o servicios. Este problema se da tanto en Guatemala como en muchos otros países.
+
+También, cabe destacar otro problema: las ideas pasan desapercibidas. Todas las personas tenemos grandes ideas que se nos ocurren, pero desafortunadamente no se logran desarrollar por falta de recursos. En el mundo hay gente dispuesta a invertir en ideas innovadoras, pero a veces esas ideas innovadoras que surgen en la mente de niños, jóvenes y adultos no se dan a conocer.
+
+Entonces… ¿Cuál es el objetivo de este proyecto?
+
+El objetivo de este proyecto es lograr conectar gente emprendedora con gente innovadora; y proveer una plataforma en donde las personas logren ofrecer recursos o servicios y que organizaciones u empresas logren contactarlos para que realicen los negocios que ellos deseen.
+
+Las palabras claves de este proyecto son: conectar y proveer.
+
+2. Competidores:
+- Presentar Nuestro estudio de factibilidad y estadísticas -
+	* Kickstarter	- Crowdfunding
+	* Indiegogo		- Crowdfunding
+	* ODX			- Source bussiness
+
+3. ¿Qué tiene de diferente?
+	- Únicamente conectamos a los emprendedores con los financistas.
+		* Ellos manejan el dinero
+		* Ellos manejan sus propios negocios
+		* No solicitamos dinero a ninguno de los dos agentes
+
+4. ¿Cómo lo hicimos?
+	* Caso de uso
+	* Diagramas de Secuencia
+	* Diagrama de Arquitectura
+	* Bases de datos
+		-> Diagrama Entidad Relación
+		-> SQLs
+
+5. Demo
+
+6. Conclusiones
+	* Discutir hoy *
+
+7. Presentar Video
