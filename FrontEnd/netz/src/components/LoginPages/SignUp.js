@@ -8,6 +8,7 @@ import ButtonGroup from "reactstrap/es/ButtonGroup";
 import {SIGNUP} from "../../Constants/Endpoint";
 import axios from "axios";
 import {HOME} from "../../Constants/routes";
+import {UCONFIG} from "../../Constants/routes";
 
 
 const SignUpPage = () => (
@@ -92,7 +93,7 @@ class SignUpFormBase extends Component {
                     }).then(result => {
                         let status = result.data.status;
                         if(status) {
-                            this.props.history.push(HOME);
+                            this.props.history.push(UCONFIG);
                             console.table(result.data);
                         }else{
                             this.setState({error:result.data.message})

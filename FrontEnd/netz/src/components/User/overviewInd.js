@@ -22,6 +22,8 @@ function OverviewInd(props) {
     // const {field} = this.state;
     // const {authUser} = this.props;
     let {path} = useRouteMatch();
+    let date = new Date(birthdate);
+
     // console.log(path);
     // console.log('Role' + role);
     const phoneList = Object.values(phones).map((phone) =>
@@ -270,7 +272,11 @@ function OverviewInd(props) {
                                             </Row>
                                             <Row>
                                                 <Col sm={{size: 6}}>
-                                                    {birthdate}
+                                                    {(birthdate)?
+                                                        <div>{date.getMonth() + 1}/{date.getDate() + 1}/{date.getFullYear()}</div>
+                                                        :
+                                                        <div>No hay fecha</div>
+                                                    }
                                                 </Col>
                                             </Row>
 

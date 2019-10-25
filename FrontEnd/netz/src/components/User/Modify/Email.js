@@ -23,7 +23,8 @@ class Email extends Component {
 
 
      onSubmit = async () => {
-        const {fireBase} = this.props;
+        const {fireBase, route} = this.props;
+         const {typeMode} = this.props.match.params;
         const {newEmail, pass} = this.state;
         try{
             if(newEmail !== ''){
@@ -46,9 +47,11 @@ class Email extends Component {
                                 headers: {'Content-Type': 'application/json'}
                             }).then((response) => {
                                 if(response.data.status){
-                                    console.log("Backend updated")
+                                    console.log("Backend updated");
+                                    this.route(`${ROUTES.OVERVIEW}/${typeMode}/modify/success`);
                                 }else{
                                     console.log(response);
+                                    this.route(`${ROUTES.OVERVIEW}/${typeMode}/modify/failure`);
                                     console.log("Failed backend update");
                                 }
                             });

@@ -125,6 +125,7 @@ class Firebase {
     };
 
     doPasswordUpdate = (newPass, oldPass) =>  {
+        console.log(this.appAuth.currentUser.email);
         return this.doSignInWithEmailAndPassword(this.appAuth.currentUser.email, oldPass)
             .then(() =>{
               //  console.log("Changing password");

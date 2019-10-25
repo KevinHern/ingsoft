@@ -232,15 +232,17 @@ class SearchIdeas extends Component {
                 if (response.data['status']) {
                     const ideas = [];
                     console.table(response.data);
+                    console.table(response.config)
                     Object.values(response.data.ideas).map(idea => ideas.push(idea));
-                    this.setState({ideas, error: null, maxpage:response.data.maxpage, showPaginator: true});
+                    this.setState({ideas, error: null, maxpage:response.data.maxpage, showPaginator: true, newBook : [], removeBook: []});
                     if(search){
-                        this.setState({initPage:1, currentPage:1})
+                        this.setState({initPage:1, currentPage:1, newBook : [], removeBook: []})
                     }
                 } else {
-                    this.setState({error: response.data['message'], showPaginator: false});
+                    this.setState({error: response.data['message'], showPaginator: false, newBook : [], removeBook: []});
                 }
             });
+            console.log(uid);
             this.setState({uid});
         });
     };
@@ -257,7 +259,7 @@ class SearchIdeas extends Component {
             return <option key = {cat.name} value = {cat.id} >{cat.name}</option>
         });
 
-
+        console.log(ideas);
         catsOp.unshift(<option key = {'Todas'} value = {-1} >Todas</option>);
         const ideasDesc = ideas.map(idea => <Idea idea={idea} bookMarked = {false}  key={idea.title+idea.uid} toggleHeart= {this.toggleHeart}
           newBook = {newBook} removeBook = {removeBook}/>);

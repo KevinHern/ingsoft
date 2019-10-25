@@ -19,18 +19,19 @@ class Password extends Component {
     }
 
     onSubmit = async () => {
-        const {fireBase, typeMode} = this.props;
+        const {fireBase} = this.props;
+        const {typeMode} = this.props.match.params;
         const {newPass1, pass, newPass2} = this.state;
         console.log(`${newPass1}  ${newPass2}`);
         if(newPass1 === newPass2) {
             try{
                 if(newPass1 !== ''){
                     const update = await fireBase.doPasswordUpdate(newPass1, pass);
-                    console.log("Successful Change");
-                    // console.log(update)
                     if(update){
+                        console.log(update);
                         this.setState({error: update.message});
                     }else{
+                        console.log("Successful Change");
                         fireBase.token().then((uid) => {
                             axios({
                                 method: 'POST',
@@ -47,9 +48,10 @@ class Password extends Component {
                                     console.log("Backend updated");
                                     this.route(`${ROUTES.OVERVIEW}/${typeMode}/modify/success`);
                                 }else{
+                                    // this.setState({error: "Error al cambiar en backend"});
                                     console.log(response);
                                     console.log("Failed backend update");
-                                    this.setState({error: "Error al cambiar en backend"});
+                                    this.route(`${ROUTES.OVERVIEW}/${typeMode}/modify/failure`);
                                 }
                             });
                         })

@@ -59,6 +59,7 @@ class UpdateFieldCom extends Component {
                             }else{
                                 console.log(response);
                                 console.log(`${field_value} Could not be saved`);
+                                this.route(`${ROUTES.OVERVIEW}/${typeMode}/modify/failure`);
                             }
                         }
                         );

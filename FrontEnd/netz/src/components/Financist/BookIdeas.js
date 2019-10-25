@@ -50,7 +50,7 @@ class BookIdeas extends Component {
                         const ideas = [];
                         console.table(response.data);
                         Object.values(response.data.ideas).map(idea => ideas.push(idea));
-                        this.setState({fetched:true, ideas, uid})
+                        this.setState({fetched:true, ideas, uid, showPaginator: true, maxpage: response.data.maxpage})
                     }else{
                         this.setState({fetched:true, error: response.data.message})
                     }

@@ -36,9 +36,10 @@ class Photo extends Component {
             });
             if(response.data['status']){
                 console.log(`Phto was stored successfully`);
-                this.route(`${ROUTES.OVERVIEW}/${typeMode}/modify/success`);
+                route(`${ROUTES.OVERVIEW}/${typeMode}/modify/success`);
             }else{
                 console.log(response.data.message);
+                route(`${ROUTES.OVERVIEW}/${typeMode}/modify/failure`);
                 console.log(`Photo Could not be saved`);
             }
             console.log(response);

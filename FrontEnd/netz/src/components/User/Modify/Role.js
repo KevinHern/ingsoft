@@ -27,32 +27,41 @@ class Role extends Component {
         //This might change later
         console.log(value);
         value = parseInt(value);
+        this.setDefaults(value);
+    }
+
+    setDefaults = (value) => {
         if(value){
-            const e =  (value%2)===1;
-            const f =  (value%2)===0;
+            let e =  false;
+            let f = false;
+            switch(value){
+                case 1:
+                    e = true;
+                    break;
+                case 2:
+                    f = true;
+                    break;
+                case 3:
+                    e = true;
+                    f = true;
+                    break;
+            }
+            console.log(value);
             console.log(`e: ${e} f: ${f}`);
             this.setState({e, f});
         }
-    }
+    };
 
     componentDidUpdate(prevProps, prevState, snapshot) {
         const{value} = prevProps;
         if(!value){
-            let{value} = this.props;
-            //This might change later
-            console.log(value);
-            value = parseInt(value);
-            if(value){
-                const e =  (value%2)===1;
-                const f =  (value%2)===0;
-                console.log(`e: ${e} f: ${f}`);
-                this.setState({e, f});
-            }
+            this.setDefaults(parseInt(this.props.value));
         }
     }
 
     update = () => {
         const{e, f}  = this.state;
+        const {typeMode} = this.props.match.params;
         let val = 0;
         if(e) val+=1;
         if(f) val+=2;
@@ -74,9 +83,11 @@ class Role extends Component {
                     }).then(response => {
                         console.log(response);
                         if(response.data['status']){
-
+                            console.log("Backend updated");
+                            this.route(`${ROUTES.OVERVIEW}/${typeMode}/modify/success`);
                         }else{
-                            console.log("failed")
+                            console.log("Failed backend update");
+                            this.route(`${ROUTES.OVERVIEW}/${typeMode}/modify/failure`);
                         }
                     });
             });
