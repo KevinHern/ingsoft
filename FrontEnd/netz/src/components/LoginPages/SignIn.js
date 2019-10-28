@@ -13,7 +13,7 @@ import ButtonGroup from "reactstrap/es/ButtonGroup";
 import firebase from "firebase";
 import {PassCom } from '../User/Modify';
 import axios from "axios";
-import Spinner from "reactstrap/es/Spinner";
+
 import Spinners from "../Wait";
 const SignInPage = () => (
     <div>
@@ -26,26 +26,24 @@ const INITIAL_STATE = {
     password: '',
     error: null,
     hidePass:true,
-    wait:false
+    wait:true
 };
 
 class SignInFormBase extends Component {
     constructor(props) {
         super(props);
-
-
         this.state = { ...INITIAL_STATE };
     }
 
     componentDidMount() {
         const API_PATH = 'http://localhost/ingsoft/src/SignUp.php';
-        const promise  = this.props.fireBase.getRedirectResult();
-        this.setState({wait:true});
+        const promise = this.props.fireBase.getRedirectResult();
+        this.rollSpinner();
         promise.then((result) => {
                 if(result.user){
-                    this.setState({wait:true});
+                   this.setState({wait:true});
                 }else{
-                    this.setState({wait:false});
+                     this.setState({wait:false});
                 }
                 if (result.credential) {
 
@@ -72,7 +70,7 @@ class SignInFormBase extends Component {
                                 .then(result => {
                                     let thing = result.data;
                                     console.table(thing);
-                                    setTimeout(()=> this.props.history.push(ROUTES.UCONFIG), 500);
+                                    this.props.history.push(ROUTES.UCONFIG)
                                 })
                                 .catch(error =>
                                     // {this.setState({ error: error.message })
@@ -80,12 +78,12 @@ class SignInFormBase extends Component {
                                 );
                         }
                     }else{
-                        setTimeout(()=> this.props.history.push(ROUTES.HOME), 500);
-
+                       this.props.history.push(ROUTES.HOME)
                     }
                 }
             })
             .catch((error) => {
+                this.setState({ error, wait:false});
                 console.log(error);
                 console.log("Not everything works kiddo")
             });
@@ -96,13 +94,20 @@ class SignInFormBase extends Component {
         this.setState({wait:true});
         this.props.fireBase
             .doSignInWithEmailAndPassword(email, password)
-            .then(() => {
+            .then((user) => {
                 this.setState({ ...INITIAL_STATE });
                 //By now always, but it is not meant to go to Uconfig all the time
                 // firebase.users().
-                setTimeout(() => {
-                    this.props.history.push(ROUTES.UCONFIG);
-                }, 1000)
+                console.log(user);
+                if(user.isNewUser){
+                    setTimeout(() => {
+                        this.props.history.push(ROUTES.UCONFIG);
+                    }, 1000)
+                } else{
+                    setTimeout(() => {
+                        this.props.history.push(ROUTES.HOME);
+                    }, 1000)
+                }
             })
             .catch(error => {
                 this.setState({ error, wait:false});
@@ -120,6 +125,13 @@ class SignInFormBase extends Component {
         const{hidePass} = this.state;
        this.setState({hidePass: !hidePass});
     };
+
+    rollSpinner = () => {
+        // console.log("Roll Spinner");
+        this.setState({wait:true});
+    };
+
+
     render() {
         const { email, password, error, hidePass, wait} = this.state;
 
@@ -160,7 +172,7 @@ class SignInFormBase extends Component {
                                     </ButtonGroup>
                                 </FormGroup>
                                 <FormGroup  row className="justify-content-md-center mt-3">
-                                    <GoogleSign message = { "Sign In with Google"}/>
+                                    <GoogleSign  message = { "Sign In with Google"}/>
                                 </FormGroup>
                             </Form>
                         </React.Fragment>

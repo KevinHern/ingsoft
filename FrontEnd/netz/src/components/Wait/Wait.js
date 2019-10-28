@@ -1,9 +1,11 @@
 import React from 'react';
 import {Spinner} from 'reactstrap';
+import {FaSpinner} from "react-icons/fa";
 
 function Wait(props) {
     return (
         <React.Fragment>
+            <FaSpinner transform={{ rotate: 42 }}/>
             <Spinner    style={{ width: '5rem', height: '5rem' }}  color="primary" />
             <Spinner  style={{ width: '5rem', height: '5rem' }} color="secondary" />
             <Spinner style={{ width: '5rem', height: '5rem' }}  color="success" />

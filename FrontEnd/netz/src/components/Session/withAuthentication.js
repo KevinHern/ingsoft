@@ -24,6 +24,8 @@ const withAuthentication = Component => {
         componentWillUnmount() {
             this.listener();
         }
+
+
         render() {
             const {authUser} = this.state;
             return (

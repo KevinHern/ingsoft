@@ -12,7 +12,13 @@ class GoogleSignUpButton extends Component {
 
     onClick = (e) => {
         if (!this.props.fireBase.appAuth.currentUser) {
-            this.props.fireBase.doSignInWithGoogle();
+            this.props.fireBase.doSignInWithGoogle().then(() => {
+               // this.props.rollSpinner();
+            })
+                .catch((e) => {
+                    console.log("Failed sign in");
+                    console.log(e.message);
+                });
         }else{
             this.props.fireBase.doSignOut();
         }

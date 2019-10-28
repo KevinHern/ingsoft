@@ -33,14 +33,7 @@ class Firebase {
             // this.googleProvider.addScope('https://www.googleapis.com/auth/contacts.readonly');
         this.googleProvider.addScope('profile');
         this.googleProvider.addScope('email');
-        this.appAuth.signInWithRedirect(this.googleProvider)
-                .then(() => {
-
-                })
-                .catch((e) => {
-                    console.log("Failed sign in");
-                    console.log(e.message);
-                })
+        return this.appAuth.signInWithRedirect(this.googleProvider);
     }
 
     withEmailAndPassword(email, pass){

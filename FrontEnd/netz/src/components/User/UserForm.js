@@ -141,7 +141,7 @@ class OrganForm extends Component {
                     <FormGroup row className={"justify-content-md-center mt-3"}>
                         <Label sm={2} for="phone">Numero Telefonico</Label>
                         <Col sm={5}>
-                            <Input name="phone" type={"text"} id="phone" onChange = {this.onChange} required/>
+                            <Input name="phone" placeholder="0000-0000" type={"text"} id="phone" onChange = {this.onChange} required/>
                         </Col>
                     </FormGroup>
                     <FormGroup row required className={"justify-content-md-center mt-3"}>
@@ -428,7 +428,7 @@ class IndForm extends Component {
                                 <Container>
                                     <Row>
                                         <Col sm={6}>
-                                        <Input name="phone" type={"text"} id="phone" data-phone = {0} onChange = {this.onChange} required/>
+                                        <Input name="phone" type={"text"} id="phone" data-phone = {0} placeholder="0000-0000" onChange = {this.onChange} required/>
                                         </Col>
                                         <Col sm={6}>
                                             <Button  onClick={this.addExtra}>Extra Phone</Button>

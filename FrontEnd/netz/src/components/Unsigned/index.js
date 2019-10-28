@@ -10,12 +10,24 @@ function Unsigned(props) {
     return (
         <React.Fragment>
             {(signIn)?
-                <NavItem>
-                    <NavLink href="signUp">SignUp</NavLink>
-                </NavItem> :
-                <NavItem>
-                    <NavLink href="signIn" className="text-md-center">SignIn</NavLink>
-                </NavItem>
+                <React.Fragment>
+                    <NavItem>
+                        <NavLink  className="text-md-center" href="/">Landing</NavLink>
+                    </NavItem>
+                    <NavItem>
+                        <NavLink  className="text-md-center" href="signUp">SignUp</NavLink>
+                    </NavItem>
+                </React.Fragment>
+                 :
+                <React.Fragment>
+                    <NavItem>
+                        <NavLink  className="text-md-center" href="/">Landing</NavLink>
+                    </NavItem>
+                    <NavItem>
+                        <NavLink href="signIn" className="text-md-center">SignIn</NavLink>
+                    </NavItem>
+                </React.Fragment>
+
             }
         </React.Fragment>
     );
