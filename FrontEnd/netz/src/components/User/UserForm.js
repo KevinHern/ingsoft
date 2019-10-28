@@ -450,7 +450,7 @@ class IndForm extends Component {
                             <legend>Esta afiliado con una organización?</legend>
                             <FormGroup check>
                                 <Label check>
-                                    <CustomInput type="radio" onChange={this.props.handleRadio} id="si" name="organization"
+                                    <CustomInput type="radio" onChange={this.props.handleRadio} id="si" name="aff"
                                                  label="Si" value="si" key={"si"} />
                                 </Label>
                             </FormGroup>

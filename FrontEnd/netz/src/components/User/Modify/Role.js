@@ -7,6 +7,7 @@ import axios from 'axios';
 import {withAuthentication} from '../../Session';
 import {UPDATE} from "../../../Constants/Endpoint";
 import Container from "reactstrap/es/Container";
+import Spinners from "../../Wait";
 
 class Role extends Component {
 
@@ -15,6 +16,7 @@ class Role extends Component {
         this.state = {
             e: false,
             f: false,
+            spinner: false
         };
     }
 
@@ -59,6 +61,7 @@ class Role extends Component {
         }
     }
 
+
     update = () => {
         const{e, f}  = this.state;
         const {typeMode} = this.props.match.params;
@@ -70,6 +73,7 @@ class Role extends Component {
         console.log(`val: ${val}`);
         if(promise) {
             promise.then((uid) => {
+                this.setState({spinner:true});
                     axios({
                         method: 'POST',
                         url: UPDATE,
@@ -84,10 +88,14 @@ class Role extends Component {
                         console.log(response);
                         if(response.data['status']){
                             console.log("Backend updated");
-                            this.route(`${ROUTES.OVERVIEW}/${typeMode}/modify/success`);
+                            setTimeout(() => {
+                                this.route(`${ROUTES.OVERVIEW}/${typeMode}/modify/success`);
+                            }, 1500);
                         }else{
                             console.log("Failed backend update");
-                            this.route(`${ROUTES.OVERVIEW}/${typeMode}/modify/failure`);
+                            setTimeout(() => {
+                                this.route(`${ROUTES.OVERVIEW}/${typeMode}/modify/failure`);
+                            }, 1500);
                         }
                     });
             });
@@ -104,45 +112,52 @@ class Role extends Component {
 
     render() {
         const {typeMode} = this.props.match.params;
-        const{e, f} = this.state;
+        const{e, f, spinner} = this.state;
         return (
+
             <React.Fragment>
-                <TitleModify typeMode = {typeMode}/>
-                <Row className={'mt-5 justify-content-center'}>
-                    <Col sm = {12}>
-                        <Form>
-                            <Container fluid>
-                                    <Row className={'mt-5 justify-content-center'}>
-                                        <Col sm={{ size: 1, offset: 2}}>
-                                            <h3 className={'capitalize'} >Roles</h3>
-                                        </Col>
-                                        <Col sm={5}>
-                                            <CustomInput type="checkbox" id="e" name="e" label="Emprendedor" key={"e"} value={1} onChange = {(e) => {this.onChange(e)}} checked={e}/>
-                                            <CustomInput type="checkbox" id="f" name="f" label="Financista" key={"f"}  value={2} onChange = {(e) => {this.onChange(e)}} checked={f}/>
-                                        </Col>
-                                    </Row>
-                                    <Row className={'mt-5 justify-content-center'}>
+                {(spinner)?
+                        <Spinners/>
+                    :
+                    <React.Fragment>
+                        <TitleModify typeMode = {typeMode}/>
+                        <Row className={'mt-5 justify-content-center'}>
+                            <Col sm = {12}>
+                                <Form>
+                                    <Container fluid>
+                                        <Row className={'mt-5 justify-content-center'}>
+                                            <Col sm={{ size: 1, offset: 2}}>
+                                                <h3 className={'capitalize'} >Roles</h3>
+                                            </Col>
+                                            <Col sm={5}>
+                                                <CustomInput type="checkbox" id="e" name="e" label="Emprendedor" key={"e"} value={1} onChange = {(e) => {this.onChange(e)}} checked={e}/>
+                                                <CustomInput type="checkbox" id="f" name="f" label="Financista" key={"f"}  value={2} onChange = {(e) => {this.onChange(e)}} checked={f}/>
+                                            </Col>
+                                        </Row>
+                                        <Row className={'mt-5 justify-content-center'}>
                                             <Col sm={{ size: 1 }}>
                                                 <Button color={'primary'} onClick={this.update}>Modificar</Button>
                                             </Col>
                                             <Col sm={{ size: 1 }}>
                                                 <Button color={"danger"} onClick={() => this.route(ROUTES.OVERVIEW)}>Cancelar</Button>
                                             </Col>
-                                    </Row>
-                            </Container>
-                        </Form>
-                    </Col>
-                </Row>
-                <Row>
-                    <Col>
-                        <br/>
-                    </Col>
-                </Row>
-                <Row>
-                    <Col>
-                        <br/>
-                    </Col>
-                </Row>
+                                        </Row>
+                                    </Container>
+                                </Form>
+                            </Col>
+                        </Row>
+                        <Row>
+                            <Col>
+                                <br/>
+                            </Col>
+                        </Row>
+                        <Row>
+                            <Col>
+                                <br/>
+                            </Col>
+                        </Row>
+                    </React.Fragment>
+                }
             </React.Fragment>
         );
     }

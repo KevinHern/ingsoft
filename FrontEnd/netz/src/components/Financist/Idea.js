@@ -2,12 +2,12 @@ import React from 'react';
 import {Col, ListGroup, ListGroupItem, Row} from "reactstrap";
 import ListGroupItemHeading from "reactstrap/es/ListGroupItemHeading";
 import ListGroupItemText from "reactstrap/es/ListGroupItemText";
-import {FaHeart} from "react-icons/fa";
+import {FaStar} from "react-icons/fa";
 function Idea(props) {
     const{isBookmarked, title, description, firstname, lastname, iid} = props.idea;
     const{bookMarked} = props;
-    const{newBook, removeBook} = props;
-    const condition = (isBookmarked | newBook.includes(iid) | bookMarked) & !(removeBook.includes(iid));
+    const{newBook} = props;
+    const condition = ( bookMarked| isBookmarked | newBook.includes(iid));
     return (
         <Row className={"mt-5"}>
             <Col sm={{size: 4, offset:4}}>
@@ -19,8 +19,8 @@ function Idea(props) {
                     </ListGroupItem>
                     <ListGroupItem tag="button" action>{
                         (condition)?
-                            <FaHeart onClick={() => {props.toggleHeart(iid, 0)}} color = {'red'}/>  :
-                            <FaHeart onClick={() => {props.toggleHeart(iid, 1)}} />}
+                            <FaStar onClick={() => {props.toggleStar(iid, 0)}} color = {'#FFD700'}/>  :
+                            <FaStar onClick={() => {props.toggleStar(iid, 1)}} />}
                     </ListGroupItem>
                 </ListGroup>
             </Col>

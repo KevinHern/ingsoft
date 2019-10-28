@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import OverViewInd  from './overviewInd'
 import OverViewOrg from './overviewOrg';
+import {FaExclamationTriangle} from "react-icons/fa";
 import {withAuthorization} from '../Session'
 import {withAuthorization2} from '../Session';
 
@@ -18,6 +19,7 @@ import withAuthentication from '../Session/withAuthentication';
 import {TabContent, TabPane, Nav, NavItem, NavLink, Col, ButtonToolbar, ButtonGroup, Button, Row} from 'reactstrap'
 import axios from "axios";
 import * as ROUTES from "../../Constants/routes";
+import Spinners from "../Wait";
 
 class TabConfigManager extends Component {
     constructor(props) {
@@ -132,32 +134,32 @@ class OverViewManager extends Component {
         super(props);
         this.state = {
             fetched: false,
-
+            fetch
         };
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
         const {fireBase} = this.props;
         const {fetched} = this.state;
-        if(!fetched){
+        const promise = fireBase.token();
+        if(promise){
             console.log(fireBase.appAuth.currentUser);
-            fireBase.token().then((response) => {
+            promise.then((uid) => {
                 // console.log(response);
                 axios({
                     method: 'POST',
                     url: GETUSER,
-                    data: {uid: response},
+                    data: {uid},
                     headers: {'Content-Type': 'application/json'}
                 }).then((response) => {
                     console.log(response.data);
                     if(response.data['status']){
-                        this.setState({...response.data})
+                        this.setState({...response.data, fetched:true})
                     }else{
                         this.setState({error: "No se pudo recolectar la informacion del usuario"})
                     }
                 });
             });
-            this.setState({fetched: true});
         }
     }
 
@@ -167,7 +169,7 @@ class OverViewManager extends Component {
 
 
     render() {
-        const {fetched, userType} = this.state;
+        const {fetched, userType, error} = this.state;
         return (
             <React.Fragment>
                 <Row>
@@ -180,7 +182,26 @@ class OverViewManager extends Component {
                         </ButtonToolbar>
                     </Col>
                 </Row>
-                {(fetched)? ((userType)? <OverViewInd {... this.state} route = {this.route}/>: <OverViewOrg {... this.state} route = {this.route}/> ): null}
+                {
+                    (fetched)?
+                        ((userType)?
+                            <OverViewInd {... this.state} route = {this.route}/>: <OverViewOrg {... this.state} route = {this.route}/> ):
+                        (error)?
+                            <React.Fragment>
+                                <Row className={"justify-content-center"}>
+
+                                    <Col sm={3}>
+                                        <FaExclamationTriangle color={'red'} size={350} />
+                                    </Col>
+                                </Row>
+                                <Row className={"justify-content-center"}>
+                                    <Col sm={3}>
+                                        {error}
+                                    </Col>
+                                </Row>
+                            </React.Fragment>
+                        :
+                        <Spinners/>}
             </React.Fragment>
         );
     }

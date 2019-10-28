@@ -6,6 +6,7 @@ import Paginator from "../Paginator";
 import {withAuthentication} from '../Session';
 import * as ROUTES from '../../Constants/routes';
 import axios from 'axios';
+import Spinners from "../Wait";
 
 class Desc extends Component {
     _isMounted = false;
@@ -25,6 +26,8 @@ class Desc extends Component {
             perTag: 3,
             currentPage:1,
             maxpage: 1,
+            wait:false,
+            waitInterested: true
         }
     }
 
@@ -73,11 +76,22 @@ class Desc extends Component {
                     if(this._isMounted){
                         this.setState({financists: financistList, max: maxpage});
                     }
+
                }
+                setTimeout(()=> {
+                    if(this._isMounted){
+                        this.setState({waitInterested: false});
+                    }
+                }, 1000)
                 if(this._isMounted){
                     this.setState({interested, title, description, category, state});
                 }
             }else{
+                setTimeout(()=> {
+                    if(this._isMounted){
+                        this.setState({waitInterested: false});
+                    }
+                }, 1000)
                 if(this._isMounted){
                     this.setState({error: "No Fue Posible recuperar las ideas"});
                 }
@@ -112,6 +126,13 @@ class Desc extends Component {
                         this.setState({financists: financistList, max: maxpage});
                     }
                 }
+
+                setTimeout(()=> {
+                    if(this._isMounted){
+                        this.setState({waitInterested: false});
+                    }
+                }, 1000)
+
                 if(this._isMounted){
                     this.setState({interested, title, description, category, state});
                 }
@@ -159,8 +180,9 @@ class Desc extends Component {
     onPageMove = (newPage) => {
         const {currentPage} = this.state;
         if(currentPage !== newPage) {
+            this.setState({waitInterested: true});
             this.fetchPage(newPage);
-            this.setState({currentPage:newPage});
+            // this.setState({currentPage:newPage});
         }
     };
 
@@ -181,6 +203,7 @@ class Desc extends Component {
 
     deleteIdea = () => {
         const{id} = this.props.match.params;
+        this.setState({wait:true});
         axios({
                 method: 'POST',
                 url: REMOVE,
@@ -193,7 +216,9 @@ class Desc extends Component {
             ).then((response) => {
                 if(response.data['status']) {
                     if(response.data['status']){
-                        this.props.history.push(ROUTES.LISTIDEA+ '/delete');
+                        setTimeout(() => {
+                            this.props.history.push(ROUTES.LISTIDEA+ '/delete');
+                        }, 1000)
                     }else{
                         console.log('Error en el servidor');
                     }
@@ -210,7 +235,8 @@ class Desc extends Component {
 
     render() {
         //Still not managing if idea does not exist, although that shouldn't happen
-        const {title, description, category, state, interested, financists, deleteIdea, initPage, perTag, currentPage, max} = this.state;
+        const {title, description, category, state, interested, financists,
+            deleteIdea, initPage, perTag, currentPage, max, wait, waitInterested} = this.state;
         let users = financists.map((i) => {
             return <tr key={i.uid}>
                 <td>{i.firstname} {i.lastname}</td>
@@ -221,93 +247,113 @@ class Desc extends Component {
         console.log(users);
         return (
             <React.Fragment>
-                    <Row className={"justify-content-end"}>
-                        <Col sm={4}>
-                            <ButtonToolbar>
-                                <ButtonGroup>
-                                    <Button color={"info"} onClick={this.editIdea}>Editar</Button>
-                                    <Button color={"info"} onClick={this.toggleDelete}>Eliminar</Button>
-                                    <Modal isOpen={deleteIdea} toggle={this.toggleDelete}>
-                                        <ModalHeader toggle={this.toggleDelete}>Desea Eliminar?</ModalHeader>
-                                        <ModalBody>
-                                            <Container>
-                                                <Row>
-                                                    <Col xs="6">
-                                                        Title: {title}
-                                                    </Col>
-                                                    <Col xs="6">
-                                                        Category: {category}
-                                                    </Col>
-                                                </Row>
-                                            </Container>
-                                        </ModalBody>
-                                        <ModalFooter>
-                                            <Button color="primary" onClick={this.deleteIdea}>Eliminar</Button>{' '}
-                                            <Button color="secondary" onClick={this.toggleDelete}>Cancelar</Button>
-                                        </ModalFooter>
-                                    </Modal>
-                                    <Button color={"info"} onClick={() => this.route(ROUTES.OVERVIEW)}>Cuenta</Button>
-                                    <Button color={"info"} onClick={() => this.route(ROUTES.HOME)}>Principal</Button>
-                                </ButtonGroup>
-                            </ButtonToolbar>
-                        </Col>
-                    </Row>
-                    <Row className={"mb-3"}>
-                        <Col sm="12" md={{size: 6, offset: 2}}>.
-                            <h1>Title:  {title}</h1>
-                        </Col>
-                    </Row>
-                    <Row  >
-                        <Col sm="2"  md={{size: 2, offset: 2}}>
-                            <h4>Descripcion</h4>
-                            <p>{description}</p>
-                        </Col>
-                        <Col sm="2" md={{size: 2, offset: 2}}>
-                            <div>
-                                <h4>Categoria</h4><p>{category}</p>
-                            </div>
-                        </Col>
-                    </Row>
-                    <Row>
-                        <Col sm="2" md={{size: 2, offset: 2}}>
-                            <h4>Estado</h4>
-                            <p>{state}</p>
-                        </Col>
-                        <Col sm="2" md={{size: 3, offset: 2}}>
-                            <div>
-                                <h4>Cantidad de Interesados</h4>
-                                <p>{interested}</p>
-                            </div>
-                        </Col>
-                    </Row>
-                    <Row>
-                        <Col sm="12" md={{size: 12, offset: 2}}>
-                            <h4>Interesados</h4>
-                        </Col>
-                    </Row>
-                    <Row>
-                        <Col sm="8" md={{size: 8, offset: 2}}>
-                        <Table hover>
-                            <tbody>
-                            {(users.length)?  <React.Fragment>{users}</React.Fragment>: <tr><td>No hay interesados</td></tr>  }
-                            </tbody>
-                        </Table>
-                        </Col>
-                    </Row>
-                    <Row >
-                        <Col sm="4" md={{size: 4, offset: 2}}>
-                            <Button color={"danger"} onClick={() => this.route(ROUTES.LISTIDEA)}>Cancelar</Button>
-                        </Col>
-                        <Col sm="4" md={{size: 4, offset: 2}}>
+                {
+                    (wait)?
+                        <Spinners/>
+                    :
+                        <React.Fragment>
+                            <Row className={"justify-content-end"}>
+                                <Col sm={4}>
+                                    <ButtonToolbar>
+                                        <ButtonGroup>
+                                            <Button color={"info"} onClick={this.editIdea}>Editar</Button>
+                                            <Button color={"info"} onClick={this.toggleDelete}>Eliminar</Button>
+                                            <Modal isOpen={deleteIdea} toggle={this.toggleDelete}>
+                                                <ModalHeader toggle={this.toggleDelete}>Desea Eliminar?</ModalHeader>
+                                                <ModalBody>
+                                                    <Container>
+                                                        <Row>
+                                                            <Col xs="6">
+                                                                Title: {title}
+                                                            </Col>
+                                                            <Col xs="6">
+                                                                Category: {category}
+                                                            </Col>
+                                                        </Row>
+                                                    </Container>
+                                                </ModalBody>
+                                                <ModalFooter>
+                                                    <Button color="primary" onClick={this.deleteIdea}>Eliminar</Button>{' '}
+                                                    <Button color="secondary" onClick={this.toggleDelete}>Cancelar</Button>
+                                                </ModalFooter>
+                                            </Modal>
+                                            <Button color={"info"} onClick={() => this.route(ROUTES.OVERVIEW)}>Cuenta</Button>
+                                            <Button color={"info"} onClick={() => this.route(ROUTES.HOME)}>Principal</Button>
+                                        </ButtonGroup>
+                                    </ButtonToolbar>
+                                </Col>
+                            </Row>
+                            <Row className={"mb-3"}>
+                                <Col sm="12" md={{size: 6, offset: 2}}>.
+                                    <h1>Title:  {title}</h1>
+                                </Col>
+                            </Row>
+                            <Row  >
+                                <Col sm="2"  md={{size: 2, offset: 2}}>
+                                    <h4>Descripcion</h4>
+                                    <p>{description}</p>
+                                </Col>
+                                <Col sm="2" md={{size: 2, offset: 2}}>
+                                    <div>
+                                        <h4>Categoria</h4><p>{category}</p>
+                                    </div>
+                                </Col>
+                            </Row>
+                            <Row>
+                                <Col sm="2" md={{size: 2, offset: 2}}>
+                                    <h4>Estado</h4>
+                                    <p>{state}</p>
+                                </Col>
+                                <Col sm="2" md={{size: 3, offset: 2}}>
+                                    <div>
+                                        <h4>Cantidad de Interesados</h4>
+                                        <p>{interested}</p>
+                                    </div>
+                                </Col>
+                            </Row>
+                            <Row>
+                                <Col sm="12" md={{size: 12, offset: 2}}>
+                                    <h4>Interesados</h4>
+                                </Col>
+                            </Row>
+                            <Row>
+                                <Col sm="8" md={{size: 8, offset: 2}}>
+                                    <Table hover={!waitInterested && interested}>
+                                        <tbody>
+                                        <React.Fragment>
+                                            {
+                                                (waitInterested)?
+                                                    <tr>
+                                                        <td>
+                                                            <Spinners noRows/>
+                                                        </td>
+                                                    </tr>
+                                                    :
+                                                    <React.Fragment>
+                                                    { (interested)?  <React.Fragment>{users}</React.Fragment>: <tr><td>No hay interesados</td></tr>  }
+                                                    </React.Fragment>
+                                            }
+                                        </React.Fragment>
+                                        </tbody>
+                                    </Table>
+                                </Col>
+                            </Row>
+                            <Row >
+                                <Col sm="4" md={{size: 4, offset: 2}}>
+                                    <Button color={"danger"} onClick={() => this.route(ROUTES.LISTIDEA)}>Regresar a la lista</Button>
+                                </Col>
+                                <Col sm="4" md={{size: 4, offset: 2}}>
 
-                            {(interested)?
-                                <Paginator initPage={initPage} perTag = {perTag} currentPage = {currentPage} max ={max} onArrowMove={this.onArrowMove}
-                                           onPageMove = {this.onPageMove}/>
-                                           :
-                                null
-                            }
-                        </Col>
-                    </Row>
+                                    {(interested && !waitInterested)?
+                                        <Paginator initPage={initPage} perTag = {perTag} currentPage = {currentPage} max ={max} onArrowMove={this.onArrowMove}
+                                                   onPageMove = {this.onPageMove}/>
+                                        :
+                                        null
+                                    }
+                                </Col>
+                            </Row>
+                        </React.Fragment>
+                }
             </React.Fragment>
         );
     }

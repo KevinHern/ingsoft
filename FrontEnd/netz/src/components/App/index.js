@@ -27,7 +27,7 @@ import VideoChat from '../VideoChat';
 const App = () => {
     return (
         <Container fluid className="min-vw-100 min-vh-100">
-            <Router forceRefresh={true}>
+            <Router>
                         <Header/>
                             <Switch>
                                 <Route exact path={ROUTES.LANDING} component={Landing} />

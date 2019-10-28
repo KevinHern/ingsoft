@@ -10,6 +10,7 @@ import axios from 'axios';
 import {withRouter} from 'react-router-dom';
 import withAuthentication from '../Session/withAuthentication.js'
 import * as ROUTES from "../../Constants/routes";
+import Spinners from "../Wait";
 
 
 class CreateIdeaCom extends Component {
@@ -23,7 +24,8 @@ class CreateIdeaCom extends Component {
             cat: 0,
             state: 0,
             states: [],
-            iid: null
+            iid: null,
+            wait: false
         };
         this.onSubmit = this.onSubmit.bind(this);
         this.create = this.create.bind(this);
@@ -45,7 +47,7 @@ class CreateIdeaCom extends Component {
                 const cat = cats[0].id;
                 this.setState({cats, cat})
             }else{
-                console.log("error")
+                console.log("error en las categorias")
             }
         });
         axios({
@@ -103,6 +105,7 @@ class CreateIdeaCom extends Component {
         try{
             const {fireBase} = this.props;
             const { title, description, cat, state} = this.state;
+            this.setState({wait:true})
             const token =  await fireBase.token();
             const formData = new FormData;
             formData.append('option', 'idea');
@@ -118,12 +121,21 @@ class CreateIdeaCom extends Component {
                 headers: { 'Content-Type': 'multipart/form-data'},
             }).then(response => {
                 if(response.data['status']){
-                    this.props.history.push('/listidea/new');
+                    setTimeout(()=> {
+                        this.setState({wait:false});
+                        this.props.history.push('/listidea/new');
+                    }, 500);
+
                 }else{
+                    // setTimeout(()=> {
+                    //     this.setState({wait:false});
+                    //     this.props.history.push('/listidea/new');
+                    // }, 1500);
                     console.log('error en el servidor');
                 }
             })
         }catch(error) {
+            this.setState({wait:false, error: error.message});
             console.log(error);
         }
     }
@@ -168,6 +180,7 @@ class CreateIdeaCom extends Component {
         //If one fails we will not be able to notice
         e.preventDefault();
         const {cat, state, title, description, iid} = this.state;
+        this.setState({wait:true})
         axios(
             {
                 url: UPDATE,
@@ -184,8 +197,12 @@ class CreateIdeaCom extends Component {
             }
         ).then((response) => {
             if(response.data['status']){
-                this.props.history.push('/listidea/modify');
+                setTimeout(()=> {
+                    this.setState({wait:false});
+                    this.props.history.push('/listidea/modify');
+                }, 500);
             }else{
+                this.setState({wait:false});
                 console.log(response.data.message);
                 console.log("Update failed");
             }
@@ -208,7 +225,7 @@ class CreateIdeaCom extends Component {
     };
 
     render() {
-        const {cats, states, iid, title, description, state, cat}  = this.state;
+        const {cats, states, iid, title, description, state, cat, wait, error}  = this.state;
 
         const catsOp = cats.map((cat) => {
             return <option key = {cat.name} value = {cat.id} >{cat.name}</option>
@@ -228,62 +245,72 @@ class CreateIdeaCom extends Component {
                             </ButtonToolbar>
                         </Col>
                     </Row>
-                    <Row>
-                        <Col sm="12" md={{size: 6, offset: 3}}>
-                            {
-                                (iid)?
-                                    <h1>Modificar Idea</h1>
-                                    :
-                                    <h1>Crear Idea</h1>
+                {  (wait)?
+                    <Spinners/>
+                    :
+                    <React.Fragment>
+                            <Row>
+                                <Col sm="12" md={{size: 6, offset: 3}}>
+                                    {
+                                        (iid) ?
+                                            <h1>Modificar Idea</h1>
+                                            :
+                                            <h1>Crear Idea</h1>
 
-                            }
-                        </Col>
-                    </Row>
-                    <Row>
-                        <Col sm="12" md={{size: 6, offset: 3}}>.
-                            <Form onSubmit={this.onSubmit}>
-                                <FormGroup row>
-                                    <Label sm={2} className={"pr-0"}>
-                                        Titulo
-                                    </Label>
-                                    <Col sm={8}>
-                                        <Input name="title" type={"text"} id="name"   defaultValue = {title} onChange = {this.changeState} required/>
-                                    </Col>
-                                </FormGroup>
-                                <FormGroup row>
-                                    <Label sm={2}>
-                                        Descripción
-                                    </Label>
-                                    <Col sm={8}>
-                                        <Input name="description" type={"textarea"} id="description"  value = {description}  onChange = {this.changeState} required/>
-                                    </Col>
-                                </FormGroup>
-                                <FormGroup row>
-                                    <Label sm={2}>
-                                        Estado
-                                    </Label>
-                                    <Col sm={8}>
-                                        <Input type="select" name="state" id="stateSelect" value = {state} onChange = {this.changeState}  required>
-                                            {stateOp}
-                                        </Input>
-                                    </Col>
-                                </FormGroup>
-                                <FormGroup row>
-                                    <Label sm={2}>
-                                        Categoría
-                                    </Label>
-                                    <Col sm={8}>
-                                        <Input type="select" name="cat" id="catSelect" value = {cat} onChange = {this.changeState} required>
-                                            {catsOp}
-                                        </Input>
-                                    </Col>
-                                </FormGroup>
-                                <FormGroup row className={"justify-content-md-center mt-3"}>
-                                    <Button color="primary">{(iid)?  'Modificar': "Crear"}</Button>
-                                </FormGroup>
-                            </Form>
-                        </Col>
-                    </Row>
+                                    }
+                                </Col>
+                            </Row>
+                            <Row>
+                                <Col sm="12" md={{size: 6, offset: 3}}>.
+                                    <Form onSubmit={this.onSubmit}>
+                                        <FormGroup row>
+                                            <Label sm={2} className={"pr-0"}>
+                                                Titulo
+                                            </Label>
+                                            <Col sm={8}>
+                                                <Input name="title" type={"text"} id="name" defaultValue={title}
+                                                       onChange={this.changeState} required/>
+                                            </Col>
+                                        </FormGroup>
+                                        <FormGroup row>
+                                            <Label sm={2}>
+                                                Descripción
+                                            </Label>
+                                            <Col sm={8}>
+                                                <Input name="description" type={"textarea"} id="description"
+                                                       value={description} onChange={this.changeState} required/>
+                                            </Col>
+                                        </FormGroup>
+                                        <FormGroup row>
+                                            <Label sm={2}>
+                                                Estado
+                                            </Label>
+                                            <Col sm={8}>
+                                                <Input type="select" name="state" id="stateSelect" value={state}
+                                                       onChange={this.changeState} required>
+                                                    {stateOp}
+                                                </Input>
+                                            </Col>
+                                        </FormGroup>
+                                        <FormGroup row>
+                                            <Label sm={2}>
+                                                Categoría
+                                            </Label>
+                                            <Col sm={8}>
+                                                <Input type="select" name="cat" id="catSelect" value={cat}
+                                                       onChange={this.changeState} required>
+                                                    {catsOp}
+                                                </Input>
+                                            </Col>
+                                        </FormGroup>
+                                        <FormGroup row className={"justify-content-md-center mt-3"}>
+                                            <Button color="primary">{(iid) ? 'Modificar' : "Crear"}</Button>
+                                        </FormGroup>
+                                    </Form>
+                                </Col>
+                            </Row>
+                    </React.Fragment>
+                }
             </React.Fragment>
         );
     }

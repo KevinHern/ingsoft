@@ -7,6 +7,7 @@ import axios from 'axios';
 import {FINANCISTEND, REMOVE} from "../../Constants/Endpoint";
 import Paginator from "../Paginator";
 import IdeaList from "./IdeaList";
+import Spinners from "../Wait";
 
 class BookIdeas extends Component {
 
@@ -19,11 +20,11 @@ class BookIdeas extends Component {
             category: -1,
             fetched: false,
             error: undefined,
-            removeBook: [],
             newBook: [],
             perTag: 3,
             maxpage: 0,
             initPage: 1,
+            wait: false
         };
     }
 
@@ -50,7 +51,8 @@ class BookIdeas extends Component {
                         const ideas = [];
                         console.table(response.data);
                         Object.values(response.data.ideas).map(idea => ideas.push(idea));
-                        this.setState({fetched:true, ideas, uid, showPaginator: true, maxpage: response.data.maxpage})
+                        this.setState({fetched:true, ideas, uid, showPaginator: true, maxpage: response.data.maxpage,
+                        cantIdeas: response.data.cantIdeas})
                     }else{
                         this.setState({fetched:true, error: response.data.message})
                     }
@@ -104,6 +106,7 @@ class BookIdeas extends Component {
     fetchIdeas = (currentPage, search=false) => {
         const{category, rows} = this.state;
         const{fireBase} = this.props;
+        this.setState({wait: true});
         fireBase.token().then((uid) => {
             axios({
                 url: FINANCISTEND,
@@ -121,14 +124,16 @@ class BookIdeas extends Component {
                 console.log(response.data);
                 if (response.data['status']) {
                     const ideas = [];
+                    const{cantIdeas} = response.data;
+                    console.log(`${cantIdeas} cantidad`);
                     console.table(response.data);
                     Object.values(response.data.ideas).map(idea => ideas.push(idea));
-                    this.setState({ideas, error: null, maxpage:response.data.maxpage, showPaginator: true});
+                    this.setState({ideas, error: null, maxpage:response.data.maxpage, showPaginator: true, cantIdeas, wait:false});
                     if(search){
                         this.setState({initPage:1, currentPage:1})
                     }
                 } else {
-                    this.setState({error: response.data['message'], showPaginator: false});
+                    this.setState({error: response.data['message'], showPaginator: false, wait:false});
                 }
             });
             this.setState({uid});
@@ -139,38 +144,28 @@ class BookIdeas extends Component {
         this.setState({[e.target.name] : e.target.value});
     };
 
-    saveChanges = () => {
-        console.log("I was called");
-        const{uid, removeBook} = this.state;
-        // const prueba = [1,2,3, 7, 8];
 
-        const ideasRemove = removeBook.map((idea) => {
-            return {iid: idea};
-        });
-        const remove = {
-            option: 'book',
-            finid: uid,
-            ideas: ideasRemove
-        };
-        if(removeBook.length){
-            axios(
-                {
-                    url: REMOVE,
-                    method: 'post',
-                    data: remove,
-                    headers: {'Content-Type': 'application/json'}
-                }).then((response) => {
-                console.log(response.data)
-            });
+
+
+    updateMaxPage = () => {
+        let{cantIdeas, maxpage, rows, currentPage} = this.state;
+        console.log(cantIdeas);
+        let maxPage = maxpage;
+        if(((cantIdeas-1) % rows) === 0) {
+            maxPage = Math.floor((cantIdeas-1)/rows);
+        }else{
+            maxPage = Math.floor((cantIdeas-1)/rows) +1;
         }
+
+        if(currentPage > maxPage) {
+           currentPage = currentPage -1;
+        }
+        return [maxPage, cantIdeas-1, currentPage];
     };
 
-    // componentWillUnmount() {
-    //     this.saveChanges();
-    // };
 
-    breakHeart = (iid, add_remove) => {
-        let{removeBook, ideas, uid} = this.state;
+    breakStar = (iid, add_remove) => {
+        let{ideas, uid} = this.state;
         ideas = ideas.filter((idea) => idea.iid !== iid);
         const ideasRemove = [{iid}];
         const remove = {
@@ -178,6 +173,7 @@ class BookIdeas extends Component {
             finid: uid,
             ideas: ideasRemove
         };
+        const [maxpage, cantIdeas, currentPage] = this.updateMaxPage();
         axios(
             {
                 url: REMOVE,
@@ -186,20 +182,27 @@ class BookIdeas extends Component {
                 headers: {'Content-Type': 'application/json'}
             }).then((response) => {
             console.log(response.data)
+            if(currentPage !== this.state.currentPage){
+                this.fetchIdeas(currentPage);
+            }
+
         });
-       // this.saveChanges();
-        this.setState({removeBook, ideas});
+        this.setState({ideas, maxpage, cantIdeas});
+
     };
 
 
     render() {
-        const{ideas, fetched, newBook, removeBook, error, initPage, currentPage, perTag, maxpage} = this.state;
+        const{ideas, fetched, newBook, removeBook, error, initPage, currentPage,
+            perTag, maxpage, wait,
+        category, rows} = this.state;
         let{showPaginator} = this.state;
         const{catsOp, route} = this.props;
-        let ideasDesc = <div>Loading...</div>;
+        console.log(`${maxpage} Maxpage`);
+        let ideasDesc = <Spinners/>;
         if(fetched && !error){
-            ideasDesc = ideas.map(idea => <Idea idea={idea} bookMarked = {true} key={idea.title+idea.uid} toggleHeart= {this.breakHeart}
-                                                newBook = {newBook} removeBook = {removeBook}/>);
+            ideasDesc = ideas.map(idea => <Idea idea={idea} bookMarked = {true} key={idea.title+idea.uid} toggleStar= {this.breakStar}
+                                                newBook = {newBook}/>);
         }
         if(!ideasDesc.length){
             showPaginator = false;
@@ -219,14 +222,14 @@ class BookIdeas extends Component {
                     </Col>
                 </Row>
                 <IdeaList catsOp = {catsOp}   onChange={this.onChange} ideasDesc = {ideasDesc} error = {error}
-                          fetchIdeas = {this.fetchIdeas}/>
-                {
-                    (showPaginator)?
-                    <Row className={"justify-content-md-center mt-5"}>
-                        <Paginator initPage={initPage} perTag = {perTag} currentPage = {currentPage} max ={maxpage} onArrowMove={this.onArrowMove}
-                                   onPageMove = {this.onPageMove}/>
-                    </Row>:null
-                }
+                                  fetchIdeas = {this.fetchIdeas} category={category} rows={rows} wait={wait}/>
+                            {
+                                (showPaginator)?
+                                <Row className={"justify-content-md-center mt-5"}>
+                                <Paginator initPage={initPage} perTag = {perTag} currentPage = {currentPage} max ={maxpage} onArrowMove={this.onArrowMove}
+                                onPageMove = {this.onPageMove}/>
+                                </Row>:null
+                            }
             </React.Fragment>
         );
     }
