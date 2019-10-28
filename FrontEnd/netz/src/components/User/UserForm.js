@@ -1,7 +1,7 @@
 import Form from "reactstrap/es/Form";
 import FormGroup from "reactstrap/es/FormGroup";
 import Label from "reactstrap/es/Label";
-import {Button, Col, CustomInput, Media, Row, Alert} from "reactstrap";
+import {Button, Col, CustomInput, Media, Row, Alert, FormFeedback} from "reactstrap";
 import Input from "reactstrap/es/Input";
 import React, {Component} from "react";
 import {withRouter} from "react-router-dom";
@@ -27,6 +27,7 @@ class OrganForm extends Component {
             role: 0,
             error:false,
             phone: "",
+            invalidRole: false
         };
         this._handleImageChange= this._handleImageChange.bind(this);
         this.modifyRole = this.modifyRole.bind(this);
@@ -55,6 +56,11 @@ class OrganForm extends Component {
 
    async handleSubmit (e) {
         e.preventDefault();
+        const {role} = this.state;
+        if(!role) {
+            this.setState({invalidRole:true});
+            return;
+        }
         const data =  {
             ...this.state,
             option:'org'
@@ -65,6 +71,7 @@ class OrganForm extends Component {
            if(!(key === "imagePreviewUrl")) formData.append(key, value);
        }
         try{
+            this.props.toggleWait();
             const promisedToken =  await this.props.token(); //Wait for this promise to resolve
             const[axiosRequest] = await Promise.all([this.props.serverData(formData, promisedToken)]);
             // const [axiosRequest, fireStoreRequest] = await Promise.all([this.props.serverData(formData, promisedToken),
@@ -75,15 +82,18 @@ class OrganForm extends Component {
             // });
             if(response['status'] === 1){
                 // console.log('success');
-                this.props.history.push(ROUTES.HOME);
+                setTimeout(() => {
+                    this.props.history.push(ROUTES.HOME);
+                }, 750);
             }else {
                 console.log(response);
-                this.setState({error:"Error en el servidor"});
+                this.props.errorStore("Error en el servidor");
+                // this.setState({error:"Error en el servidor"});
                 // console.log('failure');
             }
         }catch(error){
             console.log(error);
-            this.setState({error:error.message});
+            this.props.errorStore(error.message);
         }
     };
 
@@ -108,7 +118,7 @@ class OrganForm extends Component {
     };
 
     render() {
-        const {imagePreviewUrl} = this.state;
+        const {imagePreviewUrl, invalidRole} = this.state;
         const {error} = this.state;
         return (
             <React.Fragment>
@@ -147,15 +157,14 @@ class OrganForm extends Component {
                     <FormGroup row required className={"justify-content-md-center mt-3"}>
                         <Label sm={2} for="exampleCheckbox">Roles</Label>
                         <Col sm={5}>
-                            <CustomInput type="checkbox" id="e2" name="e2"  label="Emprendedor"  onChange = {this.onChange} key={"e2"} value={1}/>
-                            <CustomInput type="checkbox" id="f2" name="f2" label="Financista"  onChange = {this.onChange} key={"f2"} value={2}/>
+                            <Roles onChange = {this.onChange} e={"e2"} f={"f2"} invalid={invalidRole}/>
                         </Col>
                     </FormGroup>
                     <FormGroup row className={"justify-content-md-center mt-3"}>
                         <Label sm={2} for="direccion">Logo</Label>
                         <Col sm={5}>
                             <CustomInput key={'logo'} type="file" onChange={this._handleImageChange} label="Logo"
-                                         id="logo" name="logo" accept={"image/*"}/>
+                                         id="logo" name="logo" accept={"image/*"} required/>
                             <Media>
                                 <Media right>
                                     <Media id={"logoImg"} className="ml-3 w-25" object src={imagePreviewUrl}/>
@@ -164,10 +173,7 @@ class OrganForm extends Component {
                         </Col>
                     </FormGroup>
                     <FormGroup row className={"justify-content-md-center mt-3"}>
-
-                    </FormGroup>
-                    <FormGroup row className={"justify-content-md-center mt-3"}>
-                        <Button color="primary">Aceptar</Button>
+                        <Button color="primary" >Aceptar</Button>
                     </FormGroup>
                 </Form>
             </React.Fragment>
@@ -216,6 +222,7 @@ class IndForm extends Component {
             role: 0,
             error: false,
             phoneList: [""],
+            invalidRole:false
         };
         this._handleImageChange= this._handleImageChange.bind(this);
         this.modifyRole = this.modifyRole.bind(this);
@@ -253,16 +260,21 @@ class IndForm extends Component {
             ...this.state,
             option:'ind'
         };
+        if(!data['role']) {
+            this.setState({invalidRole:true});
+            return;
+        }
         const formData = new FormData;
         for (const [key, value] of Object.entries(data)){
             if(!(key === "imagePreviewUrl")) formData.append(key, value);
         }
 
-        console.log(data['role']);
-        console.log(data);
+        // console.log(data['role']);
+        // console.log(data);
 
         //When you are ready to send phones make sure you won't send empty strings or duplicate phone numbers
         try{
+            this.props.toggleWait();
             const promisedToken =  await this.props.token();
             const [axiosRequest, axiosRequestPhones] = await Promise.all(
                 [this.props.serverData(formData, promisedToken),this.storePhoneList(promisedToken)]);
@@ -277,19 +289,23 @@ class IndForm extends Component {
             if(response['status']){
                 if(phonesResponse['status']){
                     console.log('success');
-                    this.props.history.push(ROUTES.HOME);
+                    setTimeout(()=> this.props.history.push(ROUTES.HOME), 750);
                 }else{
+                    this.props.errorStore("Los telefonos no se guardaron");
                     console.log(phonesResponse);
-                    console.log('failure in phones');
+                 //   this.setState({error:"Falla al guardar los telefonos"});
+                    console.log('Falla al guardar los telefonos');
                 }
             } else {
-                this.setState({error:"Error en el servidor"});
+                this.props.errorStore("No se guardo la informacion del usuario");
+              //  this.setState({error:"Error en el servidor"});
                 console.log('failure in register');
                 console.log(response);
             }
         }catch(error){
+            this.props.errorStore(error.message);
             console.log(error);
-            this.setState({error:error.message});
+          //  this.setState({error:error.message});
         }
 
 
@@ -353,9 +369,8 @@ class IndForm extends Component {
     };
 
     render() {
-        const {imagePreviewUrl} = this.state;
-        const {error} = this.state;
-        let {phoneList} = this.state;
+        const {imagePreviewUrl, error, invalidRole} = this.state;
+        let{phoneList} = this.state;
         phoneList = phoneList.map((phone, index) => {
                 if(index === 0) {
                     return <div  key = {index}></div>;
@@ -417,8 +432,7 @@ class IndForm extends Component {
                     <Row form className={"mt-5 ml-3"}>
                         <Label sm={2} for="roles">Roles</Label>
                         <Col sm={5}>
-                            <CustomInput type="checkbox" id="e1" name="e1" label="Emprendedor" key={"e1"} value={1} onChange = {this.onChange}/>
-                            <CustomInput type="checkbox" id="f1" name="f1" label="Financista" key={"f1"}  value={2} onChange = {this.onChange}/>
+                            <Roles onChange = {this.onChange} e={"e1"} f={"f1"} invalid={invalidRole}/>
                         </Col>
                     </Row>
                     <Row form className={"mt-5 ml-3"}>
@@ -446,7 +460,7 @@ class IndForm extends Component {
                         labelSize ={2} inputSize={5} photoSize={"w-25"}/>
                     </Row>
                     <Row form className={"mt-5 ml-3"}>
-                        <FormGroup tag="fieldset">
+                        <FormGroup tag="fieldset" required>
                             <legend>Esta afiliado con una organización?</legend>
                             <FormGroup check>
                                 <Label check>
@@ -509,6 +523,22 @@ class IndForm extends Component {
     // });
     // };
 }
+
+
+
+const Roles = (props) =>{
+    return (
+        <React.Fragment>
+            <CustomInput invalid={props.invalid} type="checkbox" id={props.e} name={props.e} label="Emprendedor" key={props.e} value={1} onChange = {props.onChange}>
+                <FormFeedback>Debes escoger un role</FormFeedback>
+            </CustomInput>
+            <CustomInput invalid={props.invalid} type="checkbox" id={props.f} name={props.f} label="Financista" key={props.f}  value={2} onChange = {props.onChange}>
+                <FormFeedback>Debes escoger un role</FormFeedback>
+            </CustomInput>
+        </React.Fragment>
+    );
+};
+
 
 const Organizacion = withRouter(OrganForm);
 const Individual = withRouter(IndForm);

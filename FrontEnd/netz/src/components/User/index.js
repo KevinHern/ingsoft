@@ -20,6 +20,7 @@ import {TabContent, TabPane, Nav, NavItem, NavLink, Col, ButtonToolbar, ButtonGr
 import axios from "axios";
 import * as ROUTES from "../../Constants/routes";
 import Spinners from "../Wait";
+import GenericError from "../Wait/GenericError";
 
 class TabConfigManager extends Component {
     constructor(props) {
@@ -30,10 +31,16 @@ class TabConfigManager extends Component {
             imagePreviewUrl: '',
             roles:[],
             org:false,
+            wait:false,
+            error:false
         };
         this.token = this.token.bind(this);
         this.setRole = this.setRole.bind(this);
     }
+
+    errorStore = (error) => {
+            this.setState({wait:false, error});
+    };
 
     toggle(tab) {
         const {activeTab} = this.state;
@@ -84,45 +91,63 @@ class TabConfigManager extends Component {
     };
 
 
+    toggleWait = () => {
+        const{wait} = this.state;
+        this.setState({wait: !wait});
+    };
+
+
 
     render() {
-        const {activeTab} = this.state;
-        const {imagePreviewUrl} = this.state;
-        const {org} = this.state;
+        const {activeTab, wait, imagePreviewUrl, org, error} = this.state;
         let $imagePreview = null;
         if (imagePreviewUrl) {
             $imagePreview = (<img alt =  "empty" src={imagePreviewUrl}/>);
         }
         return (
-            <div>
-                <Nav tabs>
-                    <NavItem>
-                        <NavLink
-                            className={classnames({ active: activeTab === '1' })}
-                            onClick={() => { this.toggle('1'); }}>
-                            Individual
-                        </NavLink>
-                    </NavItem>
-                    <NavItem>
-                        <NavLink
-                            className={classnames({ active: activeTab === '2' })}
-                            onClick={() => { this.toggle('2'); }}
-                        >
-                            Organización
-                        </NavLink>
-                    </NavItem>
-                </Nav>
-                <TabContent activeTab = {activeTab}>
-                    <TabPane tabId="1">
-                        <Individual  token={this.token} setClaims = {this.setClaims} serverData={this.serverData} setRole={this.setRole} handleRadio = {this.handleRadio}
-                            org={org}
-                        />
-                    </TabPane>
-                    <TabPane tabId="2">
-                        <Organizacion   token={this.token} setClaims = {this.setClaims}  serverData={this.serverData} setRole={this.setRole} disable = {true}/>
-                    </TabPane>
-                </TabContent>
-            </div>
+            <React.Fragment>
+                {
+                    (wait)?
+                        <Spinners/>
+                     :
+                        <React.Fragment>
+                            {
+                                (error)?
+                                    <GenericError error={error}/>
+                                    :
+                                    <div>
+                                        <Nav tabs>
+                                            <NavItem>
+                                                <NavLink
+                                                    className={classnames({ active: activeTab === '1' })}
+                                                    onClick={() => { this.toggle('1'); }}>
+                                                    Individual
+                                                </NavLink>
+                                            </NavItem>
+                                            <NavItem>
+                                                <NavLink
+                                                    className={classnames({ active: activeTab === '2' })}
+                                                    onClick={() => { this.toggle('2'); }}
+                                                >
+                                                    Organización
+                                                </NavLink>
+                                            </NavItem>
+                                        </Nav>
+                                        <TabContent activeTab = {activeTab}>
+                                            <TabPane tabId="1">
+                                                <Individual errorStore={this.errorStore} toggleWait={this.toggleWait} token={this.token} setClaims = {this.setClaims} serverData={this.serverData} setRole={this.setRole} handleRadio = {this.handleRadio}
+                                                            org={org}
+                                                />
+                                            </TabPane>
+                                            <TabPane tabId="2">
+                                                <Organizacion  errorStore={this.errorStore} toggleWait={this.toggleWait} token={this.token} setClaims = {this.setClaims}  serverData={this.serverData} setRole={this.setRole} disable = {true}/>
+                                            </TabPane>
+                                        </TabContent>
+                                    </div>
+                            }
+                        </React.Fragment>
+                }
+            </React.Fragment>
         );
     }
 }
@@ -134,7 +159,7 @@ class OverViewManager extends Component {
         super(props);
         this.state = {
             fetched: false,
-            fetch
+            wait:  true
         };
     }
 
@@ -142,7 +167,7 @@ class OverViewManager extends Component {
         const {fireBase} = this.props;
         const {fetched} = this.state;
         const promise = fireBase.token();
-        if(promise){
+        if(promise && !fetched ){
             console.log(fireBase.appAuth.currentUser);
             promise.then((uid) => {
                 // console.log(response);
@@ -154,12 +179,13 @@ class OverViewManager extends Component {
                 }).then((response) => {
                     console.log(response.data);
                     if(response.data['status']){
-                        this.setState({...response.data, fetched:true})
+                        this.setState({...response.data, wait:false})
                     }else{
-                        this.setState({error: "No se pudo recolectar la informacion del usuario"})
+                        this.setState({error: "No se pudo recolectar la informacion del usuario", wait:false})
                     }
                 });
             });
+            this.setState({fetched:true});
         }
     }
 
@@ -169,7 +195,7 @@ class OverViewManager extends Component {
 
 
     render() {
-        const {fetched, userType, error} = this.state;
+        const {wait, userType, error} = this.state;
         return (
             <React.Fragment>
                 <Row>
@@ -183,13 +209,15 @@ class OverViewManager extends Component {
                     </Col>
                 </Row>
                 {
-                    (fetched)?
-                        ((userType)?
-                            <OverViewInd {... this.state} route = {this.route}/>: <OverViewOrg {... this.state} route = {this.route}/> ):
-                        (error)?
+                    (wait)?
+                        <Spinners/>
+                        :
+                        <React.Fragment>
+                        {
+
+                             (error)?
                             <React.Fragment>
                                 <Row className={"justify-content-center"}>
-
                                     <Col sm={3}>
                                         <FaExclamationTriangle color={'red'} size={350} />
                                     </Col>
@@ -199,9 +227,12 @@ class OverViewManager extends Component {
                                         {error}
                                     </Col>
                                 </Row>
-                            </React.Fragment>
-                        :
-                        <Spinners/>}
+                            </React.Fragment>:
+                                 ((userType)?
+                                    <OverViewInd {... this.state} route = {this.route}/>: <OverViewOrg {... this.state} route = {this.route}/> )
+                        }
+                        </React.Fragment>
+                }
             </React.Fragment>
         );
     }

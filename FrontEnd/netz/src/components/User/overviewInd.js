@@ -7,8 +7,8 @@ import ListGroup from "reactstrap/es/ListGroup";
 import ListGroupItem from "reactstrap/es/ListGroupItem";
 import {Password, PhoneList, Email, Role, UpdateFieldCom, StatusModify, Photo} from './Modify/';
 import NoMatch from "../NoMatch/NoMatch";
-import logo from "../../resource/logo.jpg";
 import {PHOTOEND, PROFILE} from "../../Constants/Endpoint";
+import PropTypes from 'prop-types';
 
 const route = (goTo) =>{
     this.props.history.push(goTo);
@@ -379,6 +379,21 @@ function OverviewInd(props) {
         </React.Fragment>
     );
 }
+
+
+OverviewInd.propTypes = {
+  firstname:PropTypes.string,
+    lastname:PropTypes.string,
+    nationality:PropTypes.string,
+    birthdate: PropTypes.string,
+    biography:PropTypes.string,
+    organization:PropTypes.string,
+    email:PropTypes.string,
+    role:PropTypes.string,
+    phones: PropTypes.objectOf(PropTypes.string),
+    route: PropTypes.func,
+    folderid: PropTypes.number
+};
 
 export default OverviewInd;
 

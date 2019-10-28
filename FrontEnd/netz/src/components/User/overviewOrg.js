@@ -6,6 +6,8 @@ import ListGroupItem from "reactstrap/es/ListGroupItem";
 import {Email, Password, PhoneList, Photo, Role, StatusModify, UpdateFieldCom} from "./Modify";
 import {Route, Switch, useRouteMatch} from 'react-router-dom';
 import {PHOTOEND, PROFILE} from "../../Constants/Endpoint";
+import PropTypes from 'prop-types';
+import OverviewInd from "./overviewInd";
 
 function OverviewOrg(props) {
     const {email, role, name, description, country, location, phone, route, folderid} = props;
@@ -295,5 +297,18 @@ function OverviewOrg(props) {
     );
 }
 
+OverviewOrg.propTypes = {
+    name:PropTypes.string,
+    description:PropTypes.string,
+    nationality:PropTypes.string,
+    country: PropTypes.string,
+    location:PropTypes.string,
+    organization:PropTypes.string,
+    email:PropTypes.string,
+    role:PropTypes.string,
+    phone: PropTypes.string,
+    route: PropTypes.func,
+    folderid: PropTypes.number
+};
 
 export default OverviewOrg;

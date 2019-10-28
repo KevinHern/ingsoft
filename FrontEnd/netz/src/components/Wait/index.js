@@ -4,6 +4,7 @@ import Wait from './Wait.js'
 
 import React from 'react';
 import {Row} from "reactstrap";
+import  GenericError from './GenericError';
 
 function Spinners(props) {
     const{noRows} = props;
@@ -43,3 +44,4 @@ function Spinners(props) {
 }
 
 export default Spinners;
+export {GenericError}

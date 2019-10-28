@@ -149,6 +149,7 @@ CREATE ROLE financist LOGIN password 'netzfinancist';
 GRANT CONNECT ON DATABASE "NetZ" to financist;
 GRANT SELECT, INSERT, UPDATE, DELETE ON users, individual, organization, telephone, finBook TO financist;
 GRANT SELECT ON idea, categoryidea, stateidea TO financist;
+GRANT UPDATE ON IDEA TO financist;
 
 --- Resource Business Guy ---
 CREATE ROLE resource LOGIN password 'netzresource';
