@@ -5,9 +5,12 @@ import FormGroup from "reactstrap/es/FormGroup";
 import Input from "reactstrap/es/Input";
 import Paginator from "../Paginator";
 import Spinners from "../Wait";
+import PropTypes from "prop-types";
+import Idea from './Idea';
 
 function IdeaList(props) {
     const{catsOp, onChange, ideasDesc, error, fetchIdeas, category, rows, wait} = props;
+    console.log(ideasDesc);
     return (
               <React.Fragment>
                   <Row className={"mt-5  justify-content-center"}>
@@ -44,15 +47,15 @@ function IdeaList(props) {
                           :
                           <React.Fragment>
                               {
-                                  (error)? <Row className={"mt-4 justify-content-center"}>
+                                  (error)?
+                                      <Row className={"mt-4 justify-content-center"}>
                                           <Col sm={{ size: 2}} >
                                               {error}
                                           </Col>
-                                      </Row>     :
+                                      </Row>
+                                      :
                                       <React.Fragment>
-                                          :
-                                          <div>{ideasDesc}</div>
-                                          }
+                                          {ideasDesc}
                                       </React.Fragment>
                               }
                           </React.Fragment>
@@ -69,4 +72,17 @@ function IdeaList(props) {
     );
 }
 
+IdeaList.propTypes = {
+    catsOp: PropTypes.arrayOf(PropTypes.node),
+    onChange: PropTypes.func,
+    // ideasDesc: PropTypes.oneOfType([
+    //         PropTypes.instanceOf(Spinners),
+    //         // PropTypes.arrayOf(PropTypes.objectOf(PropTypes.instanceOf(Idea))),
+    // ]),
+    error: PropTypes.oneOfType([PropTypes.bool, PropTypes.string]),
+    fetchIdeas: PropTypes.func,
+    category: PropTypes.number,
+    rows: PropTypes.number,
+    wait: PropTypes.bool
+};
 export default IdeaList;

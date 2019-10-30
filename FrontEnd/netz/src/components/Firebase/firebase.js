@@ -99,6 +99,7 @@ class Firebase {
     user = uid => this.db.collection('users').doc(uid);
     users = uid => this.db.collection('users')
 
+
     // doPasswordReset(email) {
     //     return this.appAuth.sendPasswordResetEmail(email)
     // };

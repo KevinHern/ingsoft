@@ -159,39 +159,63 @@ class OverViewManager extends Component {
         super(props);
         this.state = {
             fetched: false,
-            wait:  true
+            wait:  true,
+            source: false
         };
     }
+
+    componentDidMount() {
+        this._isMounted = true;
+    }
+
 
     componentDidUpdate(prevProps, prevState, snapshot) {
         const {fireBase} = this.props;
         const {fetched} = this.state;
         const promise = fireBase.token();
+        const CancelToken = axios.CancelToken;
+        const source = CancelToken.source();
+        console.log("source");
+        console.log(source);
         if(promise && !fetched ){
             console.log(fireBase.appAuth.currentUser);
             promise.then((uid) => {
-                // console.log(response);
                 axios({
                     method: 'POST',
                     url: GETUSER,
                     data: {uid},
-                    headers: {'Content-Type': 'application/json'}
-                }).then((response) => {
+                    headers: {'Content-Type': 'application/json'},
+
+                },{cancelToken: source.token}).then((response) => {
                     console.log(response.data);
                     if(response.data['status']){
-                        this.setState({...response.data, wait:false})
+                        if(this._isMounted) this.setState({...response.data, wait:false})
                     }else{
-                        this.setState({error: "No se pudo recolectar la informacion del usuario", wait:false})
+                        if(this._isMounted) this.setState({error: "No se pudo recolectar la informacion del usuario", wait:false})
+                    }
+                }).catch(function (thrown) {
+                    if (axios.isCancel(thrown)) {
+                        console.log('Request canceled', thrown.message);
+                    } else {
+                        // handle error
                     }
                 });
             });
-            this.setState({fetched:true});
+            this.setState({fetched:true, source});
         }
     }
 
     route = (goTo) =>{
         this.props.history.push(goTo);
     };
+
+    componentWillUnmount() {
+        console.log("Unmount");
+        const{source} = this.state;
+        console.log(source);
+        source.cancel('Operation canceled by the user.');
+        this._isMounted = false;
+    }
 
 
     render() {

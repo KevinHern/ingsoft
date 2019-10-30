@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import {Button} from "reactstrap";
+import PropTypes from 'prop-types';
 class List extends Component {
 
     constructor(props){
@@ -24,5 +25,14 @@ class List extends Component {
         </React.Fragment>)
     }
 }
+
+
+List.propTypes = {
+    ideas: PropTypes.arrayOf(PropTypes.shape({
+            iid: PropTypes.number,
+            title: PropTypes.string,
+    })),
+    showDetails: PropTypes.func
+};
 
 export default List;

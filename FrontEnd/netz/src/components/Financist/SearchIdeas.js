@@ -16,6 +16,7 @@ import BookIdeas from './BookIdeas';
 import NoMatch from "../NoMatch/NoMatch";
 import IdeaList from './IdeaList';
 import Spinners from "../Wait";
+import PropTypes from 'prop-types';
 
 class SearchIdeas extends Component {
 
@@ -307,12 +308,15 @@ class SearchIdeas extends Component {
                         </Row>
                         <IdeaList catsOp = {catsOp}   route = {this.route} onChange={this.onChange} ideasDesc = {ideasDesc} error = {error}
                                               fetchIdeas = {this.fetchIdeas} category={category} rows={rows} wait={wait}/>
-                                    {(showPaginator)?
+
+                                    {
+                                        (showPaginator)?
                                         <Row className={"justify-content-md-center mt-5"}>
                                             <Paginator initPage={initPage} perTag = {perTag} currentPage = {currentPage} max ={maxpage} onArrowMove={this.onArrowMove}
                                                        onPageMove = {this.onPageMove}/>
                                         </Row>:null
                                     }
+
                 </React.Fragment>
                 </Route>
                 <Route>
@@ -322,6 +326,11 @@ class SearchIdeas extends Component {
         );
     }
 }
+
+
+SearchIdeas.propTypes = {
+    fireBase: PropTypes.object
+};
 
 
 

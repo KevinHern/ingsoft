@@ -180,7 +180,7 @@ class CreateIdeaCom extends Component {
         //If one fails we will not be able to notice
         e.preventDefault();
         const {cat, state, title, description, iid} = this.state;
-        this.setState({wait:true})
+        this.setState({wait:true});
         axios(
             {
                 url: UPDATE,

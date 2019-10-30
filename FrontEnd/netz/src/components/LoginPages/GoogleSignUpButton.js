@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import {withRouter} from 'react-router-dom';
 import {withFirebase} from "../Firebase";
 import {Button} from  'reactstrap';
-
+import PropTypes from 'prop-types';
 
 class GoogleSignUpButton extends Component {
 
@@ -36,7 +36,8 @@ class GoogleSignUpButton extends Component {
 
 }
 
-
-
-
+GoogleSignUpButton.propTypes = {
+  message: PropTypes.string,
+  fireBase: PropTypes.object
+};
  export default withFirebase(withRouter(GoogleSignUpButton));

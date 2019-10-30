@@ -7,7 +7,7 @@ import {Email, Password, PhoneList, Photo, Role, StatusModify, UpdateFieldCom} f
 import {Route, Switch, useRouteMatch} from 'react-router-dom';
 import {PHOTOEND, PROFILE} from "../../Constants/Endpoint";
 import PropTypes from 'prop-types';
-import OverviewInd from "./overviewInd";
+
 
 function OverviewOrg(props) {
     const {email, role, name, description, country, location, phone, route, folderid} = props;

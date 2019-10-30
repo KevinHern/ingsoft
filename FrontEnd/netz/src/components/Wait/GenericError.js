@@ -1,6 +1,8 @@
 import React from 'react';
 import {Col, Row} from "reactstrap";
 import {FaExclamationTriangle} from "react-icons/fa";
+import PropTypes from 'prop-types';
+
 
 function GenericError(props) {
     return (
@@ -19,4 +21,7 @@ function GenericError(props) {
     );
 }
 
+GenericError.propTypes = {
+    error:PropTypes.string
+};
 export default GenericError;

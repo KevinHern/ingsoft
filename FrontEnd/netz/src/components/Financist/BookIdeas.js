@@ -8,6 +8,8 @@ import {FINANCISTEND, REMOVE} from "../../Constants/Endpoint";
 import Paginator from "../Paginator";
 import IdeaList from "./IdeaList";
 import Spinners from "../Wait";
+import PropTypes from 'prop-types';
+
 
 class BookIdeas extends Component {
 
@@ -19,7 +21,7 @@ class BookIdeas extends Component {
             currentPage: 1,
             category: -1,
             fetched: false,
-            error: undefined,
+            error: true,
             newBook: [],
             perTag: 3,
             maxpage: 0,
@@ -51,13 +53,14 @@ class BookIdeas extends Component {
                         const ideas = [];
                         console.table(response.data);
                         Object.values(response.data.ideas).map(idea => ideas.push(idea));
-                        this.setState({fetched:true, ideas, uid, showPaginator: true, maxpage: response.data.maxpage,
-                        cantIdeas: response.data.cantIdeas})
+                        this.setState({ideas, uid, showPaginator: true, maxpage: response.data.maxpage,
+                        cantIdeas: response.data.cantIdeas, error:null})
                     }else{
-                        this.setState({fetched:true, error: response.data.message})
+                        this.setState({error: response.data.message})
                     }
                 });
             });
+            this.setState({fetched:true});
         }
     }
 
@@ -133,7 +136,8 @@ class BookIdeas extends Component {
                         this.setState({initPage:1, currentPage:1})
                     }
                 } else {
-                    this.setState({error: response.data['message'], showPaginator: false, wait:false});
+                    console.log(response.data.message);
+                    this.setState({error: response.data.message, showPaginator: false, wait:false});
                 }
             });
             this.setState({uid});
@@ -192,6 +196,13 @@ class BookIdeas extends Component {
     };
 
 
+    addChatRequests = (uid, iid, title) => {
+        const{fireBase} = this.props;
+
+        // fireBase.currentUser.uid;
+    };
+
+
     render() {
         const{ideas, fetched, newBook, removeBook, error, initPage, currentPage,
             perTag, maxpage, wait,
@@ -200,10 +211,12 @@ class BookIdeas extends Component {
         const{catsOp, route} = this.props;
         console.log(`${maxpage} Maxpage`);
         let ideasDesc = <Spinners/>;
-        if(fetched && !error){
-            ideasDesc = ideas.map(idea => <Idea idea={idea} bookMarked = {true} key={idea.title+idea.uid} toggleStar= {this.breakStar}
-                                                newBook = {newBook}/>);
+        console.log(error);
+        if(fetched && ideas && !wait){
+            ideasDesc = ideas.map(idea => <Idea idea={idea} bookMarked ={true} key={idea.title+idea.uid} toggleStar= {this.breakStar}
+                                                newBook = {newBook} chat={true}/>);
         }
+        console.log(ideasDesc);
         if(!ideasDesc.length){
             showPaginator = false;
         }
@@ -234,5 +247,15 @@ class BookIdeas extends Component {
         );
     }
 }
+
+//
+BookIdeas.propTypes = {
+  catsOp: PropTypes.arrayOf(PropTypes.node),
+  route: PropTypes.func.isRequired,
+  fireBase: PropTypes.object
+};
+
+
+
 
 export default withAuthentication(BookIdeas);
