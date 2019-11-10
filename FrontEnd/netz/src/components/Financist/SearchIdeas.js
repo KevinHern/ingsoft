@@ -15,6 +15,8 @@ import {BOOKMARK, HOME, OVERVIEW, FINANCIST} from "../../Constants/routes";
 import BookIdeas from './BookIdeas';
 import NoMatch from "../NoMatch/NoMatch";
 import IdeaList from './IdeaList';
+import Spinners from "../Wait";
+import PropTypes from 'prop-types';
 
 class SearchIdeas extends Component {
 
@@ -34,7 +36,8 @@ class SearchIdeas extends Component {
             perTag: 3,
             maxpage: 0,
             initPage: 1,
-            showPaginator: false
+            showPaginator: false,
+            wait :false
         };
     }
 
@@ -135,36 +138,38 @@ class SearchIdeas extends Component {
                 });
     }
 
-    toggleHeart = (iid, add_remove) => {
-        let{newBook, removeBook, uid} = this.state;
+    toggleStar = (iid, add_remove) => {
+        let{newBook, uid} = this.state;
         if(add_remove) {
-            if(removeBook.includes(iid)){
-               removeBook = removeBook.filter((i) => i !== iid );
-            }else{
-                newBook.push(iid);
-            }
+            // if(removeBook.includes(iid)){
+            //    removeBook = removeBook.filter((i) => i !== iid );
+            // }else{
+            //     newBook.push(iid);
+            // }
             //Do you want to use a list? comment this out
+            newBook.push(iid);
             this.addBook({ option: 'addBook',
                         uid,
                         ideas : [{iid}]})
         }else{
-            if(newBook.includes(iid)){
-                newBook = newBook.filter((i) => i !== iid );
-            }else{
-                removeBook.push(iid);
-            }
+            // if(newBook.includes(iid)){
+            //     newBook = newBook.filter((i) => i !== iid );
+            // }else{
+            //     removeBook.push(iid);
+            // }
             //Do you want to use a list? comment this out
+            newBook = newBook.filter((idea) => idea !== iid);
             this.deleteBook({ option: 'book',
                 finid: uid,
                 ideas : [{iid}]})
         }
-        this.setState({newBook, removeBook});
+        this.setState({newBook});
     };
 
     route = (route) => {
       const{history} = this.props;
+      this.setState({showPaginator: false, ideas: []});
       history.push(route);
-      this.saveChanges();
     };
 
     onArrowMove  = (e, move) => {
@@ -214,6 +219,7 @@ class SearchIdeas extends Component {
     fetchIdeas = (currentPage, search=false) => {
         const{category, rows} = this.state;
         const{fireBase} = this.props;
+        this.setState({wait:true});
         fireBase.token().then((uid) => {
             axios({
                 url: FINANCISTEND,
@@ -231,15 +237,25 @@ class SearchIdeas extends Component {
                 console.log(response.data);
                 if (response.data['status']) {
                     const ideas = [];
-                    console.table(response.data);
-                    console.table(response.config)
+                    // console.table(response.data);
+                    // console.table(response.config);
                     Object.values(response.data.ideas).map(idea => ideas.push(idea));
-                    this.setState({ideas, error: null, maxpage:response.data.maxpage, showPaginator: true, newBook : [], removeBook: []});
+                    this.setState({ideas, error: null, maxpage:response.data.maxpage,
+                        showPaginator: true, newBook : [], removeBook: [],
+                         wait:false});
                     if(search){
-                        this.setState({initPage:1, currentPage:1, newBook : [], removeBook: []})
+                        this.setState({initPage:1, currentPage:1, newBook : [], removeBook: [],
+                        wait:false
+                        })
                     }
                 } else {
-                    this.setState({error: response.data['message'], showPaginator: false, newBook : [], removeBook: []});
+                    setTimeout(() => {
+                        this.setState({error: response.data['message'], showPaginator: false,
+                            newBook : [], removeBook: [], wait:false
+                        });
+                    }, 1000
+                    )
+
                 }
             });
             console.log(uid);
@@ -253,16 +269,22 @@ class SearchIdeas extends Component {
 
 
     render() {
-        const{cats, error, ideas, newBook, removeBook, initPage, currentPage, maxpage, perTag, showPaginator} = this.state;
-      //  console.log(maxpage);
+        const{cats, error, ideas, newBook, removeBook, initPage,
+            currentPage, maxpage, perTag, showPaginator,
+            category, rows, wait
+        } = this.state;
+        console.log(maxpage);
         const catsOp = cats.map((cat) => {
             return <option key = {cat.name} value = {cat.id} >{cat.name}</option>
         });
 
-        console.log(ideas);
         catsOp.unshift(<option key = {'Todas'} value = {-1} >Todas</option>);
-        const ideasDesc = ideas.map(idea => <Idea idea={idea} bookMarked = {false}  key={idea.title+idea.uid} toggleHeart= {this.toggleHeart}
-          newBook = {newBook} removeBook = {removeBook}/>);
+        let ideasDesc;
+        if(ideas.length){
+            ideasDesc = ideas.map(idea => <Idea idea={idea} bookMarked = {false}  key={idea.title+idea.uid} toggleStar= {this.toggleStar}
+                                                      newBook = {newBook} removeBook = {removeBook}/>);
+        }
+
         return (
             <Switch>
                     <Route path={`${BOOKMARK}`} render = {(props) =>
@@ -277,7 +299,6 @@ class SearchIdeas extends Component {
                                 <ButtonToolbar className={"justify-content-end"}>
                                     <ButtonGroup>
                                         <Button color={"info"} onClick={() =>{
-                                               // this.saveChanges();
                                                 this.route(BOOKMARK);
                                             }
                                         }>BookMark</Button>
@@ -285,14 +306,17 @@ class SearchIdeas extends Component {
                                 </ButtonToolbar>
                             </Col>
                         </Row>
-                   <IdeaList catsOp = {catsOp}   route = {this.route} onChange={this.onChange} ideasDesc = {ideasDesc} error = {error}
-                   fetchIdeas = {this.fetchIdeas}/>
-                   {(showPaginator)?
-                            <Row className={"justify-content-md-center mt-5"}>
-                                <Paginator initPage={initPage} perTag = {perTag} currentPage = {currentPage} max ={maxpage} onArrowMove={this.onArrowMove}
-                                           onPageMove = {this.onPageMove}/>
-                            </Row>:null
-                        }
+                        <IdeaList catsOp = {catsOp}   route = {this.route} onChange={this.onChange} ideasDesc = {ideasDesc} error = {error}
+                                              fetchIdeas = {this.fetchIdeas} category={category} rows={rows} wait={wait}/>
+
+                                    {
+                                        (showPaginator)?
+                                        <Row className={"justify-content-md-center mt-5"}>
+                                            <Paginator initPage={initPage} perTag = {perTag} currentPage = {currentPage} max ={maxpage} onArrowMove={this.onArrowMove}
+                                                       onPageMove = {this.onPageMove}/>
+                                        </Row>:null
+                                    }
+
                 </React.Fragment>
                 </Route>
                 <Route>
@@ -302,6 +326,11 @@ class SearchIdeas extends Component {
         );
     }
 }
+
+
+SearchIdeas.propTypes = {
+    fireBase: PropTypes.object
+};
 
 
 

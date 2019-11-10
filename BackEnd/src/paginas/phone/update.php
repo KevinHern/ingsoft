@@ -33,7 +33,7 @@
 		{
 //            print_r($phone);
             $number = $phone["phone$i"]['number'];
-			$query = "INSERT INTO telephone VALUES('$uid', $number);";
+			$query = "INSERT INTO telephone VALUES('$uid', '$number');";
 			$result = pg_query($link, $query);
 			$i++;
 		}

@@ -9,6 +9,8 @@ import * as ROUTES from '../../Constants/routes.js';
 import axios from 'axios';
 import {GETUSER, ENTREPRENEUR} from "../../Constants/Endpoint";
 import withAuthentication from "../Session/withAuthentication";
+import Spinners from "../Wait";
+import Container from "reactstrap/es/Container";
 
 
 class ListIdea extends Component {
@@ -27,6 +29,7 @@ class ListIdea extends Component {
             modifyIdea: false,
             fetched: false,
             ideas: [],
+            wait: true,
             error: null
         };
     }
@@ -82,12 +85,18 @@ class ListIdea extends Component {
                     if(status){
                         const ideaList = [];
                         Object.values(ideas).map(item => ideaList.push(item));
-                        this.setState({max: maxpage, ideas: ideaList, error: 0});
+                        this.setState({max: maxpage, ideas: ideaList, error: 0, currentPage});
                         if(search){
                             this.setState({initPage:1, currentPage:1})
                         }
+                        setTimeout(() => {
+                            this.setState({ wait:false});
+                        }, 100);
                     }else{
                         this.setState({error: "No Fue Posible recuperar las ideas"});
+                        setTimeout(() => {
+                            this.setState({ wait:false});
+                        }, 100)
                     }
                 })
             });
@@ -99,8 +108,9 @@ class ListIdea extends Component {
     onPageMove = (newPage) => {
         const {currentPage} = this.state;
         if(currentPage !== newPage) {
+            this.setState({wait:true});
             this.fetchPage(newPage);
-            this.setState({currentPage:newPage});
+            // this.setState({currentPage:newPage});
         }
     };
 
@@ -152,7 +162,7 @@ class ListIdea extends Component {
 
 
     render() {
-        const{initPage, currentPage, max, perTag, newIdea, ideas, error, deleteIdea, modifyIdea} = this.state;
+        const{initPage, currentPage, max, perTag, newIdea, ideas, error, deleteIdea, modifyIdea, wait} = this.state;
         return (
             <React.Fragment>
                 <Row className={"justify-content-end"}>
@@ -190,7 +200,7 @@ class ListIdea extends Component {
                     </Row>: null
                 }
                 <Row className={"justify-content-md-center mt-1"}>
-                    <Table hover responsive={true} size={""}>
+                    <Table hover={!(wait || error)} responsive={true} size={""}>
                         <thead>
                         <tr>
                             <td>
@@ -200,7 +210,10 @@ class ListIdea extends Component {
                                 <Form inline className={"justify-content-md-end"} onSubmit = {this.onSubmit}>
                                     <FormGroup>
                                         <Input type="text" name="filter" id="filter" placeholder="Buscar" onChange = {this.filter}/>
-                                        <Button type={"submit"} onClick={() => {this.fetchPage(1, true)}}>
+                                        <Button type={"submit"} onClick={() => {
+                                            this.setState({wait:true});
+                                            this.fetchPage(1, true)
+                                        }}>
                                             <FaSearch/>
                                         </Button>
                                     </FormGroup>
@@ -209,9 +222,29 @@ class ListIdea extends Component {
                         </tr>
                         </thead>
                         <tbody>
-                        {
-                            (error)? <tr><td colSpan={2}><UncontrolledAlert>No fue posible listar ideas</UncontrolledAlert></td></tr> : <List  ideas={ideas} showDetails = {this.showDetails}/>
-                        }
+                                { (wait)?
+                                    <tr>
+                                        <td colSpan={2}>
+                                        <Container>
+                                            <Row className={"justify-content-center"}>
+                                                <Col sm={12}>
+                                                    <Spinners noRows={true}/>
+                                                </Col>
+                                            </Row>
+                                        </Container>
+                                        </td>
+                                    </tr>
+                                        :
+                                    <React.Fragment>
+                                { (error)?
+                                    <tr><td colSpan={2}><UncontrolledAlert>No fue posible listar ideas</UncontrolledAlert></td></tr>
+                                    :
+                                    <List  ideas={ideas} showDetails = {this.showDetails}/>
+                                }
+                                    </React.Fragment>
+
+                                }
+
                         </tbody>
                     </Table>
                 </Row>

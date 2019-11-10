@@ -11,4 +11,4 @@ export const UPDATE_PROFILE = `http://${IP}/ingsoft/src/paginas/update_profile.p
 export const SIGNUP = `http://${IP}/ingsoft/src/SignUp.php`;
 export const FINANCISTEND = `http://${IP}/ingsoft/src/paginas/financist.php`;
 export const PHOTOEND = `http://${IP}/ingsoft/src/paginas/img/`;
-export const PROFILE = 'profile.jpg';
+export const PROFILE = 'profile.png';

@@ -13,17 +13,23 @@ const withAuthentication = Component => {
             };
         }
         componentDidMount() {
+            this._isMounted = true;
             this.listener = this.props.fireBase.appAuth.onAuthStateChanged(
                 authUser => {
-                    authUser
-                        ? this.setState({ authUser })
-                        : this.setState({ authUser: null });
-                },
+                    if(authUser && this._isMounted){
+                         this.setState({ authUser })
+                    }else {
+                        if(this._isMounted)  this.setState({authUser: null});
+                    }
+                }
             );
         }
         componentWillUnmount() {
             this.listener();
+            this._isMounted = false
         }
+
+
         render() {
             const {authUser} = this.state;
             return (

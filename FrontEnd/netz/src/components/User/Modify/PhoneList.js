@@ -8,6 +8,7 @@ import * as ROUTES from "../../../Constants/routes";
 import {UPDATE_PHONE} from '../../../Constants/Endpoint';
 import axios from 'axios';
 import {withAuthentication} from '../../Session';
+import Spinners from "../../Wait";
 
 class PhoneList extends Component {
 
@@ -15,7 +16,8 @@ class PhoneList extends Component {
         super(props);
         this.state = {
             phoneList:[],
-            phoneOrg: ''
+            phoneOrg: '',
+            spinner:  false
         };
     }
 
@@ -74,6 +76,7 @@ class PhoneList extends Component {
         console.log(phone);
         if(promise){
             promise.then((uid) => {
+                this.setState({spinner:true});
                 console.log(phone);
                 axios({
                     url: UPDATE_PHONE,
@@ -85,10 +88,14 @@ class PhoneList extends Component {
                     headers: { 'Content-Type': 'application/json'},
                 }).then((response) => {
                     if(response.data['status']){
-                        this.route(`${ROUTES.OVERVIEW}/${typeMode}/modify/success`);
-                    }else{
                         console.log(response);
-                        this.route(`${ROUTES.OVERVIEW}/${typeMode}/modify/failure`);
+                        setTimeout(() => {
+                            this.route(`${ROUTES.OVERVIEW}/${typeMode}/modify/success`);
+                        }, 1500);
+                    }else{
+                        setTimeout(() => {
+                            this.route(`${ROUTES.OVERVIEW}/${typeMode}/modify/failure`);
+                        }, 1500);
                     }
                 })
             })
@@ -96,7 +103,7 @@ class PhoneList extends Component {
     };
 
     render() {
-        let {phoneList} = this.state;
+        let {phoneList, spinner} = this.state;
         const{value} = this.props;
         let {typeMode} = this.props.match.params;
         const {allowExtra, field} = this.props;
@@ -117,46 +124,53 @@ class PhoneList extends Component {
             }
         );
         return (
-            <div>
-                <TitleModify typeMode = {typeMode}/>
-                {(allowExtra)?
-                    <Row className={'mt-5 justify-content-center'} >
-                        <Col sm={4}>
-                            <Container>
-                                <div>{phoneList}</div>
-                            </Container>
-                        </Col>
-                    </Row>
-                    :
+            <React.Fragment>
+                {
+                    (spinner)?
+                        <Spinners/>
+                       :
                     <React.Fragment>
-                        <Row className={'mt-5 justify-content-center'}>
-                            <Col sm={{ size: 1 }}>
-                                <Label className={'capitalize'} >{field}</Label>
-                            </Col>
-                            <Col sm ={{ size: 3}}>
-                                <Input  type={'text'}  defaultValue={value[0]} readOnly/>
-                            </Col>
-                        </Row>
-                        <Row className={'mt-5 justify-content-center'}>
-                            <Col sm={{ size: 1 }}>
-                                <Label >Nuevo Valor</Label>
-                            </Col>
-                            <Col sm ={{ size: 3}}>
-                                <Input type={'text'} name={'phoneOrg'} onChange ={this.onChangeOrg}/>
+                    <TitleModify typeMode = {typeMode}/>
+                    {(allowExtra)?
+                        <Row className={'mt-5 justify-content-center'} >
+                            <Col sm={4}>
+                                <Container>
+                                    <div>{phoneList}</div>
+                                </Container>
                             </Col>
                         </Row>
+                        :
+                        <React.Fragment>
+                            <Row className={'mt-5 justify-content-center'}>
+                                <Col sm={{ size: 1 }}>
+                                    <Label className={'capitalize'} >{field}</Label>
+                                </Col>
+                                <Col sm ={{ size: 3}}>
+                                    <Input  type={'text'}  defaultValue={value[0]} readOnly/>
+                                </Col>
+                            </Row>
+                            <Row className={'mt-5 justify-content-center'}>
+                                <Col sm={{ size: 1 }}>
+                                    <Label >Nuevo Valor</Label>
+                                </Col>
+                                <Col sm ={{ size: 3}}>
+                                    <Input type={'text'} name={'phoneOrg'} onChange ={this.onChangeOrg}/>
+                                </Col>
+                            </Row>
+                        </React.Fragment>
+                    }
+
+                    <Row className={'mt-5 justify-content-center'} >
+                    <Col sm={{ size: 1 }}>
+                    <Button color={'primary'} onClick={this.update}>Modificar</Button>
+                    </Col>
+                    <Col sm={{ size: 1 }}>
+                    <Button color={"danger"} onClick={() => this.route(ROUTES.OVERVIEW)}>Cancelar</Button>
+                    </Col>
+                    </Row>
                     </React.Fragment>
                 }
-
-                <Row className={'mt-5 justify-content-center'} >
-                    <Col sm={{ size: 1 }}>
-                        <Button color={'primary'} onClick={this.update}>Modificar</Button>
-                    </Col>
-                    <Col sm={{ size: 1 }}>
-                        <Button color={"danger"} onClick={() => this.route(ROUTES.OVERVIEW)}>Cancelar</Button>
-                    </Col>
-                </Row>
-            </div>
+            </React.Fragment>
         );
     }
 }

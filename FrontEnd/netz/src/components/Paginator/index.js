@@ -2,6 +2,7 @@ import React from 'react';
 import Pagination from "reactstrap/es/Pagination";
 import PaginationItem from "reactstrap/es/PaginationItem";
 import PaginationLink from "reactstrap/es/PaginationLink";
+import PropTypes from 'prop-types';
 
 function Item(props) {
     // console.log(props.no);
@@ -17,6 +18,13 @@ function Item(props) {
         </PaginationItem>
     )
 }
+
+Item.propTypes = {
+  active: PropTypes.bool,
+  currentPage: PropTypes.number,
+  onPageMove: PropTypes.func,
+  no: PropTypes.number
+};
 
 
 function Paginator(props) {
@@ -52,6 +60,17 @@ function Paginator(props) {
         </Pagination>
     );
 }
+
+
+Paginator.propTypes = {
+    initPage : PropTypes.number,
+    currentPage : PropTypes.number,
+    max : PropTypes.number,
+    perTag : PropTypes.number,
+    onArrowMove: PropTypes.func,
+    onPageMove: PropTypes.func
+};
+
 
 export default Paginator;
 

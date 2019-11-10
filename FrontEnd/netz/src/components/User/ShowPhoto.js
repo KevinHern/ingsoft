@@ -1,6 +1,8 @@
 import React from 'react';
 import Label from "reactstrap/es/Label";
 import {Col, CustomInput, Media} from "reactstrap";
+import PropTypes from 'prop-types';
+
 
 function ShowPhoto(props) {
     const{_handleImageChange, imagePreviewUrl, labelSize, photoSize, inputSize} = props;
@@ -20,4 +22,12 @@ function ShowPhoto(props) {
     );
 }
 
+
+//What is an imagePreviewUrl?
+ShowPhoto.proTypes = {
+    _handleImageChange: PropTypes.func,
+    labelSize: PropTypes.number,
+    inputSize:PropTypes.number,
+    imagePreviewUrl: PropTypes.node
+};
 export default ShowPhoto;
