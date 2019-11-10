@@ -214,7 +214,7 @@ class BookIdeas extends Component {
         console.log(error);
         if(fetched && ideas && !wait){
             ideasDesc = ideas.map(idea => <Idea idea={idea} bookMarked ={true} key={idea.title+idea.uid} toggleStar= {this.breakStar}
-                                                newBook = {newBook} chat={true}/>);
+                                                newBook = {newBook} chat={true} addChatRequests = {this.addChatRequests}/>);
         }
         console.log(ideasDesc);
         if(!ideasDesc.length){
