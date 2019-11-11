@@ -19,11 +19,17 @@ import Spinners from "../Wait";
 import PropTypes from 'prop-types';
 
 
-
+/**
+ * Component to help financist look for ideas to bookmark
+ *
+ */
 
 class SearchIdeas extends Component {
 
-
+    /**
+     * Constructor with default state
+     * @param props
+     */
     constructor(props) {
         super(props);
         this.state = {
@@ -43,6 +49,11 @@ class SearchIdeas extends Component {
             wait :false
         };
     }
+
+    /**
+     * Life Cycle React method
+     * We search for the current categories in the system
+     */
 
     componentDidMount() {
         axios({
@@ -116,6 +127,10 @@ class SearchIdeas extends Component {
     //    this.saveChanges();
     // };
 
+    /**
+     * Add Bookmark for this financist
+     * @param register -> object with data of bookmark
+     */
 
     addBook(register) {
         axios(
@@ -129,6 +144,11 @@ class SearchIdeas extends Component {
                 });
     }
 
+    /**
+     * Delete bookmark
+     * @param remove -> object with data of bookmark
+     */
+
     deleteBook(remove) {
         axios(
                     {
@@ -141,6 +161,11 @@ class SearchIdeas extends Component {
                 });
     }
 
+    /**
+     *  Remove or place bookmark UI aid
+     * @param iid
+     * @param add_remove
+     */
     toggleStar = (iid, add_remove) => {
         let{newBook, uid} = this.state;
         if(add_remove) {
@@ -169,12 +194,22 @@ class SearchIdeas extends Component {
         this.setState({newBook});
     };
 
+    /**
+     * Redirect user to 'route'
+     * @param route
+     */
     route = (route) => {
       const{history} = this.props;
       this.setState({showPaginator: false, ideas: []});
       history.push(route);
     };
 
+    /**
+     * This function will be passed as a prop to a Paginator component
+     * It decides what should happen if and arrow in the Paginator is clicked
+     * @param e
+     * @param move
+     */
     onArrowMove  = (e, move) => {
         e.preventDefault();
         console.log(move);
@@ -208,6 +243,11 @@ class SearchIdeas extends Component {
 
     };
 
+    /**
+     * Function to set new currentPage in the state
+     * @param newPage
+     */
+
     onPageMove = (newPage) => {
         const {currentPage} = this.state;
         console.log(`Current Page ${currentPage} New Page ${newPage}`);
@@ -218,6 +258,11 @@ class SearchIdeas extends Component {
     };
 
 
+    /**
+     * Grab next set of ideas from the backend
+     * @param currentPage
+     * @param search
+     */
 
     fetchIdeas = (currentPage, search=false) => {
         const{category, rows} = this.state;
@@ -266,11 +311,19 @@ class SearchIdeas extends Component {
         });
     };
 
+    /**
+     * When a new category is selected
+     * @param e
+     */
     onChange = (e) => {
         this.setState({[e.target.name] : e.target.value});
     };
 
 
+    /**
+     * React LifeCycle method render
+     * @returns {*}
+     */
     render() {
         const{cats, error, ideas, newBook, removeBook, initPage,
             currentPage, maxpage, perTag, showPaginator,

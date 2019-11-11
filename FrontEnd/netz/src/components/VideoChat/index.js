@@ -4,8 +4,20 @@ import {Container, Row, Col} from "reactstrap";
 import {Button} from 'reactstrap';
 import axios from "axios";
 
+/**
+ * Component for liveChat communication
+ * https://www.oreilly.com/library/view/high-performance-browser/9781449344757/ch18.html
+ * https://www.oreilly.com/library/view/high-performance-browser/9781449344757/ch03.html#NATS
+ */
+
 class VideoChat extends Component {
 
+
+    /**
+     * Constructor with default state
+     * Refs are created to work with the video stream
+     * @param props
+     */
     constructor(props){
         super(props);
         this.myVideoTag = React.createRef();
@@ -17,6 +29,13 @@ class VideoChat extends Component {
         };
     }
 
+    /**
+     * Push data to firebase real-time database
+     * The push method on the database creates a random id for the object placed.
+     * Data is always removed after placement
+     * @param uid -> Will be pushed to the database to identify the sender.
+     * @param data -> Session Description sent to peer
+     */
     sendMessage = (uid, data) => {
         const{fireBase} = this.props;
         // console.log(uid, data);
@@ -25,6 +44,13 @@ class VideoChat extends Component {
 
     };
 
+    /**
+     * Method to read data
+     * Here we set the remove session description and we add the ICE candidates (ip, port)
+     * so we can communicate with our peer.
+     * @param data
+     * @param uid
+     */
     readMessage = (data, uid) => {
        const {pc} = this.state;
        console.log('uid');
@@ -49,6 +75,9 @@ class VideoChat extends Component {
       }
     };
 
+    /**
+     * We stop streaming of both videos
+     */
     stopVideo = () => {
         const{streaming} = this.state;
         if(streaming){
@@ -70,7 +99,9 @@ class VideoChat extends Component {
         }
     };
 
-
+    /**
+     * Ask user permission to access their media, and we add the stream to the RTCPeerConnection
+     */
     showVideo = () => {
         const{pc, streaming, uid} = this.state;
         if(!streaming) {
@@ -85,6 +116,11 @@ class VideoChat extends Component {
         this.setState({streaming:true});
     };
 
+    /**
+     * Creates the offer object and we set our localDescription
+     * the ice agent begins its work.
+     * Once we create the offer, we send our local description to the other user.
+     */
     showOtherVideo = () => {
         const {pc, uid} = this.state;
         pc.createOffer()
@@ -94,6 +130,9 @@ class VideoChat extends Component {
     };
 
 
+    /**
+     * We create the RTCPeerConnection, with the stun and turn servers we will use.
+     */
     componentDidMount() {
         const config = {
             'iceServers': [{'urls': 'stun:stun.services.mozilla.com'}, {'urls': 'stun:stun.l.google.com:19302'},
@@ -104,6 +143,16 @@ class VideoChat extends Component {
         // console.log(process.env.REACT_APP_STORAGE_BUCKET);
     }
 
+
+    /**
+     * Once user is available
+     *  We set callbacks for onicecandiate, onaddstream and
+     *  we set a callback for the real time database  to read messages
+     *  once their are added
+     * @param prevProps
+     * @param prevState
+     * @param snapshot
+     */
     componentDidUpdate(prevProps, prevState, snapshot) {
         const {fireBase} = this.props;
         const {userReady, pc} = this.state;

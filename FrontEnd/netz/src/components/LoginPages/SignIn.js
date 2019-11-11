@@ -35,6 +35,10 @@ class SignInFormBase extends Component {
         this.state = { ...INITIAL_STATE };
     }
 
+    /**
+     * Here we wait for the result of a redirect if user signed in
+     * using gmail, if this happens we set the user's role and remove the spinner
+     */
     componentDidMount() {
         const API_PATH = 'http://localhost/ingsoft/src/SignUp.php';
         const promise = this.props.fireBase.getRedirectResult();
