@@ -6,6 +6,14 @@ import {FaStar} from "react-icons/fa";
 import {IoIosChatboxes} from "react-icons/io";
 import PropTypes  from 'prop-types';
 import Container from "reactstrap/es/Container";
+
+
+/**
+ * Functional component for idea item
+ * @param props
+ * @returns {*}
+ * @constructor
+ */
 function Idea(props) {
     const{isBookmarked, title, description, firstname, lastname, iid, uid} = props.idea;
     const{bookMarked, chat, newBook, addChatRequests} = props;

@@ -23,6 +23,8 @@ import {VIDEOCHAT} from "../../Constants/routes";
 import VideoChat from '../VideoChat';
 // import SignOutButton from '../LoginPages/SignOut';
 
+//Root Component For the App
+//Main Router for the App
 
 const App = () => {
     return (

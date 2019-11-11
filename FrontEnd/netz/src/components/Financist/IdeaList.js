@@ -8,6 +8,13 @@ import Spinners from "../Wait";
 import PropTypes from "prop-types";
 import Idea from './Idea';
 
+
+/**
+ * Functional component to list Ideas
+ * @param props
+ * @returns {*}
+ * @constructor
+ */
 function IdeaList(props) {
     const{catsOp, onChange, ideasDesc, error, fetchIdeas, category, rows, wait} = props;
     console.log(ideasDesc);

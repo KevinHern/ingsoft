@@ -11,9 +11,18 @@ import Spinners from "../Wait";
 import PropTypes from 'prop-types';
 
 
+/**
+ * Manages the list of ideas that have been bookmarked by a financist
+ */
+
 class BookIdeas extends Component {
 
-
+    /**
+     *
+     * Contstructor with default values for state
+     *
+     * @param props
+     */
     constructor(props) {
         super(props);
         this.state = {
@@ -29,6 +38,11 @@ class BookIdeas extends Component {
             wait: false
         };
     }
+
+    /**
+     * LifeCycle method from React
+     * Here we fetch the ideas that have been bookmarked by the user
+     */
 
     componentDidUpdate() {
         const{fireBase} = this.props;
@@ -64,6 +78,12 @@ class BookIdeas extends Component {
         }
     }
 
+    /**
+     * OnArrowMove will be passed as a prop to a Paginator Component
+     * @param e
+     * @param move -> {first| last | previous | next}
+     */
+
     onArrowMove  = (e, move) => {
         e.preventDefault();
         console.log(move);
@@ -97,6 +117,11 @@ class BookIdeas extends Component {
 
     };
 
+    /**
+     * Sets the state with the new page of ideas to be showed
+     * @param newPage
+     */
+
     onPageMove = (newPage) => {
         const {currentPage} = this.state;
         console.log(`Current Page ${currentPage} New Page ${newPage}`);
@@ -105,6 +130,12 @@ class BookIdeas extends Component {
             this.setState({currentPage:newPage});
         }
     };
+
+    /**
+     * Method to look for ideas in the backend
+     * @param currentPage
+     * @param search -> string that will be searched among the titles of the ideas
+     */
 
     fetchIdeas = (currentPage, search=false) => {
         const{category, rows} = this.state;
@@ -144,13 +175,21 @@ class BookIdeas extends Component {
         });
     };
 
+    /**
+     * Method to keep track of the new category chosen
+     * @param e
+     */
     onChange = (e) => {
         this.setState({[e.target.name] : e.target.value});
     };
 
 
-
-
+    /**
+     *  TODO Thorough testing
+     *  This method sets the new maxPage, and the new  quantity of bookmarked ideas
+     *  belonging to this financist, also changes currentPage if necessary
+     * @returns {*[]}
+     */
     updateMaxPage = () => {
         let{cantIdeas, maxpage, rows, currentPage} = this.state;
         console.log(cantIdeas);
@@ -167,7 +206,12 @@ class BookIdeas extends Component {
         return [maxPage, cantIdeas-1, currentPage];
     };
 
-
+    /**
+     * TODO REFACTOTRING AND CLEANING
+     * Unbookmark and idea and lets the backend know about it
+     * @param iid
+     * @param add_remove, this parameter is not necessary
+     */
     breakStar = (iid, add_remove) => {
         let{ideas, uid} = this.state;
         ideas = ideas.filter((idea) => idea.iid !== iid);
@@ -196,12 +240,22 @@ class BookIdeas extends Component {
     };
 
 
+    /**
+     * TODO SAVE CHATREQUESTS IN CLOUD FIRESTORE
+     * @param uid
+     * @param iid
+     * @param title
+     */
     addChatRequests = (uid, iid, title) => {
         const{fireBase} = this.props;
 
         // fireBase.currentUser.uid;
     };
 
+    /**
+     * React lifecycle method , render
+     * @returns {*}
+     */
 
     render() {
         const{ideas, fetched, newBook, removeBook, error, initPage, currentPage,

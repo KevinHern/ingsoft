@@ -18,6 +18,9 @@ import IdeaList from './IdeaList';
 import Spinners from "../Wait";
 import PropTypes from 'prop-types';
 
+
+
+
 class SearchIdeas extends Component {
 
 
